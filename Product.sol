@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity >=0.7.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 // SPDX-License-Identifier: MIT;
@@ -38,7 +38,7 @@ contract SupplyChain {
     
     mapping (uint => uint[]) public productsOwned; // ParticipantId -> current products
     
-    function getProductsOwned(uint _id) public returns(uint[] memory){
+    function getProductsOwned(uint _id) public view returns(uint[] memory){
         return(productsOwned[_id]);
     }
     mapping (uint => Trace[]) public productTrace; // productId -> Trace array
