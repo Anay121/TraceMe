@@ -36,7 +36,11 @@ contract SupplyChain {
     uint[] participantIds;
     uint uid = 0;
     
-    mapping (uint => uint[]) productsOwned; // ParticipantId -> all products 
+    mapping (uint => uint[]) public productsOwned; // ParticipantId -> current products
+    
+    function getProductsOwned(uint _id) public returns(uint[] memory){
+        return(productsOwned[_id]);
+    }
     mapping (uint => Trace[]) public productTrace; // productId -> Trace array
     mapping (uint => Product) products;      // productId -> Product Object
     uint pid = 0;
@@ -122,7 +126,7 @@ contract SupplyChain {
         
     }
     
-    function addToOwner(uint _parentId, uint _ownerId) public {
+    function addToOwner(uint _parentId, uint _ownerId) public { //where is this used??
         require(products[_parentId].currentOwnerId == _ownerId, "The old product was not yours");
         productsOwned[_ownerId].push(_parentId);
     }
@@ -148,6 +152,7 @@ contract SupplyChain {
                         p.childrenId[k] = p.childrenId[k+1];
                     }
                 }
+                
                 
                 products[uint(products[_childrenIds[i]].parentId[j])] = p;
                 products[uint(products[_childrenIds[i]].parentId[j])].childrenId.pop();

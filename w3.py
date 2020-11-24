@@ -4,9 +4,9 @@ import json
 
 my_provider = Web3.HTTPProvider('http://127.0.0.1:7545')
 
-w3 = Web3(my_provider);
+w3 = Web3(my_provider)
 
-w3.eth.defaultAccount = w3.eth.accounts[0];
+w3.eth.defaultAccount = w3.eth.accounts[0]
 print(w3.isConnected())
 
 my_abi = [
