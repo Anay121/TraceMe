@@ -8,6 +8,19 @@ class Connection :
         print("Connection established:",w3.isConnected())
         my_abi =[
             {
+                "anonymous": "false",
+                "inputs": [
+                    {
+                        "indexed": "false",
+                        "internalType": "uint256",
+                        "name": "_child",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "childAdded",
+                "type": "event"
+            },
+            {
                 "inputs": [
                     {
                         "internalType": "string",
@@ -337,5 +350,5 @@ class Connection :
                 "type": "function"
             }
         ]
-        greeter = w3.eth.contract(address="0x8BBC70494c576d85D52DbC8f58bbd97640f59943", abi=my_abi)
+        greeter = w3.eth.contract(address="0x0Eb5Db2a9AabC93B0DE43713B4A94Ad0Ade0DEf2", abi=my_abi)
         return greeter,w3

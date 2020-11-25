@@ -31,7 +31,9 @@ contract SupplyChain {
         uint[] childrenId;
         uint currentOwnerId;
     }
-    
+    event childAdded(
+        uint _child
+    );
     mapping(uint => Participant) participant;   // userId -> User Object
     uint[] participantIds;
     uint uid = 0;
@@ -84,6 +86,7 @@ contract SupplyChain {
         productsOwned[_currentOwnerId].push(pid+1);
         products[++pid] = p;
         
+        emit childAdded(pid);
         return pid;
     }
     
