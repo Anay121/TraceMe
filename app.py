@@ -2,6 +2,7 @@ from flask import Flask, request, url_for, jsonify
 import json, time
 from web3connection import Connection
 import dotenv
+from hashlib import sha256
 
 app = Flask(__name__)
 c = Connection()
@@ -21,7 +22,7 @@ def home():
 	parent_id = input_json["product_id"]
 
 	#check owned before:
-	print(conn.functions.getProductsOwned(1).call())
+	# print(conn.functions.getProductsOwned(1).call())
 
 	p = conn.functions.getProduct(parent_id).call() #p is a tuple with the product structure type.
 	print(p)
@@ -40,7 +41,7 @@ def home():
 	tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
 	#check owned after:
-	print(conn.functions.getProductsOwned(1).call())
+	# print(conn.functions.getProductsOwned(1).call())
 
 	return ('', 204)
 
@@ -56,19 +57,32 @@ def register_user():
 	# username, password, fullname, role are expected as parameters - add more parameters here
 	print("REG REQ FOR:",input_json)
 	username = input_json["username"]
-	password = input_json["password"]
+	password = sha256(input_json["password"].encode()).hexdigest()	#hash password
 	fullname = input_json["fullname"]
 	role = input_json["role"]
-	#TODO could pass username+password hash for user id here OR could calc hash in product.sol
+	hashedId = sha256((username+password).encode()).hexdigest()	#for hashed userId
+	print(hashedId)
+	#DONE could pass username+password hash for user id here OR could calc hash in product.sol
+	
+	# check if username exists and for that username is password is same
+	p = conn.functions.getLoginDetails(username).call()
+	# print("HASHED PASSWORD",p)
+	if (p!=""):
+		return ("Username already exists!",500)
 
 	#call addParticipant function of Product.sol
-	tx_hash = conn.functions.addParticipant(username,password,fullname,role).transact()
+	tx_hash = conn.functions.addParticipant(username,password,fullname,role,hashedId).transact()
 	tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 	print("RECEIPT",tx_receipt)
 	
 	#confirm added participant --- no return value of user hash as of now
-	# print("GET PARTICIPANT",conn.functions.getParticipant(1).call())
-	return ('', 204)
+	print("GET PARTICIPANT",conn.functions.getParticipant(hashedId).call())
+	return ('Added Participant successfully', 204)
+
+# @app.route('/getuser', methods=['GET'])
+# def getparticipant():
+# 	print(conn.functions.getParticipant("137f8dd76837941037a63f22cc277577bf41c94d3be55c232ee6e9fea8cb465e").call())
+# 	return ('', 204)
 
 # merge -- deleteProducts + addToOwner
 @app.route('/merge',methods=['POST'])
@@ -85,17 +99,28 @@ def merge_children():
 
 	p = conn.functions.getProduct(childrenIds[0]).call() #p is a tuple with the product structure type.
 	parent_id = p[2][0]
-	print("Parent_id: ", parent_id)
-	
+
+	# check if not all
+	parent = conn.functions.getProduct(parent_id).call()
+	print("PARENT:",parent_id,parent)
+
 	# delete childrenIds
 	tx_hash = conn.functions.deleteProducts(childrenIds,ownerId).transact()
 	tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 	print("Delete RECEIPT",tx_receipt)
 
-	# add the parent id to products owned
-	tx_hash = conn.functions.addToOwner(parent_id,ownerId).transact()
-	tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-	print("AddtoOwner RECEIPT",tx_receipt)
+	# NOT ALL Logic -> delete the products and add a new product with their quantities added together else
+	# add parent id to products owned
+
+	if len(parent[3]) != len(childrenIds):
+		tx_hash = conn.functions.addProduct(p[0],[parent_id],[],p[4],"new prop with ADDED quantities OF 2 CHILDS").transact()
+		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash) #how to get returned value?
+		print("AddNewProduct",tx_receipt)
+	else:
+		# add the parent id to products owned
+		tx_hash = conn.functions.addToOwner(parent_id,ownerId).transact()
+		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+		print("AddtoOwner RECEIPT",tx_receipt)
 
 	# check owned
 	print(conn.functions.getProductsOwned(1).call())

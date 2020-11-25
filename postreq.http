@@ -4,8 +4,8 @@
 # content-type: application/json
 
 # {
-#     "product_id": 1,
-#     "quantities": ["20","20"]
+#     "product_id": 5,
+#     "quantities": ["20","30"]
 # }
 
 # POST http://127.0.0.1:5000/register HTTP/1.1
@@ -22,6 +22,8 @@
 # content-type: application/json
 
 # {
-#     "childrenIds": [2,3],
-#     "ownerId": 1
+#     "childrenIds": [6,7],
+#     "ownerId": "137f8dd76837941037a63f22cc277577bf41c94d3be55c232ee6e9fea8cb465e"
 # }
+
+# GET http://127.0.0.1:5000/getuser HTTP/1.1
