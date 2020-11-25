@@ -1,0 +1,27 @@
+# Install extension Rest client in vs code to test post requests
+
+# POST http://127.0.0.1:5000/split HTTP/1.1
+# content-type: application/json
+
+# {
+#     "product_id": 1,
+#     "quantities": ["20","20"]
+# }
+
+# POST http://127.0.0.1:5000/register HTTP/1.1
+# content-type: application/json
+
+# {
+#     "username": "fate",
+#     "password": "2703",
+#     "fullname": "fatema",
+#     "role": "farmer"
+# }
+
+# POST http://127.0.0.1:5000/merge HTTP/1.1
+# content-type: application/json
+
+# {
+#     "childrenIds": [2,3],
+#     "ownerId": 1
+# }

@@ -337,6 +337,11 @@ class Connection :
                 "type": "function"
             }
         ]
+<<<<<<< HEAD
         greeter = w3.eth.contract(address="0x8BBC70494c576d85D52DbC8f58bbd97640f59943", abi=my_abi)
         return greeter, w3
         
+=======
+        greeter = w3.eth.contract(address="0xB29Ad19D41A9B288c74B4E8c47B52114D2496AE3", abi=my_abi)
+        return greeter,w3
+>>>>>>> 6f225b5579e2a834d80ebf01adc88f0e85288c53
