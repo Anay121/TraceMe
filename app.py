@@ -1,6 +1,7 @@
 from flask import Flask, request, url_for, jsonify
 import json
 from web3connection import Connection
+import dotenv
 
 app = Flask(__name__)
 c = Connection()

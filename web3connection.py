@@ -5,7 +5,7 @@ class Connection :
         my_provider = Web3.HTTPProvider('http://127.0.0.1:7545')
         w3 = Web3(my_provider)
         w3.eth.defaultAccount = w3.eth.accounts[0]
-        print("Connection established:",w3.isConnected())
+        print("Connection established:", w3.isConnected())
         my_abi =[
             {
                 "inputs": [
@@ -338,4 +338,5 @@ class Connection :
             }
         ]
         greeter = w3.eth.contract(address="0x8BBC70494c576d85D52DbC8f58bbd97640f59943", abi=my_abi)
-        return greeter,w3
+        return greeter, w3
+        
