@@ -1,5 +1,5 @@
 from flask import Flask, request, url_for, jsonify
-import json
+import json, time
 from web3connection import Connection
 import dotenv
 
@@ -99,4 +99,24 @@ def merge_children():
 
 	# check owned
 	print(conn.functions.getProductsOwned(1).call())
+	return ('', 204)
+
+# transfer ownership
+
+@app.route('/transfer', methods=['POST'])
+def transfer_owner():
+	# expecting senderId and productId (via qr code), and receiverId, location
+	input_json = request.get_json(force=True)
+	print('Received params', input_json)
+	sender_id = input_json['senderId']
+	receiver_id = input_json['receiverId']
+	product_id = input_json['productId']
+	location = input_json['location']
+	# assume only one product is being transfered
+	# call transfer
+	conn.functions.TransferOwnership(sender_id, receiver_id, product_id, location, str(time.time()))
+	# make an event to get return value maybe?
+
+	# after returning maybe smoe way to send an OK message to both the parties
+	#
 	return ('', 204)
