@@ -1,5 +1,5 @@
 from web3 import Web3
-
+import os
 class Connection :
     def create_conn(self):
         my_provider = Web3.HTTPProvider('http://127.0.0.1:7545')
@@ -337,5 +337,5 @@ class Connection :
                 "type": "function"
             }
         ]
-        greeter = w3.eth.contract(address="0xB29Ad19D41A9B288c74B4E8c47B52114D2496AE3", abi=my_abi)
+        greeter = w3.eth.contract(address=os.getenv('CONTRACT_ADDRESS') , abi=my_abi)
         return greeter,w3
