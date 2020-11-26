@@ -1,13 +1,20 @@
 from flask import Flask, request, url_for, jsonify
-import json, time
+import json, time, os
 from web3connection import Connection
 import dotenv
 from hashlib import sha256
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
+jwt = JWTManager(app)
 c = Connection()
-conn,w3 = c.create_conn()
+conn, w3 = c.create_conn()
 print(conn)
+
 
 #https://stackoverflow.com/questions/10313001/is-it-possible-to-make-post-request-in-flask 
 @app.route('/split', methods=['POST'])
@@ -45,10 +52,12 @@ def home():
 
 	return ('', 204)
 
+
 @app.route('/trial', methods=['GET'])
 def current_ownership():
 	print(conn.functions.getProductsOwned(1).call())
 	return ('', 204)
+
 
 # addParticipant
 @app.route('/register',methods=['POST'])
@@ -150,6 +159,7 @@ def transfer_owner():
 	#
 	return ('', 204)
 
+
 @app.route('/login', methods=['POST'])
 def login():
 	# get username and password
@@ -159,20 +169,20 @@ def login():
 	password = input_json['password']
 
 	# check if username exists
-	ret = conn.functions.getLoginDetails(username).call()
+	val = conn.functions.getLoginDetails(username).call()
 	# check if username password combo is correct
 	# print('ret', ret)
-	if ret == '':
+	if val == '':
 		return 'Invalid Username', 401
 	
-	if sha256(password.encode()).hexdigest() != ret:
+	if sha256(password.encode()).hexdigest() != val:
 		return 'Invalid Attempt', 401
 
-	hashedId = sha256((username+ret).encode()).hexdigest()	#for hashed userId
+	hashedId = sha256((username + val).encode()).hexdigest()	#for hashed userId
 	# print(hashedId)
 	user_details = conn.functions.getParticipant(hashedId).call()
 	print('User Details', user_details)
 	# generate a token also maybe?
-	
+	access_token = create_access_token(identity = hashedId)
 	# return the generated token
-	return 'False', 200
+	return jsonify({'userid': hashedId, 'JWTAccessToken': access_token}), 200
