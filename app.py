@@ -135,13 +135,44 @@ def transfer_owner():
 	print('Received params', input_json)
 	sender_id = input_json['senderId']
 	receiver_id = input_json['receiverId']
-	product_id = input_json['productId']
+	product_id = int(input_json['productId'])
 	location = input_json['location']
+	
 	# assume only one product is being transfered
 	# call transfer
-	conn.functions.TransferOwnership(sender_id, receiver_id, product_id, location, str(time.time()))
-	# make an event to get return value maybe?
-
+	try:
+		tx_hash = conn.functions.TransferOwnership(sender_id, receiver_id, product_id, location, str(time.time())).transact()
+		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+	# print(tx_receipt)
+	except:
+		return "Failed, Please check if all details entered were correct or not", 400
 	# after returning maybe smoe way to send an OK message to both the parties
 	#
 	return ('', 204)
+
+@app.route('/login', methods=['POST'])
+def login():
+	# get username and password
+	input_json = request.get_json(force=True)
+	print('Received params', input_json)
+	username = input_json['username']
+	password = input_json['password']
+
+	# check if username exists
+	ret = conn.functions.getLoginDetails(username).call()
+	# check if username password combo is correct
+	# print('ret', ret)
+	if ret == '':
+		return 'Invalid Username', 401
+	
+	if sha256(password.encode()).hexdigest() != ret:
+		return 'Invalid Attempt', 401
+
+	hashedId = sha256((username+ret).encode()).hexdigest()	#for hashed userId
+	# print(hashedId)
+	user_details = conn.functions.getParticipant(hashedId).call()
+	print('User Details', user_details)
+	# generate a token also maybe?
+	
+	# return the generated token
+	return 'False', 200

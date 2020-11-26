@@ -180,26 +180,4 @@ contract SupplyChain {
         productsOwned[_ownerId].pop();
     }
     
-    // function split(int[] memory _productId, string[] memory _encProdProps, uint _ownerId) public returns(uint[] memory finalProducts) {
-    //     string memory p = products[uint(_productId[0])].productName;
-    //     uint[] memory t1;
-    //     // int[] memory t2;
-    //     // t2[t2.length] = _productId;
-    //     for(uint i = 0; i < _encProdProps.length; i++){
-    //         uint newId = addProduct(p, _productId, t1, _ownerId, _encProdProps[i]);
-            
-    //         finalProducts;
-    //     }
-    //     // remove from owned
-    //     removeFromOwner(_ownerId, uint(_productId[0]));
-        
-    // }
-    
-    // function makeTrace(int _productId) public pure returns(Product[] memory p){
-    //     p = products;
-    //     // flag = true;
-    //     // while (flag) {
-            
-    //     // }
-    // }
 }
