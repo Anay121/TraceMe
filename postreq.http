@@ -42,14 +42,14 @@
 
 # GET http://127.0.0.1:5000/getuser HTTP/1.1
 
-POST http://127.0.0.1:5000/login HTTP/2
-content-type: application/json
+# POST http://127.0.0.1:5000/login HTTP/2
+# content-type: application/json
 
-{
-    "username": "fate",
-    "password": "2703"
-}
+# {
+#     "username": "anay",
+#     "password": "2703"
+# }
 
 # GET http://127.0.0.1:5000/protected HTTP/2
-# Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDYzODcxNjIsIm5iZiI6MTYwNjM4NzE2MiwianRpIjoiY2IyYjdlN2YtZjVmNS00NGU0LWFiZTctYmYxZmY1MDBlOGIxIiwiZXhwIjoxNjA2Mzg4MDYyLCJpZGVudGl0eSI6ImFuYXkiLCJmcmVzaCI6ZmFsc2UsInR5cGUiOiJhY2Nlc3MifQ.lreKNnz_-rb0OGJZCzkgsoqPLlXam-LaP-av7L-dW9E
+# Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDY0NTMxNTIsIm5iZiI6MTYwNjQ1MzE1MiwianRpIjoiMzYzMWQ4NmMtODJjOS00ZjdjLWI1OGUtZjVkZGIwY2VmZjdkIiwiZXhwIjoxNjA2NDU0MDUyLCJpZGVudGl0eSI6ImFuYXkiLCJmcmVzaCI6ZmFsc2UsInR5cGUiOiJhY2Nlc3MifQ.8ojwjoHei3J5A8rEax4iB7dVQ3JZhnjMMYpYVgV0xsM
 

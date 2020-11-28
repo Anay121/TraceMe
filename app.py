@@ -160,18 +160,27 @@ def transfer_owner():
 	return ('', 204)
 
 
+@app.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+	current_user = get_jwt_identity()
+	access_token = create_access_token(identity=current_user)
+	return jsonify({'JWTAccessToken': access_token}), 200
+
+
 @app.route('/login', methods=['POST'])
 def login():
 	# get username and password
 	input_json = request.get_json(force=True)
-	print('Received params', input_json)
-	username = input_json['username']
-	password = input_json['password']
+	# print('Received params', input_json)
+	username = input_json.get('username', None)
+	password = input_json.get('password', None)
 
 	# check if username exists
+	if not username or not password:
+		return "Invalid attempt", 401
 	val = conn.functions.getLoginDetails(username).call()
 	# check if username password combo is correct
-	# print('ret', ret)
 	if val == '':
 		return 'Invalid Username', 401
 	
@@ -179,10 +188,12 @@ def login():
 		return 'Invalid Attempt', 401
 
 	hashedId = sha256((username + val).encode()).hexdigest()	#for hashed userId
-	# print(hashedId)
+	
 	user_details = conn.functions.getParticipant(hashedId).call()
 	print('User Details', user_details)
 	# generate a token also maybe?
 	access_token = create_access_token(identity = hashedId)
+	refresh_token = create_refresh_token(identity = hashedId)
+	print(access_token)
 	# return the generated token
-	return jsonify({'userid': hashedId, 'JWTAccessToken': access_token}), 200
+	return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token}), 200
