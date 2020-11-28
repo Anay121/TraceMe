@@ -68,4 +68,14 @@ content-type: application/json
 
 
 ###
+POST http://127.0.0.1:5000/add_product HTTP/1.1
+content-type: application/json
 
+{
+    "product_name":"andda",
+    "product_properties":{"quantity":50},
+    "user_id":"user_id"
+}
+
+###
+GET http://127.0.0.1:5000/get_products/1 HTTP/1.1
