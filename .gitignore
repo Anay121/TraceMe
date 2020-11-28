@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-.flaskenv
 # C extensions
 *.so
 
@@ -113,6 +112,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+TraceMe/
+.flaskenv
 
 # Spyder project settings
 .spyderproject
