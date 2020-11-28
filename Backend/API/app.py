@@ -2,11 +2,12 @@ from flask import Flask, request, url_for, jsonify
 import json
 import time
 import os
-from web3connection import Connection
+from .web3connection import Connection
 import dotenv
 from hashlib import sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
+    jwt_refresh_token_required, create_refresh_token,
     get_jwt_identity
 )
 
@@ -19,15 +20,15 @@ print(conn)
 print(conn.address)
 
 
-def init():
-    # add more init stuff here idm lol
-    conn.functions.addParticipant(
-        "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
-    conn.functions.addProduct("prod1", [], [], "1", "100").transact()
-    conn.functions.addProduct("prod2", [], [], "1", "200").transact()
+# def init():
+#     # add more init stuff here idm lol
+#     conn.functions.addParticipant(
+#         "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
+#     conn.functions.addProduct("prod1", [], [], "1", "100").transact()
+#     conn.functions.addProduct("prod2", [], [], "1", "200").transact()
 
 
-init()
+# init()
 
 
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities):  # TODO user string
@@ -252,9 +253,9 @@ def transfer_owner():
 @app.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required
 def refresh():
-	current_user = get_jwt_identity()
-	access_token = create_access_token(identity=current_user)
-	return jsonify({'JWTAccessToken': access_token}), 200
+    current_user = get_jwt_identity()
+    access_token = create_access_token(identity=current_user)
+    return jsonify({'JWTAccessToken': access_token}), 200
 
 
 @app.route('/login', methods=['POST'])
@@ -263,11 +264,11 @@ def login():
     input_json = request.get_json(force=True)
     # print('Received params', input_json)
     username = input_json.get('username', None)
-	password = input_json.get('password', None)
+    password = input_json.get('password', None)
 
     # check if username exists
     if not username or not password:
-		return "Invalid attempt", 401
+        return "Invalid attempt", 401
     val = conn.functions.getLoginDetails(username).call()
     # check if username password combo is correct
     # print('ret', ret)
@@ -285,9 +286,9 @@ def login():
     # generate a token also maybe?
     access_token = create_access_token(identity=hashedId)
     refresh_token = create_refresh_token(identity = hashedId)
-	print(access_token)
-	# return the generated token
-	return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token}), 200
+    print(access_token)
+    # return the generated token
+    return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token}), 200
 
 
 # string memory _productName, int[] memory _parentId, uint[] memory _childrenId, string memory _currentOwnerId,
