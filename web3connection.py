@@ -1,12 +1,12 @@
 from web3 import Web3
-
+import os
 class Connection :
     def create_conn(self):
         my_provider = Web3.HTTPProvider('http://127.0.0.1:7545')
         w3 = Web3(my_provider)
         w3.eth.defaultAccount = w3.eth.accounts[0]
-        print("Connection established:",w3.isConnected())
-        my_abi =[
+        print("Connection established:", w3.isConnected())
+        my_abi = [
             {
                 "anonymous": "false",
                 "inputs": [
@@ -41,14 +41,19 @@ class Connection :
                         "internalType": "string",
                         "name": "_role",
                         "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "hashedId",
+                        "type": "string"
                     }
                 ],
                 "name": "addParticipant",
                 "outputs": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "",
-                        "type": "uint256"
+                        "type": "string"
                     }
                 ],
                 "stateMutability": "nonpayable",
@@ -72,9 +77,9 @@ class Connection :
                         "type": "uint256[]"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "_currentOwnerId",
-                        "type": "uint256"
+                        "type": "string"
                     },
                     {
                         "internalType": "string",
@@ -101,9 +106,9 @@ class Connection :
                         "type": "uint256"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "_ownerId",
-                        "type": "uint256"
+                        "type": "string"
                     }
                 ],
                 "name": "addToOwner",
@@ -119,9 +124,9 @@ class Connection :
                         "type": "uint256[]"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "_ownerId",
-                        "type": "uint256"
+                        "type": "string"
                     }
                 ],
                 "name": "deleteProducts",
@@ -132,28 +137,9 @@ class Connection :
             {
                 "inputs": [
                     {
-                        "internalType": "uint256",
-                        "name": "_id",
-                        "type": "uint256"
-                    }
-                ],
-                "name": "getProductsOwned",
-                "outputs": [
-                    {
-                        "internalType": "uint256[]",
-                        "name": "",
-                        "type": "uint256[]"
-                    }
-                ],
-                "stateMutability": "nonpayable",
-                "type": "function"
-            },
-            {
-                "inputs": [
-                    {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "_ownerId",
-                        "type": "uint256"
+                        "type": "string"
                     },
                     {
                         "internalType": "uint256",
@@ -169,14 +155,14 @@ class Connection :
             {
                 "inputs": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "_senderId",
-                        "type": "uint256"
+                        "type": "string"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "_receiverId",
-                        "type": "uint256"
+                        "type": "string"
                     },
                     {
                         "internalType": "uint256",
@@ -202,9 +188,52 @@ class Connection :
             {
                 "inputs": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
+                        "name": "a",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "b",
+                        "type": "string"
+                    }
+                ],
+                "name": "compareStrings",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "pure",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_username",
+                        "type": "string"
+                    }
+                ],
+                "name": "getLoginDetails",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
                         "name": "_id",
-                        "type": "uint256"
+                        "type": "string"
                     }
                 ],
                 "name": "getParticipant",
@@ -273,9 +302,9 @@ class Connection :
                                 "type": "uint256[]"
                             },
                             {
-                                "internalType": "uint256",
+                                "internalType": "string",
                                 "name": "currentOwnerId",
-                                "type": "uint256"
+                                "type": "string"
                             }
                         ],
                         "internalType": "struct SupplyChain.Product",
@@ -289,9 +318,28 @@ class Connection :
             {
                 "inputs": [
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
+                        "name": "_id",
+                        "type": "string"
+                    }
+                ],
+                "name": "getProductsOwned",
+                "outputs": [
+                    {
+                        "internalType": "uint256[]",
                         "name": "",
-                        "type": "uint256"
+                        "type": "uint256[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
                     },
                     {
                         "internalType": "uint256",
@@ -336,19 +384,20 @@ class Connection :
                         "type": "string"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "senderId",
-                        "type": "uint256"
+                        "type": "string"
                     },
                     {
-                        "internalType": "uint256",
+                        "internalType": "string",
                         "name": "receiverId",
-                        "type": "uint256"
+                        "type": "string"
                     }
                 ],
                 "stateMutability": "view",
                 "type": "function"
             }
         ]
-        greeter = w3.eth.contract(address="0x0Eb5Db2a9AabC93B0DE43713B4A94Ad0Ade0DEf2", abi=my_abi)
+        greeter = w3.eth.contract(address=os.getenv('CONTRACT_ADDRESS') , abi=my_abi)
+        # greeter = w3.eth.contract(address="0xc78566Fc1E873c8e8575Dbc702c31C074cb65EE4", abi=my_abi)
         return greeter,w3

@@ -4,8 +4,12 @@ pragma experimental ABIEncoderV2;
 // SPDX-License-Identifier: MIT;
 
 contract SupplyChain {
-    // Participant
     
+    uint pid = 0;
+    
+    // SRUCTS
+    
+    // Participant Struct
     struct Participant {
         string username;
         string password;
@@ -13,15 +17,15 @@ contract SupplyChain {
         string role;
     }
     
-    // Trace
+    // Trace Struct
     struct Trace {
         string time;
         string location;
-        uint senderId;
-        uint receiverId;
+        string senderId;
+        string receiverId;
     }
     
-    // Product
+    // Product Struct
     struct Product {
         string productName;
         // mapping(string => string) productProperties;
@@ -29,7 +33,7 @@ contract SupplyChain {
         // Trace trace;
         int[] parentId;
         uint[] childrenId;
-        uint currentOwnerId;
+        string currentOwnerId;
     }
     event childAdded(
         uint _child
@@ -38,34 +42,61 @@ contract SupplyChain {
     uint[] participantIds;
     uint uid = 0;
     
-    mapping (uint => uint[]) public productsOwned; // ParticipantId -> current products
+    mapping(string => Participant) participant;   // userId -> User Object
+    string[] participantIds;
     
-    function getProductsOwned(uint _id) public returns(uint[] memory){
-        return(productsOwned[_id]);
-    }
+    mapping(string => string) loginDetails; // username -> hashed password mapping
+    
+    mapping (string => uint[]) public productsOwned; // ParticipantId -> current products
+    
     mapping (uint => Trace[]) public productTrace; // productId -> Trace array
-    mapping (uint => Product) products;      // productId -> Product Object
-    uint pid = 0;
     
-    modifier onlyOwner(uint _senderId, uint _productId){
-        require(products[_productId].currentOwnerId == _senderId, "Its not yours");
+    mapping (uint => Product) products;      // productId -> Product Object
+    
+    // UTILITY FUNCTIONS
+    
+    function compareStrings(string memory a, string memory b) public pure returns (bool) {
+        return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
+    }
+    
+    modifier onlyOwner(string memory _senderId, uint _productId){
+        // require(products[_productId].currentOwnerId == _senderId, "Its not yours");
+        require(compareStrings(products[_productId].currentOwnerId,_senderId),"You dont own this product");
         _;
     }
     
-    function addParticipant (string memory _username, string memory _password, string memory _fullname, string memory _role) public returns(uint) {
-        Participant memory p = Participant(_username, _password, _fullname, _role);
-        participant[++uid] = p;
-        participantIds.push(uid);
-        return(uid);
-    }
-    // TODO:login?
+    // VIEW FUNCTIONS
     
-    function getParticipant (uint _id) public view returns(Participant memory) {
+    function getProductsOwned(string memory _id) public view returns(uint[] memory){
+        return(productsOwned[_id]);
+    }
+   
+    function getLoginDetails (string memory _username) public view returns(string memory) {
+        return(loginDetails[_username]);
+    }
+    
+    function getParticipant (string memory _id) public view returns(Participant memory) {
         return( participant[_id]);
     }
     
+    function getProduct(uint _pid) public view returns(Product memory){
+        return(products[_pid]);
+    }
+    
+    // IMPORTANT FUNCTIONS
+    
+    function addParticipant (string memory _username, string memory _password, string memory _fullname, string memory _role, string memory hashedId) public returns(string memory) {
+        Participant memory p = Participant(_username, _password, _fullname, _role);
+        string memory uid = hashedId;
+        participant[uid] = p;
+        participantIds.push(uid);
+        loginDetails[_username]=_password;
+        
+        return(uid);
+    }
+    
     function addProduct( 
-        string memory _productName, int[] memory _parentId, uint[] memory _childrenId, uint _currentOwnerId, 
+        string memory _productName, int[] memory _parentId, uint[] memory _childrenId, string memory _currentOwnerId, 
         string memory _encProdProps  // encoded product properties
         ) public returns(uint) {
         Product memory p; 
@@ -79,7 +110,8 @@ contract SupplyChain {
         
         for(uint j = 0; j<_parentId.length; j++) {
             if(_parentId[j] != -1) {
-                require(products[uint(_parentId[j])].currentOwnerId == _currentOwnerId, "You dont own this product");
+                // require(products[uint(_parentId[j])].currentOwnerId == _currentOwnerId, "You dont own this product");
+                require(compareStrings(products[uint(_parentId[j])].currentOwnerId,_currentOwnerId),"You dont own this product");
                 products[uint(_parentId[j])].childrenId.push(pid+1);
             }
         }
@@ -90,30 +122,8 @@ contract SupplyChain {
         return pid;
     }
     
-    
-    function getProduct(uint _pid) public view returns(Product memory){
-        return(products[_pid]);
-    }
-    
-    function removeFromOwner(uint _ownerId, uint _productId) public onlyOwner(_ownerId, _productId) {
-        bool flag = false;
-        for(uint i = 0; i < productsOwned[_ownerId].length - 1; i++){
-            
-            if(productsOwned[_ownerId][i] == _productId){
-                flag = true;
-            }
-            
-            if(flag){
-                productsOwned[_ownerId][i] = productsOwned[_ownerId][i+1];
-            }
-        }
-        productsOwned[_ownerId].pop();
-    }
-
-    // transfer ownership
-    
     function TransferOwnership(
-        uint _senderId, uint _receiverId, uint _productId, string memory _location, string memory _time
+        string memory _senderId, string memory _receiverId, uint _productId, string memory _location, string memory _time
         ) public onlyOwner(_senderId, _productId) {
         
         // Update Trace array
@@ -125,23 +135,14 @@ contract SupplyChain {
         
         // Change owner
         products[_productId].currentOwnerId = _receiverId;
-        
-        
     }
     
-    function addToOwner(uint _parentId, uint _ownerId) public { //where is this used??
-        require(products[_parentId].currentOwnerId == _ownerId, "The old product was not yours");
-        productsOwned[_ownerId].push(_parentId);
-    }
-    
-    function deleteProducts(uint[] memory _childrenIds, uint _ownerId) public {
-        
+    function deleteProducts(uint[] memory _childrenIds, string memory _ownerId) public {
         for(uint i=0; i < _childrenIds.length; i++){
             // remove from productsOwned
             removeFromOwner(_ownerId, _childrenIds[i]);
             
             //remove from parents    
-            
             for( uint j = 0; j < products[_childrenIds[i]].parentId.length; j++){  // maybe change later
                 
                 bool flag = false;
@@ -155,21 +156,34 @@ contract SupplyChain {
                         p.childrenId[k] = p.childrenId[k+1];
                     }
                 }
-                
-                
                 products[uint(products[_childrenIds[i]].parentId[j])] = p;
                 products[uint(products[_childrenIds[i]].parentId[j])].childrenId.pop();
             }
             
             //remove from products
-            
             delete products[_childrenIds[i]];
         }
     }
     
-    // split
+    function addToOwner(uint _parentId, string memory _ownerId) public { //where is this used??
+        // require(products[_parentId].currentOwnerId == _ownerId, "The old product was not yours");
+        require(compareStrings(products[_parentId].currentOwnerId,_ownerId),"The old product was not yours");
+        productsOwned[_ownerId].push(_parentId);
+    }
     
-    
+    function removeFromOwner(string memory _ownerId, uint _productId) public onlyOwner(_ownerId, _productId) {
+        bool flag = false;
+        for(uint i = 0; i < productsOwned[_ownerId].length - 1; i++){
+            if(productsOwned[_ownerId][i] == _productId){
+                flag = true;
+            }
+            
+            if(flag){
+                productsOwned[_ownerId][i] = productsOwned[_ownerId][i+1];
+            }
+        }
+        productsOwned[_ownerId].pop();
+    }
     
     // function split(int[] memory _productId, string[] memory _encProdProps, uint _ownerId) public returns(uint[] memory finalProducts) {
     //     string memory p = products[uint(_productId[0])].productName;
@@ -185,9 +199,6 @@ contract SupplyChain {
     //     removeFromOwner(_ownerId, uint(_productId[0]));
         
     // }
-    
-    
-    // function for tracing
     
     // function makeTrace(int _productId) public pure returns(Product[] memory p){
     //     p = products;
