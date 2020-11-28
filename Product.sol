@@ -1,4 +1,4 @@
-pragma solidity ^0.6.6;
+pragma solidity >=0.7.0 <0.8.0;
 pragma experimental ABIEncoderV2;
 
 // SPDX-License-Identifier: MIT;
@@ -38,9 +38,6 @@ contract SupplyChain {
     event childAdded(
         uint _child
     );
-    mapping(uint => Participant) participant;   // userId -> User Object
-    uint[] participantIds;
-    uint uid = 0;
     
     mapping(string => Participant) participant;   // userId -> User Object
     string[] participantIds;
@@ -185,26 +182,4 @@ contract SupplyChain {
         productsOwned[_ownerId].pop();
     }
     
-    // function split(int[] memory _productId, string[] memory _encProdProps, uint _ownerId) public returns(uint[] memory finalProducts) {
-    //     string memory p = products[uint(_productId[0])].productName;
-    //     uint[] memory t1;
-    //     // int[] memory t2;
-    //     // t2[t2.length] = _productId;
-    //     for(uint i = 0; i < _encProdProps.length; i++){
-    //         uint newId = addProduct(p, _productId, t1, _ownerId, _encProdProps[i]);
-            
-    //         finalProducts;
-    //     }
-    //     // remove from owned
-    //     removeFromOwner(_ownerId, uint(_productId[0]));
-        
-    // }
-    
-    // function makeTrace(int _productId) public pure returns(Product[] memory p){
-    //     p = products;
-    //     // flag = true;
-    //     // while (flag) {
-            
-    //     // }
-    // }
 }

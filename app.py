@@ -1,30 +1,43 @@
 from flask import Flask, request, url_for, jsonify
-import json
+import json, time, os
 from web3connection import Connection
 import dotenv
 from hashlib import sha256
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
+jwt = JWTManager(app)
 c = Connection()
-conn,w3 = c.create_conn()
+conn, w3 = c.create_conn()
 print(conn)
+print(conn.address)
 
-def split_product(p_id,p_name,parent_array,children_array,user_id,quantities):
+def init():
+	#add more init stuff here idm lol
+	conn.functions.addParticipant("anjum_k","pass","Anjum Khandeshi","farmer","1").transact()
+	conn.functions.addProduct("prod1",[],[],"1","100").transact()
+	conn.functions.addProduct("prod2",[],[],"1","200").transact()
+init()
+
+def split_product(p_id,p_name,parent_array,children_array,user_id,quantities):#TODO user string
 	children = []
+	print("split_products() called with quantities",quantities)
 	for q in quantities:
 		#TODO encode the quanitities and the prop what algo??
-		tx_hash = conn.functions.addProduct(p_name,parent_array,children_array,user_id,"new prop with new quantities"+str(q)).transact()
-		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash) #how to get returned value?
-		rich_logs = conn.events.childAdded().processReceipt(tx_receipt)
-		flag = eth.getTransactionReceipt(tx_hash)['logs'][0]['data']
-		print(tx_receipt)
-		# flag = conn.functions.addProduct(p[0],[parent_id],[],p[4],"new prop with new quantities"+str(q)).call()
-		print("Added new product with ID",flag)
-		children.append(flag)
+		tx_hash = conn.functions.addProduct(p_name,parent_array,children_array,str(user_id),str(q)).transact()
+		event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
+		for event in event_filter.get_all_entries():
+			print(event)
+			children.append(event['args']['_child']) #the id of the child newly produced, already added to products owned.
 		# check and change ownership
 	# remove from parent
-	tx_hash = conn.functions.removeFromOwner(user_id,p_id).transact()
+	tx_hash = conn.functions.removeFromOwner(str(user_id),p_id).transact()
 	tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+	print("New children are:",children)
 	return children
 
 
@@ -39,7 +52,7 @@ def split():
 	quantities = input_json["quantities"]
 	#get the product:
 	parent_id = input_json["product_id"]
-	current_user = input_json["user_id"]
+	current_user = input_json["user_id"]#TODO change to hashed string
 
 	#check owned before:
 	print(conn.functions.getProductsOwned(current_user).call()) #list of products owned by caller.
@@ -66,25 +79,39 @@ def add_from_multiple_products():
 	'''
 	data = request.get_json(force=True)
 	user_id = data['user_id']
+	# print("user_id",user_id)
 	parent_products = data['parents']
+	# print("parent_products",parent_products)
 	parent_ids = []
 	for p in parent_products:
 		parent_id = p['product_id']
+		# print("curretn parent id is :",parent_id)
 		parent_prod = conn.functions.getProduct(parent_id).call() #p is a tuple with the product structure type.
+		print(parent_prod)
 		quan = int(p['quantity'])
-		total = int(parent_prod[4])#get the product quantity from here
+		total = int(parent_prod[1])#get the product quantity from here
+		# print(parent_prod[1])
 		parent_ids.append(parent_id)
+		# print("parent id:",parent_ids)
+		# print(quan,total)
 		if(quan<total):
-			children = split_product(parent_id,parent_prod[0],[parent_id],[],user_id,[quan,total-quan])#children is an array of children product ids cvreated
+			print("quan less than!")
+			children = split_product(parent_id,parent_prod[0],[parent_id],[],user_id,[quan,total-quan])
+			#children is an array of children product ids cvreated
 			parent_ids.pop()
 			parent_ids.append(children[0])#first child is the correct quantity.
-	
-	tx_hash = conn.functions.addProduct("new_product_name",parent_ids,[],user_id,"new prop with new quantities").transact()
-	tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash) #how to get returned value?
-	print(tx_hash,tx_receipt)
-	# print(conn.functions.getProductsOwned(1).call())
-
-	return ('', 204)
+	print("\nParent ids of the new product to add------",parent_ids)
+	conn.functions.addProduct("new_product_name",parent_ids,[],str(user_id),"quan1+quant2...").transact()#TODO quantitites here
+	event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
+	for event in event_filter.get_all_entries():
+		print(event)
+		child_id = event['args']['_child']
+	print("ID of child newly added:",child_id)
+	#now the child has x parents that are no longer viable:
+	for p_id in parent_ids:
+		conn.functions.removeFromOwner(str(user_id),p_id).transact()
+	print(conn.functions.getProductsOwned("1").call())
+	return jsonify({"new_child":child_id})
 
 @app.route('/trial', methods=['GET'])
 def current_ownership():
@@ -117,7 +144,7 @@ def register_user():
 	print("RECEIPT",tx_receipt)
 	
 	#confirm added participant --- no return value of user hash as of now
-	print("GET PARTICIPANT",conn.functions.getParticipant(hashedId).call())
+	print("GET PARTICIPANT",conn.functions.getParticipant(hashedId).call()) #why calling with hashed ID? **
 	return ('Added Participant successfully', 204)
 
 # @app.route('/getuser', methods=['GET'])
@@ -164,6 +191,57 @@ def merge_children():
 		print("AddtoOwner RECEIPT",tx_receipt)
 
 	# check owned
-	print(conn.functions.getProductsOwned(ownerId).call())
+	print(conn.functions.getProductsOwned(1).call())
 	return ('', 204)
 
+# transfer ownership
+
+@app.route('/transfer', methods=['POST'])
+def transfer_owner():
+	# expecting senderId and productId (via qr code), and receiverId, location
+	input_json = request.get_json(force=True)
+	print('Received params', input_json)
+	sender_id = input_json['senderId']
+	receiver_id = input_json['receiverId']
+	product_id = int(input_json['productId'])
+	location = input_json['location']
+	
+	# assume only one product is being transfered
+	# call transfer
+	try:
+		tx_hash = conn.functions.TransferOwnership(sender_id, receiver_id, product_id, location, str(time.time())).transact()
+		tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+	# print(tx_receipt)
+	except:
+		return "Failed, Please check if all details entered were correct or not", 400
+	# after returning maybe smoe way to send an OK message to both the parties
+	#
+	return ('', 204)
+
+
+@app.route('/login', methods=['POST'])
+def login():
+	# get username and password
+	input_json = request.get_json(force=True)
+	print('Received params', input_json)
+	username = input_json['username']
+	password = input_json['password']
+
+	# check if username exists
+	val = conn.functions.getLoginDetails(username).call()
+	# check if username password combo is correct
+	# print('ret', ret)
+	if val == '':
+		return 'Invalid Username', 401
+	
+	if sha256(password.encode()).hexdigest() != val:
+		return 'Invalid Attempt', 401
+
+	hashedId = sha256((username + val).encode()).hexdigest()	#for hashed userId
+	# print(hashedId)
+	user_details = conn.functions.getParticipant(hashedId).call()
+	print('User Details', user_details)
+	# generate a token also maybe?
+	access_token = create_access_token(identity = hashedId)
+	# return the generated token
+	return jsonify({'userid': hashedId, 'JWTAccessToken': access_token}), 200

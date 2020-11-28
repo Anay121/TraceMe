@@ -12,10 +12,24 @@
 # content-type: application/json
 
 # {
-#     "username": "fate",
+#     "username": "anay",
 #     "password": "2703",
-#     "fullname": "fatema",
-#     "role": "farmer"
+#     "fullname": "anay",
+#     "role": "transporter"
+# }
+
+# id1 502d33c9ff5648efa78d0636bd40ff38b7e46bf6b156369a7e464b27e1fa4584
+# id2 7c156f0f28d0569a46c425fe4545ad462bdeb23426946dcd9f96cdbc1d73ea14
+
+
+# POST http://127.0.0.1:5000/transfer HTTP/1.1
+# content-type: application/json
+
+# {
+#     "senderId": "502d33c9ff5648efa78d0636bd40ff38b7e46bf6b156369a7e464b27e1fa4584",
+#     "receiverId": "7c156f0f28d0569a46c425fe4545ad462bdeb23426946dcd9f96cdbc1d73ea14",
+#     "productId": "1",
+#     "location": "Mumbai"
 # }
 
 # POST http://127.0.0.1:5000/merge HTTP/1.1
@@ -27,3 +41,31 @@
 # }
 
 # GET http://127.0.0.1:5000/getuser HTTP/1.1
+
+POST http://127.0.0.1:5000/login HTTP/2
+content-type: application/json
+
+{
+    "username": "fate",
+    "password": "2703"
+}
+
+# GET http://127.0.0.1:5000/protected HTTP/2
+# Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MDYzODcxNjIsIm5iZiI6MTYwNjM4NzE2MiwianRpIjoiY2IyYjdlN2YtZjVmNS00NGU0LWFiZTctYmYxZmY1MDBlOGIxIiwiZXhwIjoxNjA2Mzg4MDYyLCJpZGVudGl0eSI6ImFuYXkiLCJmcmVzaCI6ZmFsc2UsInR5cGUiOiJhY2Nlc3MifQ.lreKNnz_-rb0OGJZCzkgsoqPLlXam-LaP-av7L-dW9E
+
+###
+
+POST http://127.0.0.1:5000/parents HTTP/1.1
+content-type: application/json
+
+{
+    "user_id":1,
+    "parents":[
+        {"product_id":1,"quantity":30},
+        {"product_id":2,"quantity":50}
+    ]
+}
+
+
+###
+
