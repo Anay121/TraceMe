@@ -20,15 +20,15 @@ print(conn)
 print(conn.address)
 
 
-# def init():
-#     # add more init stuff here idm lol
-#     conn.functions.addParticipant(
-#         "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
-#     conn.functions.addProduct("prod1", [], [], "1", "100").transact()
-#     conn.functions.addProduct("prod2", [], [], "1", "200").transact()
+def init():
+    # add more init stuff here idm lol
+    conn.functions.addParticipant(
+        "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
+    conn.functions.addProduct("prod1", [], [], "1", "100").transact()
+    conn.functions.addProduct("prod2", [], [], "1", "200").transact()
 
 
-# init()
+init()
 
 
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities):  # TODO user string
