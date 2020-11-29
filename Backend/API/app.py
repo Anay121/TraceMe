@@ -12,16 +12,17 @@ from flask_jwt_extended import (
 )
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
-c = Connection()
-conn, w3 = c.create_conn()
-print(conn)
-print(conn.address)
+connection = Connection()
+conn, w3 = connection.create_conn()
+print("connection:", conn)
+print("connection address:", conn.address)
 
 
 def init():
-    # add more init stuff here idm lol
+    # add more init stuff here
+    print("executing init function")
     conn.functions.addParticipant(
         "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
     conn.functions.addProduct("prod1", [], [], "1", "100").transact()
@@ -171,7 +172,7 @@ def register_user():
         hashedId).call())  # why calling with hashed ID? **
     return ('Added Participant successfully', 204)
 
-# @app.route('/getuser', methods=['GET'])
+# @app.route('/get_user', methods=['GET'])
 # def getparticipant():
 # 	print(conn.functions.getParticipant("137f8dd76837941037a63f22cc277577bf41c94d3be55c232ee6e9fea8cb465e").call())
 # 	return ('', 204)
@@ -285,50 +286,80 @@ def login():
     print('User Details', user_details)
     # generate a token also maybe?
     access_token = create_access_token(identity=hashedId)
-    refresh_token = create_refresh_token(identity = hashedId)
+    refresh_token = create_refresh_token(identity=hashedId)
     print(access_token)
     # return the generated token
     return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token}), 200
 
 
-# string memory _productName, int[] memory _parentId, uint[] memory _childrenId, string memory _currentOwnerId,
-# string memory _encProdProps  // encoded product properties
-
 @app.route("/add_product", methods=["POST"])
 def add_product():
-    input_json = request.get_json(force=True)
+    """
+    request (POST) - '/add_product'
+    body - dict<string, ...>
+        product_name (string)
+        user_id (string)
+        product_properties (dict<string, ...>)
+    response - dict<string, id>
+    {
+        "product_id": product_id
+    }
+    """
 
-    # Is equivalent to product_properties ie additional information
+    # Acquiring all the POST information from the body
+    input_json = request.get_json(force=True)
     product_name = input_json["product_name"]
     product_properties = str(input_json["product_properties"])
     user_id = input_json["user_id"]
 
-    # TODO - Encrypt all the additional information
+    # TODO - Encrypt all the additional information aka "product_properties"
+    # Need to discuss the algorithm to be used
 
+    # parent_id and children_id are populated by calling split (?) at the front ent
     parent_id, children_id = [], []
 
+    # transacting the data to the blockchain using the addProduct function defined in the smart contract
     tx_hash = conn.functions.addProduct(
         product_name, parent_id, children_id, user_id, product_properties).transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    print("Add Product Receipt", tx_receipt)
+    print("addProduct Receipt", tx_receipt)
 
+    # Calling the childAdded event to acquire the child_id as a return value
     event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
     for event in event_filter.get_all_entries():
         print(event)
         child_id = event['args']['_child']
-    print("ID of child newly added:", child_id)
+    print("id of the newly added child:", child_id)
 
     return jsonify({"product_id": child_id})
 
 
 @app.route("/get_products/<user_id>", methods=["GET"])
 def get_products(user_id):
-    tx_hash = conn.functions.getProductsOwned(str(user_id)).call()
-    print("Get Products hash", tx_hash)
+    """
+    request (GET) - '/get_products/<user_id>'
+    response - dict<string, dict>
+    "user_id" -> {
+                "name",
+                "encoded_properties",
+                "parent_id_list",
+                "children_id_list",
+                "current_owner_id",
+    }
+    """
 
-    product_list = []
+    # Acquiring a list of product ids owned by user.
+    tx_hash = conn.functions.getProductsOwned(str(user_id)).call()
+
+    product_dict = {}
     for product_id in list(tx_hash):
         product = conn.functions.getProduct(product_id).call()
-        product_list.append(product)
+        product_dict[product_id] = {
+            "name": product[0],
+            "encoded_properties": product[1],
+            "parent_id_list": product[2],
+            "children_id_list": product[3],
+            "current_owner_id": product[4]
+        }
 
-    return {"product_list": product_list}
+    return product_dict
