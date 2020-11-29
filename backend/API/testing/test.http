@@ -101,3 +101,5 @@ content-type: application/json
 ###
 # Testing the /get_products [GET] endpoint
 GET http://127.0.0.1:5000/get_products/1 HTTP/1.1
+###
+GET http://127.0.0.1:5000/get_products/user_id HTTP/1.1

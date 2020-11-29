@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="" rel="noopener">
+ <img width=300px src="./assets/images/logo.png" alt="NewsBuster-logo"></a>
+</p>
+
 # TraceMe
 Trace Me is a mobile application developed in flutter which utilises the Ethereum blockchain to keep track of the farm produce and transactions with the intention to help towards food security. It is a secure system which provides transparency and auditing for farmers, supply chain entities, and consumers.
 

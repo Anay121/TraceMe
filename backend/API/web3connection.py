@@ -11,7 +11,7 @@ class Connection:
 
         print("connection established:", w3.isConnected())
 
-        with open(r"./Backend/API/abi.json", 'r') as f:
+        with open(r"./backend/API/abi.json", 'r') as f:
             my_abi = json.loads(f.read())["0"]
         greeter = w3.eth.contract(
             address=os.getenv("CONTRACT_ADDRESS"), abi=my_abi)
