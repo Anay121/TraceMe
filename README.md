@@ -14,7 +14,7 @@ The system is developed using -
 
 ## Usage
 
-1) Add Backend/SmartContract/Product.sol code to remix and connect with Ganache.
+1) Add backend/smart_contract/product.sol code to remix and connect with Ganache.
 2) Setup .env in the root folder with -
    - JWT_SECRET_KEY (eg: "keyboard cat"; preferably a randomly generated string using os.urandom())
    - GANACHE_ADDRESS (usually: http://127.0.0.1:7545)
