@@ -22,6 +22,7 @@ contract SupplyChain {
         string location;
         string senderId;
         string receiverId;
+        string encProperties;
     }
 
     // Product Struct
@@ -156,16 +157,21 @@ contract SupplyChain {
         return pid;
     }
 
+    function setEncProps(uint _productId, string memory encProductProps) public {
+
+    }
+
     function TransferOwnership(
         string memory _senderId,
         string memory _receiverId,
         uint256 _productId,
         string memory _location,
-        string memory _time
+        string memory _time,
+        string memory _encProps
     ) public onlyOwner(_senderId, _productId) {
         // Update Trace array
         productTrace[_productId].push(
-            Trace(_time, _location, _senderId, _receiverId)
+            Trace(_time, _location, _senderId, _receiverId, _encProps)
         );
 
         // update products owned

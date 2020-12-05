@@ -5,7 +5,7 @@ import json
 
 class Connection:
     def create_conn(self):
-        my_provider = Web3.HTTPProvider(os.getenv("GANACHE_ADDRESS"))
+        my_provider = Web3.HTTPProvider('HTTP://127.0.0.1:7545')
         w3 = Web3(my_provider)
         w3.eth.defaultAccount = w3.eth.accounts[0]
 

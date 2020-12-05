@@ -29,9 +29,6 @@ def init():
     conn.functions.addProduct("prod2", [], [], "1", "200").transact()
 
 
-init()
-
-
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities):  # TODO user string
     children = []
     print("split_products() called with quantities", quantities)
@@ -236,12 +233,15 @@ def transfer_owner():
     receiver_id = input_json['receiverId']
     product_id = int(input_json['productId'])
     location = input_json['location']
+    props = input_json.get('props', {})
+
+    # do the encoding
 
     # assume only one product is being transfered
     # call transfer
     try:
         tx_hash = conn.functions.TransferOwnership(
-            sender_id, receiver_id, product_id, location, str(time.time())).transact()
+            sender_id, receiver_id, product_id, location, str(time.time()), props).transact()
         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     # print(tx_receipt)
     except:
