@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="" rel="noopener">
+ <img width=300px src="./assets/images/logo.png" alt="NewsBuster-logo"></a>
+</p>
+
 # TraceMe
 Trace Me is a mobile application developed in flutter which utilises the Ethereum blockchain to keep track of the farm produce and transactions with the intention to help towards food security. It is a secure system which provides transparency and auditing for farmers, supply chain entities, and consumers.
 
@@ -9,7 +14,7 @@ The system is developed using -
 
 ## Usage
 
-1) Add Backend/SmartContract/Product.sol code to remix and connect with Ganache.
+1) Add backend/smart_contract/product.sol code to remix and connect with Ganache.
 2) Setup .env in the root folder with -
    - JWT_SECRET_KEY (eg: "keyboard cat"; preferably a randomly generated string using os.urandom())
    - GANACHE_ADDRESS (usually: http://127.0.0.1:7545)
