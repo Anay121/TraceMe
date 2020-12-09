@@ -150,7 +150,6 @@ def register_user():
     hashedId = sha256((username+password).encode()
                       ).hexdigest()  # for hashed userId
     print(hashedId)
-    # DONE could pass username+password hash for user id here OR could calc hash in product.sol
 
     # check if username exists and for that username is password is same
     p = conn.functions.getLoginDetails(username).call()
@@ -218,7 +217,7 @@ def merge_children():
         print("AddtoOwner RECEIPT", tx_receipt)
 
     # check owned
-    print(conn.functions.getProductsOwned(1).call())
+    # print(conn.functions.getProductsOwned().call())
     return ('', 204)
 
 # transfer ownership
@@ -233,8 +232,7 @@ def transfer_owner():
     receiver_id = input_json['receiverId']
     product_id = int(input_json['productId'])
     location = input_json['location']
-    props = input_json.get('props', {})
-
+    props = input_json.get('props', '')
     # do the encoding
 
     # assume only one product is being transfered
@@ -244,8 +242,9 @@ def transfer_owner():
             sender_id, receiver_id, product_id, location, str(time.time()), props).transact()
         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     # print(tx_receipt)
-    except:
-        return "Failed, Please check if all details entered were correct or not", 400
+    except Exception as e:
+        print(e)
+        return str(e), 400
     # after returning maybe smoe way to send an OK message to both the parties
     #
     return ('', 204)
@@ -263,7 +262,6 @@ def refresh():
 def login():
     # get username and password
     input_json = request.get_json(force=True)
-    # print('Received params', input_json)
     username = input_json.get('username', None)
     password = input_json.get('password', None)
 
@@ -272,7 +270,6 @@ def login():
         return "Invalid attempt", 401
     val = conn.functions.getLoginDetails(username).call()
     # check if username password combo is correct
-    # print('ret', ret)
     if val == '':
         return 'Invalid Username', 401
 
@@ -281,7 +278,6 @@ def login():
 
     hashedId = sha256((username + val).encode()
                       ).hexdigest()  # for hashed userId
-    # print(hashedId)
     user_details = conn.functions.getParticipant(hashedId).call()
     print('User Details', user_details)
     # generate a token also maybe?
@@ -313,10 +309,9 @@ def add_product():
     user_id = input_json["user_id"]
 
     # TODO - Encrypt all the additional information aka "product_properties"
-    # Need to discuss the algorithm to be used
 
     # parent_id and children_id are populated by calling split (?) at the front ent
-    parent_id, children_id = [], []
+    parent_id, children_id = [-1], []
 
     # transacting the data to the blockchain using the addProduct function defined in the smart contract
     tx_hash = conn.functions.addProduct(
@@ -329,7 +324,7 @@ def add_product():
     for event in event_filter.get_all_entries():
         print(event)
         child_id = event['args']['_child']
-    print("id of the newly added child:", child_id)
+        print("id of the newly added child:", child_id)
 
     return jsonify({"product_id": child_id})
 

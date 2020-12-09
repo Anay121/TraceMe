@@ -17,7 +17,7 @@ content-type: application/json
 
 {
     "username": "anay",
-    "password": "2703",
+    "password": "password",
     "fullname": "anay",
     "role": "transporter"
 }
@@ -25,15 +25,16 @@ content-type: application/json
 
 ###
 # Testing the /transfer [POST] endpoint
-# id1 502d33c9ff5648efa78d0636bd40ff38b7e46bf6b156369a7e464b27e1fa4584
-# id2 7c156f0f28d0569a46c425fe4545ad462bdeb23426946dcd9f96cdbc1d73ea14
-POST http://127.0.0.1:5000/transfer HTTP/1.1
+# id1 e0c2ee138764f6a304c8bfd6ee046ad3be1353aaee0e91a6baf63ad1c464a0da
+# id2 f038ba9c0704d9592982863a3f42f4e65fddb98de431555e9af55d099d779425
+POST http://127.0.0.1:5000/transfer HTTP/2
 content-type: application/json
 
 {
     "senderId": "502d33c9ff5648efa78d0636bd40ff38b7e46bf6b156369a7e464b27e1fa4584",
-    "receiverId": "7c156f0f28d0569a46c425fe4545ad462bdeb23426946dcd9f96cdbc1d73ea14",
-    "productId": "1",
+    "receiverId": "e0c2ee138764f6a304c8bfd6ee046ad3be1353aaee0e91a6baf63ad1c464a0da",
+    "productId": "2",
+    "props":"somevalue",
     "location": "Mumbai"
 }
 
@@ -50,8 +51,8 @@ content-type: application/json
 
 
 ###
-# Testing the /getuser [GET] endpoint
-GET http://127.0.0.1:5000/getuser HTTP/1.1
+# # Testing the /getuser [GET] endpoint
+# GET http://127.0.0.1:5000/getuser HTTP/1.1
 
 
 ###
@@ -94,7 +95,7 @@ content-type: application/json
 {
     "product_name":"andda",
     "product_properties":{"quantity":50},
-    "user_id":"user_id"
+    "user_id": "e0c2ee138764f6a304c8bfd6ee046ad3be1353aaee0e91a6baf63ad1c464a0da"
 }
 
 
