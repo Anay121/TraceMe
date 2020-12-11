@@ -267,7 +267,8 @@ def login():
     # check if username exists
     if not username or not password:
         return "Invalid attempt", 401
-    val = conn.functions.getLoginDetails(username).call()
+    val = conn.functions.getLoginDetails(username).call()#returns the password
+    print(val)
     # check if username password combo is correct
     if val == '':
         return 'Invalid Username', 401
@@ -275,8 +276,12 @@ def login():
     if sha256(password.encode()).hexdigest() != val:
         return 'Invalid Attempt', 401
 
+    # if password != val:
+    #     return 'Invalid Attempt', 401
+
     hashedId = sha256((username + val).encode()
                       ).hexdigest()  # for hashed userId
+    print(hashedId)
     user_details = conn.functions.getParticipant(hashedId).call()
     print('User Details', user_details)
     # generate a token also maybe?
