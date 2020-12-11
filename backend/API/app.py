@@ -12,7 +12,7 @@ from flask_jwt_extended import (
 )
 
 app = Flask(__name__)
-app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+app.config['JWT_SECRET_KEY'] = 'secret'
 jwt = JWTManager(app)
 connection = Connection()
 conn, w3 = connection.create_conn()
@@ -268,16 +268,21 @@ def login():
     # check if username exists
     if not username or not password:
         return "Invalid attempt", 401
-    val = conn.functions.getLoginDetails(username).call()
+    val = conn.functions.getLoginDetails(username).call()#returns the password
+    print(val)
     # check if username password combo is correct
     if val == '':
         return 'Invalid Username', 401
 
-    if sha256(password.encode()).hexdigest() != val:
+    # if sha256(password.encode()).hexdigest() != val:
+    #     return 'Invalid Attempt', 401
+
+    if password != val:
         return 'Invalid Attempt', 401
 
     hashedId = sha256((username + val).encode()
                       ).hexdigest()  # for hashed userId
+    print(hashedId)
     user_details = conn.functions.getParticipant(hashedId).call()
     print('User Details', user_details)
     # generate a token also maybe?
