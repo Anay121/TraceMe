@@ -274,11 +274,11 @@ def login():
     if val == '':
         return 'Invalid Username', 401
 
-    # if sha256(password.encode()).hexdigest() != val:
-    #     return 'Invalid Attempt', 401
-
-    if password != val:
+    if sha256(password.encode()).hexdigest() != val:
         return 'Invalid Attempt', 401
+
+    # if password != val:
+    #     return 'Invalid Attempt', 401
 
     hashedId = sha256((username + val).encode()
                       ).hexdigest()  # for hashed userId
