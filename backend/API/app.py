@@ -3,6 +3,7 @@ import json
 import time
 import os
 from .web3connection import Connection
+from .treeStruct import treeNode
 import dotenv
 from hashlib import sha256
 from flask_jwt_extended import (
@@ -70,11 +71,11 @@ def split():
     p = conn.functions.getProduct(parent_id).call()
     print(p)
     # addProduct will add the new product into the productsOwned but will not remove the parent.
-    split_product(parent_id, p[0], [parent_id], [], current_user, quantities)
+    children = split_product(parent_id, p[0], [parent_id], [], current_user, quantities)
 
     # check owned after:
     print(conn.functions.getProductsOwned(current_user).call())
-    # return
+    return jsonify(children), 204
 
 
 @app.route('/parents', methods=['POST'])
@@ -173,9 +174,8 @@ def register_user():
 # 	print(conn.functions.getParticipant("137f8dd76837941037a63f22cc277577bf41c94d3be55c232ee6e9fea8cb465e").call())
 # 	return ('', 204)
 
+
 # merge -- deleteProducts + addToOwner
-
-
 @app.route('/merge', methods=['POST'])
 def merge_children():
     input_json = request.get_json(force=True)
@@ -220,9 +220,8 @@ def merge_children():
     # print(conn.functions.getProductsOwned().call())
     return ('', 204)
 
+
 # transfer ownership
-
-
 @app.route('/transfer', methods=['POST'])
 def transfer_owner():
     # expecting senderId and productId (via qr code), and receiverId, location
@@ -247,7 +246,7 @@ def transfer_owner():
         return str(e), 400
     # after returning maybe smoe way to send an OK message to both the parties
     #
-    return ('', 204)
+    return (f'Transfer completed between {sender_id} and {receiver_id}', 204)
 
 
 @app.route('/refresh', methods=['POST'])
@@ -321,6 +320,7 @@ def add_product():
 
     # Calling the childAdded event to acquire the child_id as a return value
     event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
+    child_id = None
     for event in event_filter.get_all_entries():
         print(event)
         child_id = event['args']['_child']
@@ -358,3 +358,43 @@ def get_products(user_id):
         }
 
     return product_dict
+
+# utility function to generate product trace
+def makeTree(product, product_id):
+    t = treeNode(product[0])
+    trace = conn.functions.getTrace(product_id).call()
+    arr = []
+    # print(trace, 'trace')
+    
+    if trace:
+        t.maker = trace[0][2]
+        t.owner = trace[-1][3]
+        for i in trace: 
+            arr.append(f'Transfered to {i[3]}')
+    t.trace = arr
+    print(t)
+    # get children and enumerate
+    for i in product[3]:
+        product_child = conn.functions.getProduct(i).call()
+        t.children.append(makeTree(product_child, i))
+    # get parents and enumerate
+    
+    # t.parents = 
+
+    return t
+
+# tracing function
+@app.route('/trace', methods=['POST'])
+def trace():
+    input_json = request.get_json(force=True)
+    product_id = int(input_json.get('product_id', ''))
+    user_id = input_json.get('user_id', '')
+    is_owned = conn.functions.isOwner(user_id, product_id).call()
+    if not is_owned:
+        return "Can't view trace of unowned products", 402
+    product = conn.functions.getProduct(product_id).call()
+    print(product, 'product')
+    makeTree(product, product_id)
+
+    return 'Kay', 200
+    

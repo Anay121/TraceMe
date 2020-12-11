@@ -5,8 +5,9 @@ POST http://127.0.0.1:5000/split HTTP/1.1
 content-type: application/json
 
 {
-    "product_id": 5,
-    "quantities": ["20","30"]
+    "product_id": 1,
+    "quantities": ["20","30"],
+    "user_id":"c6ff365f60a9e375b982bae164bb67065814c75a5e478ac82aa7267696d7943e"
 }
 
 
@@ -31,9 +32,9 @@ POST http://127.0.0.1:5000/transfer HTTP/2
 content-type: application/json
 
 {
-    "senderId": "502d33c9ff5648efa78d0636bd40ff38b7e46bf6b156369a7e464b27e1fa4584",
-    "receiverId": "e0c2ee138764f6a304c8bfd6ee046ad3be1353aaee0e91a6baf63ad1c464a0da",
-    "productId": "2",
+    "senderId": "dba8a99f1fb683065fbbc4be4e23e42f21ae21d3eb4ff77acf1a1484e57eab7a",
+    "receiverId": "c6ff365f60a9e375b982bae164bb67065814c75a5e478ac82aa7267696d7943e",
+    "productId": "1",
     "props":"somevalue",
     "location": "Mumbai"
 }
@@ -93,14 +94,22 @@ POST http://127.0.0.1:5000/add_product HTTP/1.1
 content-type: application/json
 
 {
-    "product_name":"andda",
+    "product_name":"egg",
     "product_properties":{"quantity":50},
-    "user_id": "e0c2ee138764f6a304c8bfd6ee046ad3be1353aaee0e91a6baf63ad1c464a0da"
+    "user_id": "502d33c9ff5648efa78d0636bd40ff38b7e46bf6b156369a7e464b27e1fa4584"
 }
 
 
 ###
 # Testing the /get_products [GET] endpoint
-GET http://127.0.0.1:5000/get_products/1 HTTP/1.1
+GET http://127.0.0.1:5000/get_products/c6ff365f60a9e375b982bae164bb67065814c75a5e478ac82aa7267696d7943e HTTP/1.1
 ###
 GET http://127.0.0.1:5000/get_products/user_id HTTP/1.1
+###
+POST http://127.0.0.1:5000/trace HTTP/2
+content-type: application/json
+
+{
+    "product_id": "1",
+    "user_id": "c6ff365f60a9e375b982bae164bb67065814c75a5e478ac82aa7267696d7943e"
+}

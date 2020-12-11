@@ -42,9 +42,9 @@ contract SupplyChain {
 
     mapping(string => string) loginDetails; // username -> hashed password mapping
 
-    mapping(string => uint256[]) public productsOwned; // ParticipantId -> current products
+    mapping(string => uint256[]) productsOwned; // ParticipantId -> current products
 
-    mapping(uint256 => Trace[]) public productTrace; // productId -> Trace array
+    mapping(uint256 => Trace[]) productTrace; // productId -> Trace array
 
     mapping(uint256 => Product) products; // productId -> Product Object
 
@@ -67,6 +67,7 @@ contract SupplyChain {
         );
         _;
     }
+    
 
     // VIEW FUNCTIONS
 
@@ -97,7 +98,20 @@ contract SupplyChain {
     function getProduct(uint256 _pid) public view returns (Product memory) {
         return (products[_pid]);
     }
-
+    
+    function isOwner (string memory _senderId, uint256 _productId) public view returns(bool)  {
+        if(compareStrings(products[_productId].currentOwnerId, _senderId) == true){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    
+    function getTrace(uint _pid) public view returns(Trace[] memory) {
+        return productTrace[_pid];
+    }
+    
     // IMPORTANT FUNCTIONS
 
     function addParticipant(
