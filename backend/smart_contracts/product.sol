@@ -34,6 +34,7 @@ contract SupplyChain {
         int256[] parentId;
         uint256[] childrenId;
         string currentOwnerId;
+        string owner;
     }
     event childAdded(uint256 _child);
 

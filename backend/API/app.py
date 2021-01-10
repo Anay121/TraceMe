@@ -3,7 +3,7 @@ import json
 import time
 import os
 from .web3connection import Connection
-from .treeStruct import treeNode
+from .treeStruct import makeTree
 import dotenv
 from hashlib import sha256
 from flask_jwt_extended import (
@@ -21,13 +21,13 @@ print("connection:", conn)
 print("connection address:", conn.address)
 
 
-def init():
-    # add more init stuff here
-    print("executing init function")
-    conn.functions.addParticipant(
-        "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
-    conn.functions.addProduct("prod1", [], [], "1", "100").transact()
-    conn.functions.addProduct("prod2", [], [], "1", "200").transact()
+# def init():
+#     # add more init stuff here
+#     print("executing init function")
+#     conn.functions.addParticipant(
+#         "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
+#     conn.functions.addProduct("prod1", [], [], "1", "100").transact()
+#     conn.functions.addProduct("prod2", [], [], "1", "200").transact()
 
 
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities):  # TODO user string
@@ -267,8 +267,7 @@ def login():
     # check if username exists
     if not username or not password:
         return "Invalid attempt", 401
-    val = conn.functions.getLoginDetails(username).call()#returns the password
-    print(val)
+    val = conn.functions.getLoginDetails(username).call()
     # check if username password combo is correct
     if val == '':
         return 'Invalid Username', 401
@@ -276,12 +275,8 @@ def login():
     if sha256(password.encode()).hexdigest() != val:
         return 'Invalid Attempt', 401
 
-    # if password != val:
-    #     return 'Invalid Attempt', 401
-
     hashedId = sha256((username + val).encode()
                       ).hexdigest()  # for hashed userId
-    print(hashedId)
     user_details = conn.functions.getParticipant(hashedId).call()
     print('User Details', user_details)
     # generate a token also maybe?
@@ -364,29 +359,6 @@ def get_products(user_id):
 
     return product_dict
 
-# utility function to generate product trace
-def makeTree(product, product_id):
-    t = treeNode(product[0])
-    trace = conn.functions.getTrace(product_id).call()
-    arr = []
-    # print(trace, 'trace')
-    
-    if trace:
-        t.maker = trace[0][2]
-        t.owner = trace[-1][3]
-        for i in trace: 
-            arr.append(f'Transfered to {i[3]}')
-    t.trace = arr
-    print(t)
-    # get children and enumerate
-    for i in product[3]:
-        product_child = conn.functions.getProduct(i).call()
-        t.children.append(makeTree(product_child, i))
-    # get parents and enumerate
-    
-    # t.parents = 
-
-    return t
 
 # tracing function
 @app.route('/trace', methods=['POST'])
@@ -399,6 +371,7 @@ def trace():
         return "Can't view trace of unowned products", 402
     product = conn.functions.getProduct(product_id).call()
     print(product, 'product')
+    makeTree.conn = conn
     makeTree(product, product_id)
 
     return 'Kay', 200
