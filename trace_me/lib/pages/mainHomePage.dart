@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 
 class MainHomePage extends StatelessWidget {
-  final unameController = TextEditingController();
-  final passController = TextEditingController();
-
-  Map<String, String> getVal() {
-    Map<String, String> val = Map<String, String>();
-    val['uname'] = unameController.text;
-    val['pass'] = passController.text;
-    return val;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,8 +22,7 @@ class MainHomePage extends StatelessWidget {
                 RaisedButton(
                   onPressed: () => {
                     // print(unameController.text + passController.text)
-                    Navigator.pushNamed(context, 'LoginPage',
-                        arguments: getVal())
+                    Navigator.pushNamed(context, 'LoginPage')
                   },
                   child: Text(
                     'Login',
@@ -57,8 +46,7 @@ class MainHomePage extends StatelessWidget {
                 RaisedButton(
                   onPressed: () => {
                     // print(unameController.text + passController.text)
-                    Navigator.pushNamed(context, 'HomePage',
-                        arguments: getVal())
+                    Navigator.pushNamed(context, 'RegisterPage')
                   },
                   child: Text(
                     'Register',
