@@ -1,14 +1,37 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class LoginPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<LoginPage> {
+  bool _passwordShow = false;
   final unameController = TextEditingController();
   final passController = TextEditingController();
+
+  Future<dynamic> checkData(String uname, String pass) {
+    return http.post('https://c02b8d5ca353.ngrok.io/login',
+        body: json.encode({
+          'username': uname,
+          'password': pass,
+        }));
+  }
 
   Map<String, String> getVal() {
     Map<String, String> val = Map<String, String>();
     val['uname'] = unameController.text;
     val['pass'] = passController.text;
     return val;
+  }
+
+  @override
+  void initState() {
+    _passwordShow = false;
+    super.initState();
   }
 
   @override
@@ -39,9 +62,20 @@ class LoginPage extends StatelessWidget {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 TextField(
-                  obscureText: false,
+                  obscureText: !_passwordShow,
                   decoration: InputDecoration(
                       hintText: 'Enter Password',
+                      errorText: "Invalid username or password",
+                      suffixIcon: IconButton(
+                        icon: Icon(_passwordShow
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onPressed: () {
+                          setState(() {
+                            _passwordShow = !_passwordShow;
+                          });
+                        },
+                      ),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(32.0))),
                   controller: passController,
@@ -49,9 +83,10 @@ class LoginPage extends StatelessWidget {
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 RaisedButton(
                   onPressed: () => {
-                    // print(unameController.text + passController.text)
-                    Navigator.pushNamed(context, 'HomePage',
-                        arguments: getVal())
+                    checkData(unameController.text, passController.text)
+                        .then((val) {
+                      print(val.body);
+                    })
                   },
                   child: Text(
                     'Login',

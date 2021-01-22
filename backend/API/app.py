@@ -36,7 +36,7 @@ def split_product(p_id, p_name, parent_array, children_array, user_id, quantitie
     for q in quantities:
         # TODO encode the quanitities and the prop what algo??
         tx_hash = conn.functions.addProduct(
-            p_name, parent_array, children_array, str(user_id), str(q)).transact()
+            p_name, parent_array, children_array, str(user_id), json.dumps({'quantity':q})).transact()
         event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
         for event in event_filter.get_all_entries():
             print(event)
@@ -57,7 +57,7 @@ def split():
     # expectation for input_json is product_id and quantities_array[] also user_id
     # check quantities (can be done on flutter - should be done on flutter)
     # call add products, if successful
-    print("here", input_json)
+    # print("here", input_json)
     quantities = input_json["quantities"]
     # get the product:
     parent_id = input_json["product_id"]
@@ -304,11 +304,11 @@ def add_product():
     # Acquiring all the POST information from the body
     input_json = request.get_json(force=True)
     product_name = input_json["product_name"]
-    product_properties = str(input_json["product_properties"])
+    product_properties = json.dumps(input_json["product_properties"])
     user_id = input_json["user_id"]
 
     # TODO - Encrypt all the additional information aka "product_properties"
-
+    print(product_properties)
     # parent_id and children_id are populated by calling split (?) at the front ent
     parent_id, children_id = [-1], []
 
@@ -370,9 +370,9 @@ def trace():
     if not is_owned:
         return "Can't view trace of unowned products", 402
     product = conn.functions.getProduct(product_id).call()
-    print(product, 'product')
+    # print(product, 'product')
     makeTree.conn = conn
-    makeTree(product, product_id)
-
+    t = makeTree(product, product_id)
+    print(t)
     return 'Kay', 200
     

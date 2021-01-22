@@ -6,8 +6,8 @@ content-type: application/json
 
 {
     "product_id": 1,
-    "quantities": ["20","30"],
-    "user_id":"c6ff365f60a9e375b982bae164bb67065814c75a5e478ac82aa7267696d7943e"
+    "quantities": ["300","700"],
+    "user_id":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
 }
 
 
@@ -17,17 +17,15 @@ POST http://127.0.0.1:5000/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "JaneSmith22",
-    "password": "janey",
-    "fullname": "Jane Smith",
-    "role": "Transporter"
+    "username": "anay",
+    "password": "password",
+    "fullname": "Anay K",
+    "role": "Farmer"
 }
 
 
 ###
 # Testing the /transfer [POST] endpoint
-# id1 e0c2ee138764f6a304c8bfd6ee046ad3be1353aaee0e91a6baf63ad1c464a0da
-# id2 f038ba9c0704d9592982863a3f42f4e65fddb98de431555e9af55d099d779425
 POST http://127.0.0.1:5000/transfer HTTP/2
 content-type: application/json
 
@@ -80,7 +78,7 @@ POST http://127.0.0.1:5000/parents HTTP/1.1
 content-type: application/json
 
 {
-    "user_id":1,
+    "user_id":1,`
     "parents":[
         {"product_id":1,"quantity":30},
         {"product_id":2,"quantity":50}
@@ -96,7 +94,7 @@ content-type: application/json
 {
     "product_name":"Sugarcane",
     "product_properties":{"quantity":1000},
-    "user_id": "84e8c99ed1593f69837a5c811b1a29148feee1251d4345e28f01017a8e8037a1"
+    "user_id": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
 }
 
 
@@ -110,6 +108,6 @@ POST http://127.0.0.1:5000/trace HTTP/2
 content-type: application/json
 
 {
-    "product_id": "1",
-    "user_id": "c6ff365f60a9e375b982bae164bb67065814c75a5e478ac82aa7267696d7943e"
+    "product_id": "5",
+    "user_id": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
 }
