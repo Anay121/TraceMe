@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trace_me/helper.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _LoginState extends State<LoginPage> {
   final passController = TextEditingController();
 
   Future<dynamic> checkData(String uname, String pass) {
-    return http.post('http://6aba66bd897b.ngrok.io/login',
+    return http.post(Helper.url + '/login',
         body: json.encode({
           'username': uname,
           'password': pass,
@@ -81,10 +82,14 @@ class _LoginState extends State<LoginPage> {
                   controller: passController,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
-                RaisedButton(
+                ElevatedButton(
                   onPressed: () => {
                     checkData(unameController.text, passController.text)
                         .then((val) {
+                      // check validation
+
+                      // redirect with params
+
                       print(val.body);
                     })
                   },

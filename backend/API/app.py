@@ -168,7 +168,7 @@ def register_user():
     # confirm added participant --- no return value of user hash as of now
     print("GET PARTICIPANT", conn.functions.getParticipant(
         hashedId).call())  # why calling with hashed ID? **
-    return ('Added Participant successfully', 204)
+    return ('Added Participant successfully', 200)
 
 # @app.route('/get_user', methods=['GET'])
 # def getparticipant():

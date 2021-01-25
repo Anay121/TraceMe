@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 
 class MainHomePage extends StatelessWidget {
-  final unameController = TextEditingController();
-  final passController = TextEditingController();
-
-  Map<String, String> getVal() {
-    Map<String, String> val = Map<String, String>();
-    val['uname'] = unameController.text;
-    val['pass'] = passController.text;
-    return val;
-  }
-
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.50;
@@ -41,8 +31,7 @@ class MainHomePage extends StatelessWidget {
                 RaisedButton(
                   onPressed: () => {
                     // print(unameController.text + passController.text)
-                    Navigator.pushNamed(context, 'LoginPage',
-                        arguments: getVal())
+                    Navigator.pushNamed(context, 'LoginPage')
                   },
                   child: Text(
                     'Login',
@@ -66,8 +55,7 @@ class MainHomePage extends StatelessWidget {
                 RaisedButton(
                   onPressed: () => {
                     // print(unameController.text + passController.text)
-                    Navigator.pushNamed(context, 'DisplayProductsPage',
-                        arguments: getVal())
+                    Navigator.pushNamed(context, 'RegisterPage')
                   },
                   child: Text(
                     'Register',
