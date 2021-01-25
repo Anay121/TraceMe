@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trace_me/pages/homePage.dart';
+import 'package:trace_me/pages/displayProducts.dart';
 import 'package:trace_me/pages/login.dart';
 import 'package:trace_me/pages/mainHomePage.dart';
+import 'package:trace_me/pages/addNewProduct.dart';
+import 'package:trace_me/pages/splitProduct.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   print(settings.arguments);
@@ -12,6 +14,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => MainHomePage());
     case "LoginPage":
       return MaterialPageRoute(builder: (context) => LoginPage());
+    case "DisplayProductsPage":
+      return MaterialPageRoute(builder: (context) => DisplayProductsPage());
+    case "AddNewProductPage":
+      return MaterialPageRoute(builder: (context) => AddNewProductPage());
+    case "SplitProductPage":
+      return MaterialPageRoute(builder: (context) => SplitProductPage());
     default:
       return MaterialPageRoute(builder: (context) => LoginPage());
   }

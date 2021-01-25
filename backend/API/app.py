@@ -2,8 +2,8 @@ from flask import Flask, request, url_for, jsonify
 import json
 import time
 import os
-from .web3connection import Connection
-from .treeStruct import makeTree
+from web3connection import Connection
+from treeStruct import makeTree
 import dotenv
 from hashlib import sha256
 from flask_jwt_extended import (
@@ -12,6 +12,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
+JWT_SECRET_KEY='a9346b0068335c634304afa5de1d51232a80966775613d8c1c5a0f6d231c8b1a'
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
@@ -329,6 +330,7 @@ def add_product():
     return jsonify({"product_id": child_id})
 
 
+#get products owned
 @app.route("/get_products/<user_id>", methods=["GET"])
 def get_products(user_id):
     """
@@ -356,8 +358,8 @@ def get_products(user_id):
             "children_id_list": product[3],
             "current_owner_id": product[4]
         }
-
-    return product_dict
+    print(product_dict)
+    return jsonify({"product_dict": product_dict})
 
 
 # tracing function

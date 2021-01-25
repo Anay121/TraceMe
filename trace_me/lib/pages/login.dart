@@ -14,7 +14,7 @@ class _LoginState extends State<LoginPage> {
   final passController = TextEditingController();
 
   Future<dynamic> checkData(String uname, String pass) {
-    return http.post('https://c02b8d5ca353.ngrok.io/login',
+    return http.post('http://6aba66bd897b.ngrok.io/login',
         body: json.encode({
           'username': uname,
           'password': pass,
