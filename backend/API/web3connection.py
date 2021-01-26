@@ -10,8 +10,8 @@ class Connection:
         w3.eth.defaultAccount = w3.eth.accounts[0]
 
         print("connection established:", w3.isConnected())
-
-        with open(r"abi.json", 'r') as f:
+        print(os.getcwd())
+        with open("./Backend/API/abi.json", 'r') as f:
             my_abi = json.loads(f.read())
         greeter = w3.eth.contract(
             os.getenv('CONTRACT_ADDRESS'), abi=my_abi)

@@ -13,6 +13,7 @@ class _LoginState extends State<LoginPage> {
   bool _passwordShow = false;
   final unameController = TextEditingController();
   final passController = TextEditingController();
+  bool _validateError = false;
 
   Future<dynamic> checkData(String uname, String pass) {
     return http.post(Helper.url + '/login',
@@ -66,7 +67,9 @@ class _LoginState extends State<LoginPage> {
                   obscureText: !_passwordShow,
                   decoration: InputDecoration(
                       hintText: 'Enter Password',
-                      errorText: "Invalid username or password",
+                      errorText: _validateError
+                          ? "Invalid username or password"
+                          : null,
                       suffixIcon: IconButton(
                         icon: Icon(_passwordShow
                             ? Icons.visibility
@@ -87,10 +90,19 @@ class _LoginState extends State<LoginPage> {
                     checkData(unameController.text, passController.text)
                         .then((val) {
                       // check validation
-
+                      print(val.statusCode);
+                      if (val.statusCode == '401') {
+                        setState(() {
+                          _validateError = true;
+                        });
+                      }
                       // redirect with params
-
-                      print(val.body);
+                      else {
+                        dynamic data = json.decode(val.body);
+                        print(data['userid']);
+                        Session().setter(data);
+                        Navigator.pushNamed(context, 'DisplayProductsPage');
+                      }
                     })
                   },
                   child: Text(
