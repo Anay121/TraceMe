@@ -5,7 +5,7 @@ POST http://127.0.0.1:5000/split HTTP/1.1
 content-type: application/json
 
 {
-    "product_id": 1,
+    "product_id": 7,
     "quantities": ["300","700"],
     "user_id":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
 }
@@ -100,9 +100,14 @@ content-type: application/json
 
 ###
 # Testing the /get_products [GET] endpoint
-GET http://127.0.0.1:5000/get_products/c6ff365f60a9e375b982bae164bb67065814c75a5e478ac82aa7267696d7943e HTTP/1.1
+GET http://6aba66bd897b.ngrok.io/get_products/5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 HTTP/1.1
 ###
-GET http://127.0.0.1:5000/get_products/user_id HTTP/1.1
+GET http://127.0.0.1:5000/get_products HTTP/1.1
+content-type: application/json
+
+{
+    "user_id": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+}
 ###
 POST http://127.0.0.1:5000/trace HTTP/2
 content-type: application/json
