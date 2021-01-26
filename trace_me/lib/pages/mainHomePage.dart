@@ -53,6 +53,10 @@ class MainHomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
+                RaisedButton(
+                  onPressed: () =>
+                      {Navigator.pushNamed(context, "TransferPage")},
+                )
               ],
             ),
           ),
