@@ -19,9 +19,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case "DisplayProductsPage":
       return MaterialPageRoute(builder: (context) => DisplayProductsPage());
     case "AddNewProductPage":
-      return MaterialPageRoute(builder: (context) => AddNewProductPage());
+      return MaterialPageRoute(
+          builder: (context) => AddNewProductPage(arguments));
     case "SplitProductPage":
-      return MaterialPageRoute(builder: (context) => SplitProductPage());
+      return MaterialPageRoute(
+          builder: (context) => SplitProductPage(arguments));
     case 'RegisterPage':
       return MaterialPageRoute(builder: (context) => RegisterPage());
     case 'TransferPage':

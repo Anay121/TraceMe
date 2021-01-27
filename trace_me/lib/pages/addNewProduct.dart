@@ -4,6 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
 class AddNewProductPage extends StatefulWidget {
+  AddNewProductPage(List<String> args) {
+    print(args);
+  }
+
   @override
   _AddNewProductState createState() => _AddNewProductState();
 }
@@ -13,15 +17,30 @@ class _AddNewProductState extends State<AddNewProductPage> {
   final quantController = TextEditingController();
   final key1Controller = TextEditingController();
   final value1Controller = TextEditingController();
+  bool _validateError = false;
 
-  Future<dynamic> addProduct(String productName, Map prodProps, String userId) {
+  Future<dynamic> addProduct(String productName, Map prodProps) async {
+    Future<dynamic> value;
+    // Session().getter('userid').then((val) {
+    //   return http.get(Helper.url + '/get_products/' + val);
+    // });
+    String val = await Session().getter('userid');
     return http.post(Helper.url + '/add_product',
         body: json.encode({
           "product_name": productName,
           "product_properties": prodProps,
-          "user_id": userId
+          "user_id": val
         }));
   }
+
+  // Future<dynamic> addProduct(String productName, Map prodProps, String userId) {
+  //   return http.post(Helper.url + '/add_product',
+  //       body: json.encode({
+  //         "product_name": productName,
+  //         "product_properties": prodProps,
+  //         "user_id": userId
+  //       }));
+  // }
 
   @override
   void initState() {
@@ -102,13 +121,22 @@ class _AddNewProductState extends State<AddNewProductPage> {
               onPressed: () => {
                 print("here"),
                 print(pnameController.text),
-                addProduct(
-                    pnameController.text,
-                    {
-                      "quantity": quantController.text,
-                      key1Controller.text: value1Controller.text
-                    },
-                    "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8")
+                addProduct(pnameController.text, {
+                  "quantity": quantController.text,
+                  key1Controller.text: value1Controller.text
+                }).then((val) {
+                  // check validation
+                  print(val.statusCode);
+                  if (val.statusCode == '401') {
+                    setState(() {
+                      _validateError = true;
+                    });
+                  }
+                  // redirect with params
+                  else {
+                    Navigator.pushNamed(context, 'DisplayProductsPage');
+                  }
+                }),
               },
               child: Text("ADD PRODUCT"),
             ),

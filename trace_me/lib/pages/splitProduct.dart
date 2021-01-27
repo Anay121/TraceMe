@@ -5,6 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
 class SplitProductPage extends StatefulWidget {
+  SplitProductPage(List<String> args) {
+    print(args);
+  }
+
   @override
   _SplitProductState createState() => _SplitProductState();
 }
@@ -12,12 +16,26 @@ class SplitProductPage extends StatefulWidget {
 class _SplitProductState extends State<SplitProductPage> {
   final q1Controller = TextEditingController();
   final q2Controller = TextEditingController();
+  bool _validateError = false;
 
-  Future<dynamic> splitProduct(int prodId, List quants, String userId) {
+  Future<dynamic> splitProduct(
+    int prodId,
+    List quants,
+  ) async {
+    Future<dynamic> value;
+    // Session().getter('userid').then((val) {
+    //   return http.get(Helper.url + '/get_products/' + val);
+    // });
+    String val = await Session().getter('userid');
     return http.post(Helper.url + '/split',
         body: json.encode(
-            {"product_id": prodId, "quantities": quants, "user_id": userId}));
+            {"product_id": prodId, "quantities": quants, "user_id": val}));
   }
+  // Future<dynamic> splitProduct(int prodId, List quants, String userId) {
+  //   return http.post(Helper.url + '/split',
+  //       body: json.encode(
+  //           {"product_id": prodId, "quantities": quants, "user_id": userId}));
+  // }
 
   @override
   void initState() {
@@ -95,8 +113,20 @@ class _SplitProductState extends State<SplitProductPage> {
             alignment: Alignment.bottomCenter,
             child: RaisedButton(
               onPressed: () => {
-                splitProduct(1, [q1Controller.text, q2Controller.text],
-                    "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8")
+                splitProduct(5, [q1Controller.text, q2Controller.text])
+                    .then((val) {
+                  // check validation
+                  print(val.statusCode);
+                  if (val.statusCode == '401') {
+                    setState(() {
+                      _validateError = true;
+                    });
+                  }
+                  // redirect with params
+                  else {
+                    Navigator.pushNamed(context, 'DisplayProductsPage');
+                  }
+                }),
               },
               child: Text("SPLIT PRODUCT"),
             ),

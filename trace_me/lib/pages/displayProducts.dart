@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
@@ -8,7 +10,7 @@ class DisplayProductsPage extends StatefulWidget {
 }
 
 class _DisplayProductsState extends State<DisplayProductsPage> {
-  Future<dynamic> getProducts(String userId) async {
+  Future<dynamic> getProducts() async {
     Future<dynamic> value;
     // Session().getter('userid').then((val) {
     //   return http.get(Helper.url + '/get_products/' + val);
@@ -28,6 +30,10 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
+    var productList = List<Widget>();
+    var productsSelected = List<String>();
+    bool checked = false;
+
     return Scaffold(
       body: Column(children: [
         ClipPath(
@@ -40,6 +46,8 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
         Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.height / 30),
           child: Container(
+            height: 400,
+            width: 400,
             child: Column(
               children: [
                 Text(
@@ -50,34 +58,119 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    RaisedButton(
-                      onPressed: () =>
-                          {Navigator.pushNamed(context, 'AddNewProductPage')},
-                      child: Text(
-                        'Add a new Product',
+                    Expanded(
+                      child: RaisedButton(
+                        onPressed: () => {
+                          Navigator.pushNamed(context, 'AddNewProductPage',
+                              arguments: productsSelected)
+                        },
+                        child: Text(
+                          'Add new Product',
+                        ),
+                        color: Color(0xFFCB672F),
+                        textColor: Colors.white,
                       ),
                     ),
-                    RaisedButton(
-                      onPressed: () =>
-                          {Navigator.pushNamed(context, 'SplitProductPage')},
-                      child: Text(
-                        'Merge the split',
-                      ),
+                    SizedBox(width: MediaQuery.of(context).size.width / 20),
+                    Expanded(
+                      child: (RaisedButton(
+                        onPressed: () => {
+                          Navigator.pushNamed(context, 'SplitProductPage',
+                              arguments: productsSelected)
+                        },
+                        child: Text(
+                          'Split Product',
+                        ),
+                        color: Color(0xFFCB672F),
+                        textColor: Colors.white,
+                      )),
+                    ),
+                    SizedBox(width: MediaQuery.of(context).size.width / 20),
+                    Expanded(
+                      child: (RaisedButton(
+                        onPressed: () => {
+                          // Navigator.pushNamed(context, 'SplitProductPage')
+                        },
+                        child: Text(
+                          'Merge the split',
+                        ),
+                        color: Color(0xFFCB672F),
+                        textColor: Colors.white,
+                      )),
                     ),
                   ],
                 ),
                 FutureBuilder(
-                    future: getProducts(
-                        "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"), //of userid 1
+                    future: getProducts(), //of userid 1
                     builder: (context, snapshot) {
-                      print(snapshot.hasData);
                       if (snapshot.hasData) {
-                        print(snapshot.data);
-                        print("here");
+                        Map data = json.decode(snapshot.data.body);
+                        // print(data["product_dict"]);
+                        // print("here");
+
+                        for (var k in data["product_dict"].keys) {
+                          // print(productsSelected);
+                          // "Key : $k, value : ${json.decode(data["product_dict"][k]["encoded_properties"])["quantity"]}");
+                          // productList.add(Text("Key: $k, Name: ${data["product_dict"][k]["name"]}"));
+                          productList.add(Card(
+                            child: Row(
+                              children: <Widget>[
+                                StatefulBuilder(builder: (BuildContext context,
+                                    StateSetter setState) {
+                                  return Checkbox(
+                                      value: checked,
+                                      activeColor: Colors.green,
+                                      onChanged: (bool newValue) {
+                                        setState(() {
+                                          checked = newValue;
+                                          if (checked) {
+                                            productsSelected.add(k);
+                                          } else {
+                                            productsSelected.remove(k);
+                                          }
+                                          print(productsSelected);
+                                        });
+                                      });
+                                }),
+                                Container(
+                                  height: 50,
+                                  width: 5,
+                                  color: Color(0xFFE98D39),
+                                ),
+                                GestureDetector(
+                                    onTap: () => {
+                                          // Navigator.pushNamed(
+                                          //     context, "DisplayProductPage")
+                                        },
+                                    child: ((Column(children: [
+                                      Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: Text(
+                                              data["product_dict"][k]["name"])),
+                                      Container(
+                                          margin: EdgeInsets.all(10),
+                                          child: Text(
+                                              "QTY - ${json.decode(data["product_dict"][k]["encoded_properties"])["quantity"]}"))
+                                    ]))))
+                              ],
+                            ),
+                          ));
+                        }
                         // Build the widget with data.
-                        return Center(
-                            child: Container(
-                                child: Text('Data: ${snapshot.data.body}')));
+                        // return Center(
+                        //     child: Container(
+                        //         child: Text('Data: ${snapshot.data.body}')));
+                        return Flexible(
+                            child: ListView.builder(
+                          itemCount: productList.length,
+                          // scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            print(productList[index]);
+                            return new ListTile(
+                              title: productList[index],
+                            );
+                          },
+                        ));
                       } else {
                         return CircularProgressIndicator();
                       }

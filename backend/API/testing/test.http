@@ -92,7 +92,7 @@ POST http://127.0.0.1:5000/add_product HTTP/1.1
 content-type: application/json
 
 {
-    "product_name":"Sugarcane",
+    "product_name":"Juice",
     "product_properties":{"quantity":1000},
     "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
 }
