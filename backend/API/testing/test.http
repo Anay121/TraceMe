@@ -7,7 +7,7 @@ content-type: application/json
 {
     "product_id": 7,
     "quantities": ["300","700"],
-    "user_id":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+    "user_id":"ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
 }
 
 
@@ -45,7 +45,7 @@ content-type: application/json
 
 {
     "childrenIds": [6,7],
-    "ownerId": "137f8dd76837941037a63f22cc277577bf41c94d3be55c232ee6e9fea8cb465e"
+    "ownerId": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
 }
 
 
@@ -78,7 +78,7 @@ POST http://127.0.0.1:5000/parents HTTP/1.1
 content-type: application/json
 
 {
-    "user_id":1,`
+    "user_id":1,
     "parents":[
         {"product_id":1,"quantity":30},
         {"product_id":2,"quantity":50}
@@ -100,13 +100,13 @@ content-type: application/json
 
 ###
 # Testing the /get_products [GET] endpoint
-GET http://127.0.0.1:5000/get_products/5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 HTTP/1.1
+GET http://127.0.0.1:5000/get_products/ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a HTTP/1.1
 ###
 GET http://127.0.0.1:5000/get_products HTTP/1.1
 content-type: application/json
 
 {
-    "user_id": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
 }
 ###
 POST http://127.0.0.1:5000/trace HTTP/2
@@ -114,5 +114,5 @@ content-type: application/json
 
 {
     "product_id": "5",
-    "user_id": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
 }

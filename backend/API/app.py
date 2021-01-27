@@ -2,8 +2,8 @@ from flask import Flask, request, url_for, jsonify
 import json
 import time
 import os
-from .web3connection import Connection
-from .treeStruct import makeTree
+from web3connection import Connection
+from treeStruct import makeTree
 import dotenv
 from hashlib import sha256
 from flask_jwt_extended import (
@@ -149,8 +149,7 @@ def register_user():
                       ).hexdigest()  # hash password
     fullname = input_json["fullname"]
     role = input_json["role"]
-    hashedId = sha256((username+password).encode()
-                      ).hexdigest()  # for hashed userId
+    hashedId = sha256((username+password).encode()).hexdigest()  # for hashed userId
     print(hashedId)
 
     # check if username exists and for that username is password is same

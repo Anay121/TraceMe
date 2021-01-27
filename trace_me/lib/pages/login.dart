@@ -99,6 +99,7 @@ class _LoginState extends State<LoginPage> {
                       // redirect with params
                       else {
                         dynamic data = json.decode(val.body);
+                        print(data);
                         print(data['userid']);
                         Session().setter(data);
                         Navigator.pushNamed(context, 'DisplayProductsPage');
