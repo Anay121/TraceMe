@@ -8,8 +8,15 @@ class DisplayProductsPage extends StatefulWidget {
 }
 
 class _DisplayProductsState extends State<DisplayProductsPage> {
-  Future<dynamic> getProducts(String userId) {
-    return http.get(Helper.url + '/get_products/$userId');
+  Future<dynamic> getProducts(String userId) async {
+    Future<dynamic> value;
+    // Session().getter('userid').then((val) {
+    //   return http.get(Helper.url + '/get_products/' + val);
+    // });
+    String val = await Session().getter('userid');
+    return http.get(Helper.url + '/get_products/' + val);
+    // print(value);
+    // return value;
   }
 
   @override

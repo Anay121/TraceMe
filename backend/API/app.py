@@ -2,8 +2,8 @@ from flask import Flask, request, url_for, jsonify
 import json
 import time
 import os
-from web3connection import Connection
-from treeStruct import makeTree
+from .web3connection import Connection
+from .treeStruct import makeTree
 import dotenv
 from hashlib import sha256
 from flask_jwt_extended import (
@@ -283,7 +283,7 @@ def login():
     # generate a token also maybe?
     access_token = create_access_token(identity=hashedId)
     refresh_token = create_refresh_token(identity=hashedId)
-    print(access_token)
+    # print(access_token)
     # return the generated token
     return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token}), 200
 

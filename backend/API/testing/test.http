@@ -17,10 +17,10 @@ POST http://127.0.0.1:5000/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "anay",
+    "username": "alpha",
     "password": "password",
-    "fullname": "Anay K",
-    "role": "Farmer"
+    "fullname": "anayk",
+    "role": "Retailer"
 }
 
 
@@ -60,7 +60,7 @@ POST http://127.0.0.1:5000/login HTTP/2
 content-type: application/json
 
 {
-    "username": "anay",
+    "username": "alpha",
     "password": "password"
 }
 
@@ -94,7 +94,7 @@ content-type: application/json
 {
     "product_name":"Sugarcane",
     "product_properties":{"quantity":1000},
-    "user_id": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
 }
 
 

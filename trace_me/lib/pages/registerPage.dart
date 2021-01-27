@@ -58,8 +58,6 @@ class _RegisterState extends State<RegisterPage> {
                 Form(
                     key: _formKey,
                     child: Expanded(
-                      // padding: EdgeInsets.all(
-                      // MediaQuery.of(context).size.height / 80),
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
