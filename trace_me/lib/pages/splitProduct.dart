@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trace_me/helper.dart';
 
 class SplitProductPage extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _SplitProductState extends State<SplitProductPage> {
   final q2Controller = TextEditingController();
 
   Future<dynamic> splitProduct(int prodId, List quants, String userId) {
-    return http.post('http://6aba66bd897b.ngrok.io/split',
+    return http.post(Helper.url + '/split',
         body: json.encode(
             {"product_id": prodId, "quantities": quants, "user_id": userId}));
   }

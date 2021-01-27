@@ -100,7 +100,7 @@ content-type: application/json
 
 ###
 # Testing the /get_products [GET] endpoint
-GET http://6aba66bd897b.ngrok.io/get_products/5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 HTTP/1.1
+GET http://127.0.0.1:5000/get_products/5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8 HTTP/1.1
 ###
 GET http://127.0.0.1:5000/get_products HTTP/1.1
 content-type: application/json

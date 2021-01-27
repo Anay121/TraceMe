@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trace_me/helper.dart';
 
 class DisplayProductsPage extends StatefulWidget {
   @override
@@ -8,7 +9,7 @@ class DisplayProductsPage extends StatefulWidget {
 
 class _DisplayProductsState extends State<DisplayProductsPage> {
   Future<dynamic> getProducts(String userId) {
-    return http.get(' http://6aba66bd897b.ngrok.io/get_products/$userId');
+    return http.get(Helper.url + '/get_products/$userId');
   }
 
   @override

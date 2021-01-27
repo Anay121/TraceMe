@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trace_me/helper.dart';
 
 class AddNewProductPage extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
   final value1Controller = TextEditingController();
 
   Future<dynamic> addProduct(String productName, Map prodProps, String userId) {
-    return http.post('http://6aba66bd897b.ngrok.io/add_product',
+    return http.post(Helper.url + '/add_product',
         body: json.encode({
           "product_name": productName,
           "product_properties": prodProps,

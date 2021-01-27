@@ -1,3 +1,3 @@
 class Helper {
-  static final String url = 'https://e02b3d657fad.ngrok.io';
+  static final String url = 'http://70989bea1e0a.ngrok.io';
 }

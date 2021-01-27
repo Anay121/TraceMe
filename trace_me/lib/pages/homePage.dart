@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trace_me/helper.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title, this.arguments}) : super(key: key);
@@ -18,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String pass = 'password';
 
   Future<dynamic> checkData(String uname, String pass) {
-    return http.post('https://b8c68e1a2e5d.ngrok.io/login',
+    return http.post(Helper.url + '/login',
         body: json.encode({
           'username': uname,
           'password': pass,

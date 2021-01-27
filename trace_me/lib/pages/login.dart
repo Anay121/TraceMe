@@ -89,8 +89,8 @@ class _LoginState extends State<LoginPage> {
                       // check validation
 
                       // redirect with params
-
                       print(val.body);
+                      Navigator.pushNamed(context, "DisplayProductsPage");
                     })
                   },
                   child: Text(
