@@ -4,8 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
+var args = List<int>();
+
 class SplitProductPage extends StatefulWidget {
-  SplitProductPage(List<String> args) {
+  SplitProductPage(List<int> arg) {
+    args = arg;
+    // print("here");
     print(args);
   }
 
@@ -18,10 +22,7 @@ class _SplitProductState extends State<SplitProductPage> {
   final q2Controller = TextEditingController();
   bool _validateError = false;
 
-  Future<dynamic> splitProduct(
-    int prodId,
-    List quants,
-  ) async {
+  Future<dynamic> splitProduct(List quants) async {
     Future<dynamic> value;
     // Session().getter('userid').then((val) {
     //   return http.get(Helper.url + '/get_products/' + val);
@@ -29,7 +30,7 @@ class _SplitProductState extends State<SplitProductPage> {
     String val = await Session().getter('userid');
     return http.post(Helper.url + '/split',
         body: json.encode(
-            {"product_id": prodId, "quantities": quants, "user_id": val}));
+            {"product_id": args[0], "quantities": quants, "user_id": val}));
   }
   // Future<dynamic> splitProduct(int prodId, List quants, String userId) {
   //   return http.post(Helper.url + '/split',
@@ -113,20 +114,54 @@ class _SplitProductState extends State<SplitProductPage> {
             alignment: Alignment.bottomCenter,
             child: RaisedButton(
               onPressed: () => {
-                splitProduct(5, [q1Controller.text, q2Controller.text])
-                    .then((val) {
-                  // check validation
-                  print(val.statusCode);
-                  if (val.statusCode == '401') {
-                    setState(() {
-                      _validateError = true;
-                    });
+                if (int.parse(q1Controller.text) +
+                        int.parse(q2Controller.text) ==
+                    args[1])
+                  {
+                    splitProduct([q1Controller.text, q2Controller.text])
+                        .then((val) {
+                      // check validation
+                      print(val.statusCode);
+                      if (val.statusCode == '401') {
+                        setState(() {
+                          _validateError = true;
+                        });
+                      }
+                      // redirect with params
+                      else {
+                        Navigator.pushNamed(context, 'DisplayProductsPage');
+                      }
+                    }),
                   }
-                  // redirect with params
-                  else {
-                    Navigator.pushNamed(context, 'DisplayProductsPage');
+                else if (int.parse(q1Controller.text) +
+                        int.parse(q2Controller.text) <
+                    args[1])
+                  {
+                    splitProduct([
+                      q1Controller.text,
+                      q2Controller.text,
+                      (args[1] -
+                              (int.parse(q1Controller.text) +
+                                  int.parse(q2Controller.text)))
+                          .toString()
+                    ]).then((val) {
+                      // check validation
+                      print(val.statusCode);
+                      if (val.statusCode == '401') {
+                        setState(() {
+                          _validateError = true;
+                        });
+                      }
+                      // redirect with params
+                      else {
+                        Navigator.pushNamed(context, 'DisplayProductsPage');
+                      }
+                    }),
                   }
-                }),
+                else
+                  {
+                    showAlertDialog(context),
+                  }
               },
               child: Text("SPLIT PRODUCT"),
             ),
@@ -144,6 +179,33 @@ class _SplitProductState extends State<SplitProductPage> {
       //     ]),
     );
   }
+}
+
+showAlertDialog(BuildContext context) {
+  // set up the button
+  Widget okButton = FlatButton(
+    child: Text("OK"),
+    onPressed: () {
+      Navigator.of(context).pop();
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Error!"),
+    content: Text("Quantities specified are greater! Please check once again."),
+    actions: [
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
 
 class BezierClipper extends CustomClipper<Path> {

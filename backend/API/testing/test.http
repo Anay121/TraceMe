@@ -94,20 +94,21 @@ content-type: application/json
 {
     "product_name":"Juice",
     "product_properties":{"quantity":1000},
-    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
+    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
+    "parent_ids": [2,4]
 }
 
 
 ###
 # Testing the /get_products [GET] endpoint
-GET http://127.0.0.1:5000/get_products/ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a HTTP/1.1
+GET http://127.0.0.1:5000/get_products/10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484 HTTP/1.1
 ###
-GET http://127.0.0.1:5000/get_products HTTP/1.1
-content-type: application/json
+# GET http://127.0.0.1:5000/get_products HTTP/1.1
+# content-type: application/json
 
-{
-    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
-}
+# {
+#     "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
+# }
 ###
 POST http://127.0.0.1:5000/trace HTTP/2
 content-type: application/json

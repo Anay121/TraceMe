@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
+var args = new List<int>();
+
 class AddNewProductPage extends StatefulWidget {
-  AddNewProductPage(List<String> args) {
+  AddNewProductPage(List<int> arg) {
+    args = arg;
     print(args);
   }
 
@@ -20,7 +23,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
   bool _validateError = false;
 
   Future<dynamic> addProduct(String productName, Map prodProps) async {
-    Future<dynamic> value;
+    // Future<dynamic> value;
     // Session().getter('userid').then((val) {
     //   return http.get(Helper.url + '/get_products/' + val);
     // });
@@ -29,7 +32,8 @@ class _AddNewProductState extends State<AddNewProductPage> {
         body: json.encode({
           "product_name": productName,
           "product_properties": prodProps,
-          "user_id": val
+          "user_id": val,
+          "parent_ids": args
         }));
   }
 

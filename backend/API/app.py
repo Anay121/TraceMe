@@ -31,13 +31,15 @@ print("connection address:", conn.address)
 #     conn.functions.addProduct("prod2", [], [], "1", "200").transact()
 
 
-def split_product(p_id, p_name, parent_array, children_array, user_id, quantities):  # TODO user string
+def split_product(p_id, p_name, parent_array, children_array, user_id, quantities,enc_props):  # TODO user string
     children = []
     print("split_products() called with quantities", quantities)
     for q in quantities:
         # TODO encode the quanitities and the prop what algo??
+        #add parent properties but change quantity field
+        enc_props["quantity"]=q
         tx_hash = conn.functions.addProduct(
-            p_name, parent_array, children_array, str(user_id), json.dumps({'quantity':q})).transact()
+            p_name, parent_array, children_array, str(user_id), json.dumps(enc_props)).transact()
         event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
         for event in event_filter.get_all_entries():
             print(event)
@@ -71,64 +73,65 @@ def split():
     # p is a tuple with the product structure type.
     p = conn.functions.getProduct(parent_id).call()
     print(p)
+    print("props",p[1],type(json.loads(p[1])))
     # addProduct will add the new product into the productsOwned but will not remove the parent.
-    children = split_product(parent_id, p[0], [parent_id], [], current_user, quantities)
+    children = split_product(parent_id, p[0], [parent_id], [], current_user, quantities,json.loads(p[1]))
 
     # check owned after:
     print(conn.functions.getProductsOwned(current_user).call())
     return jsonify(children), 204
 
 
-@app.route('/parents', methods=['POST'])
-def add_from_multiple_products():
-    '''
-    {
-            "user_id":123,
-            "parents": [{product_id:1,quantity:30},{product_id:2,quantity:10},...]
-    }
+# @app.route('/parents', methods=['POST'])
+# def add_from_multiple_products():
+#     '''
+#     {
+#             "user_id":123,
+#             "parents": [{product_id:1,quantity:30},{product_id:2,quantity:10},...]
+#     }
 
-    we could fetch the total from here but were better off pasing it in from flutter beacuse flutter has all
-    this data to be displayed anyways.
-    '''
-    data = request.get_json(force=True)
-    user_id = data['user_id']
-    # print("user_id",user_id)
-    parent_products = data['parents']
-    # print("parent_products",parent_products)
-    parent_ids = []
-    for p in parent_products:
-        parent_id = p['product_id']
-        # print("curretn parent id is :",parent_id)
-        # p is a tuple with the product structure type.
-        parent_prod = conn.functions.getProduct(parent_id).call()
-        print(parent_prod)
-        quan = int(p['quantity'])
-        total = int(parent_prod[1])  # get the product quantity from here
-        # print(parent_prod[1])
-        parent_ids.append(parent_id)
-        # print("parent id:",parent_ids)
-        # print(quan,total)
-        if(quan < total):
-            print("quan less than!")
-            children = split_product(parent_id, parent_prod[0], [
-                                     parent_id], [], user_id, [quan, total-quan])
-            # children is an array of children product ids cvreated
-            parent_ids.pop()
-            # first child is the correct quantity.
-            parent_ids.append(children[0])
-    print("\nParent ids of the new product to add------", parent_ids)
-    conn.functions.addProduct("new_product_name", parent_ids, [], str(
-        user_id), "quan1+quant2...").transact()  # TODO quantitites here
-    event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
-    for event in event_filter.get_all_entries():
-        print(event)
-        child_id = event['args']['_child']
-    print("ID of child newly added:", child_id)
-    # now the child has x parents that are no longer viable:
-    for p_id in parent_ids:
-        conn.functions.removeFromOwner(str(user_id), p_id).transact()
-    print(conn.functions.getProductsOwned("1").call())
-    return jsonify({"new_child": child_id})
+#     we could fetch the total from here but were better off pasing it in from flutter beacuse flutter has all
+#     this data to be displayed anyways.
+#     '''
+#     data = request.get_json(force=True)
+#     user_id = data['user_id']
+#     # print("user_id",user_id)
+#     parent_products = data['parents']
+#     # print("parent_products",parent_products)
+#     parent_ids = []
+#     for p in parent_products:
+#         parent_id = p['product_id']
+#         # print("curretn parent id is :",parent_id)
+#         # p is a tuple with the product structure type.
+#         parent_prod = conn.functions.getProduct(parent_id).call()
+#         print(parent_prod)
+#         quan = int(p['quantity'])
+#         total = int(parent_prod[1])  # get the product quantity from here
+#         # print(parent_prod[1])
+#         parent_ids.append(parent_id)
+#         # print("parent id:",parent_ids)
+#         # print(quan,total)
+#         if(quan < total):
+#             print("quan less than!")
+#             children = split_product(parent_id, parent_prod[0], [
+#                                      parent_id], [], user_id, [quan, total-quan])
+#             # children is an array of children product ids cvreated
+#             parent_ids.pop()
+#             # first child is the correct quantity.
+#             parent_ids.append(children[0])
+#     print("\nParent ids of the new product to add------", parent_ids)
+#     conn.functions.addProduct("new_product_name", parent_ids, [], str(
+#         user_id), "quan1+quant2...").transact()  # TODO quantitites here
+#     event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
+#     for event in event_filter.get_all_entries():
+#         print(event)
+#         child_id = event['args']['_child']
+#     print("ID of child newly added:", child_id)
+#     # now the child has x parents that are no longer viable:
+#     for p_id in parent_ids:
+#         conn.functions.removeFromOwner(str(user_id), p_id).transact()
+#     print(conn.functions.getProductsOwned("1").call())
+#     return jsonify({"new_child": child_id})
 
 
 @app.route('/trial', methods=['GET'])
@@ -196,6 +199,13 @@ def merge_children():
     parent = conn.functions.getProduct(parent_id).call()
     print("PARENT:", parent_id, parent)
 
+    # get quant of childrenids
+    childrenQuantities = []
+    for c in childrenIds:
+        p = conn.functions.getProduct(c).call()
+        childrenQuantities.append(int(json.loads(p[1])["quantity"]))
+
+    print(childrenQuantities)
     # delete childrenIds
     tx_hash = conn.functions.deleteProducts(childrenIds, ownerId).transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
@@ -205,8 +215,10 @@ def merge_children():
     # add parent id to products owned
 
     if len(parent[3]) != len(childrenIds):
+        enc_props = json.loads(parent[1])
+        enc_props["quantity"] = str(sum(childrenQuantities))
         tx_hash = conn.functions.addProduct(
-            p[0], [parent_id], [], p[4], "new prop with ADDED quantities OF 2 CHILDS").transact()
+            p[0], [parent_id], [], p[4], json.dumps(enc_props)).transact()
         tx_receipt = w3.eth.waitForTransactionReceipt(
             tx_hash)  # how to get returned value?
         print("AddNewProduct", tx_receipt)
@@ -308,15 +320,17 @@ def add_product():
     user_id = input_json["user_id"]
 
     # TODO - Encrypt all the additional information aka "product_properties"
-    print(product_properties)
+    # print(product_properties)
     # parent_id and children_id are populated by calling split (?) at the front ent
-    parent_id, children_id = [-1], []
+    parent_id = input_json["parent_ids"]
+    print("HERE",parent_id,type(parent_id))
+    children_id = []
 
     # transacting the data to the blockchain using the addProduct function defined in the smart contract
     tx_hash = conn.functions.addProduct(
         product_name, parent_id, children_id, user_id, product_properties).transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    print("addProduct Receipt", tx_receipt)
+    # print("addProduct Receipt", tx_receipt)
 
     # Calling the childAdded event to acquire the child_id as a return value
     event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
