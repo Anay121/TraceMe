@@ -5,7 +5,7 @@ import 'package:trace_me/pages/mainHomePage.dart';
 import 'package:trace_me/pages/addNewProduct.dart';
 import 'package:trace_me/pages/splitProduct.dart';
 import 'package:trace_me/pages/registerPage.dart';
-import 'package:trace_me/pages/transferPage.dart';
+import 'package:trace_me/pages/productDetailsPage.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   print(settings.arguments);
@@ -26,8 +26,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           builder: (context) => SplitProductPage(arguments));
     case 'RegisterPage':
       return MaterialPageRoute(builder: (context) => RegisterPage());
-    case 'TransferPage':
-      return MaterialPageRoute(builder: (context) => TransferPage(arguments));
+    case 'ProductPage':
+      return MaterialPageRoute(
+          builder: (context) => ProductDetailsPage(arguments));
     default:
       return MaterialPageRoute(builder: (context) => LoginPage());
   }

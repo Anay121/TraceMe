@@ -2,9 +2,10 @@ from flask import Flask, request, url_for, jsonify
 import json
 import time
 import os
-from web3connection import Connection
-from treeStruct import makeTree
-import dotenv
+
+from web3 import method
+from .web3connection import Connection
+from .treeStruct import makeTree
 from hashlib import sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -21,15 +22,9 @@ conn, w3 = connection.create_conn()
 print("connection:", conn)
 print("connection address:", conn.address)
 
-
-# def init():
-#     # add more init stuff here
-#     print("executing init function")
-#     conn.functions.addParticipant(
-#         "anjum_k", "pass", "Anjum Khandeshi", "farmer", "1").transact()
-#     conn.functions.addProduct("prod1", [], [], "1", "100").transact()
-#     conn.functions.addProduct("prod2", [], [], "1", "200").transact()
-
+# user : {product : status}
+#status: 1=added, 2=transaction deets added by recv, 3=deets accepted by sender
+pendingTransactions = {}
 
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities,enc_props):  # TODO user string
     children = []
@@ -391,3 +386,25 @@ def trace():
     print(t)
     return 'Kay', 200
     
+@app.route('/makeTransaction', methods=['POST'])
+def addTransaction():
+    input_json = request.get_json(force=True)
+    username = input_json['username']
+    product_id = input_json['product_id']
+    if username not in pendingTransactions:
+        pendingTransactions[username] = {product_id : 1}
+    print(pendingTransactions)
+    return 'done', 200
+
+@app.route('/removeTransaction', methods=['POST'])
+def deleteTransaction():
+    input_json = request.get_json(force=True)
+    username = input_json['username']
+    product_id = input_json['product_id']
+    if username in pendingTransactions:
+        if product_id in pendingTransactions[username]:
+            del pendingTransactions[username][product_id]
+            if len(pendingTransactions[username]) == 0:
+                del pendingTransactions[username]
+    print(pendingTransactions, 'this')
+    return 'done', 200
