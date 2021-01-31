@@ -165,13 +165,10 @@ def register_user():
     # confirm added participant --- no return value of user hash as of now
     print("GET PARTICIPANT", conn.functions.getParticipant(
         hashedId).call())  # why calling with hashed ID? **
-    return ('Added Participant successfully', 200)
+    access_token = create_access_token(identity=hashedId)
+    refresh_token = create_refresh_token(identity=hashedId)
 
-# @app.route('/get_user', methods=['GET'])
-# def getparticipant():
-# 	print(conn.functions.getParticipant("137f8dd76837941037a63f22cc277577bf41c94d3be55c232ee6e9fea8cb465e").call())
-# 	return ('', 204)
-
+    return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token}), 200
 
 # merge -- deleteProducts + addToOwner
 @app.route('/merge', methods=['POST'])
@@ -386,6 +383,19 @@ def trace():
     print(t)
     return 'Kay', 200
     
+@app.route('/transactionInfo', methods=['POST'])
+def transactionInfo():
+    input_json = request.get_json(force=True)
+    username = input_json['username']
+    product_id = input_json['product_id']
+    if username not in pendingTransactions:
+        return json.dumps({'status':0}), 200
+    else:
+        if product_id not in pendingTransactions[username]:
+            return json.dumps({'status':0}), 200
+        else:
+            return json.dumps({'status':pendingTransactions[username][product_id]}), 200
+
 @app.route('/makeTransaction', methods=['POST'])
 def addTransaction():
     input_json = request.get_json(force=True)

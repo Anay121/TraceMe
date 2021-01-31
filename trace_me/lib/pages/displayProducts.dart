@@ -67,8 +67,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
               children: [
                 Text(
                   'Your Products',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 15),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -78,8 +77,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         onPressed: () => {
                           if (productsSelected.isEmpty)
                             {
-                              Navigator.pushNamed(context, 'AddNewProductPage',
-                                  arguments: [-1])
+                              Navigator.pushNamed(context, 'AddNewProductPage', arguments: [-1])
                             }
                           else
                             {
@@ -104,21 +102,14 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 productsSelected[0],
                                 productsSelectedQuantities[productsSelected[0]]
                               ],
-                              Navigator.pushNamed(context, 'SplitProductPage',
-                                  arguments: splitArgs)
+                              Navigator.pushNamed(context, 'SplitProductPage', arguments: splitArgs)
                             }
                           else
                             {
                               if (productsSelected.isEmpty)
-                                {
-                                  alertBoxMsg =
-                                      "Please select the product you want to split."
-                                }
+                                {alertBoxMsg = "Please select the product you want to split."}
                               else
-                                {
-                                  alertBoxMsg =
-                                      "Please select only one product."
-                                },
+                                {alertBoxMsg = "Please select only one product."},
                               showAlertDialog(context)
                             }
                         },
@@ -139,15 +130,14 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                               mergeProducts(productsSelected).then((val) {
                                 // check validation
                                 print(val.statusCode);
-                                if (val.statusCode == '401') {
+                                if (val.statusCode == 401) {
                                   // setState(() {
                                   //   _validateError = true;
                                   // });
                                 }
                                 // redirect with params
                                 else {
-                                  Navigator.pushNamed(
-                                      context, 'DisplayProductsPage');
+                                  Navigator.pushNamed(context, 'DisplayProductsPage');
                                 }
                               }),
                             }
@@ -180,15 +170,15 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                           // "Key : $k, value : ${json.decode(data["product_dict"][k]["encoded_properties"])["quantity"]}");
                           // productList.add(Text("Key: $k, Name: ${data["product_dict"][k]["name"]}"));
                           int id = int.parse(k);
-                          var parentsArray = List<int>.from(
-                              data["product_dict"][k]["parent_id_list"]);
+                          var parentsArray =
+                              List<int>.from(data["product_dict"][k]["parent_id_list"]);
                           // .Cast<int>()
                           // .ToList();
                           productList.add(Card(
                             child: Row(
                               children: <Widget>[
-                                StatefulBuilder(builder: (BuildContext context,
-                                    StateSetter setState) {
+                                StatefulBuilder(
+                                    builder: (BuildContext context, StateSetter setState) {
                                   return Checkbox(
                                       value: checked,
                                       activeColor: Colors.green,
@@ -197,32 +187,28 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                           checked = newValue;
                                           if (checked) {
                                             productsSelected.add(id);
-                                            productsSelectedQuantities[id] =
-                                                int.parse(json.decode(data[
-                                                            "product_dict"][k]
-                                                        ["encoded_properties"])[
-                                                    "quantity"]);
+                                            productsSelectedQuantities[id] = int.parse(json.decode(
+                                                data["product_dict"][k]
+                                                    ["encoded_properties"])["quantity"]);
                                             if (parentsOfProductsSelected
-                                                .containsKey(json
-                                                    .encode(parentsArray))) {
-                                              parentsOfProductsSelected[json
-                                                  .encode(parentsArray)] += 1;
+                                                .containsKey(json.encode(parentsArray))) {
+                                              parentsOfProductsSelected[
+                                                  json.encode(parentsArray)] += 1;
                                             } else {
-                                              parentsOfProductsSelected[json
-                                                  .encode(parentsArray)] = 1;
+                                              parentsOfProductsSelected[json.encode(parentsArray)] =
+                                                  1;
                                             }
                                           } else {
                                             productsSelected.remove(id);
-                                            productsSelectedQuantities
-                                                .remove(id);
-                                            if (parentsOfProductsSelected[json
-                                                    .encode(parentsArray)] ==
+                                            productsSelectedQuantities.remove(id);
+                                            if (parentsOfProductsSelected[
+                                                    json.encode(parentsArray)] ==
                                                 1) {
-                                              parentsOfProductsSelected.remove(
-                                                  json.encode(parentsArray));
+                                              parentsOfProductsSelected
+                                                  .remove(json.encode(parentsArray));
                                             } else {
-                                              parentsOfProductsSelected[json
-                                                  .encode(parentsArray)] -= 1;
+                                              parentsOfProductsSelected[
+                                                  json.encode(parentsArray)] -= 1;
                                             }
                                           }
                                           print(productsSelected);
@@ -244,8 +230,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                     child: ((Column(children: [
                                       Container(
                                           margin: EdgeInsets.all(10),
-                                          child: Text(
-                                              data["product_dict"][k]["name"])),
+                                          child: Text(data["product_dict"][k]["name"])),
                                       Container(
                                           margin: EdgeInsets.all(10),
                                           child: Text(

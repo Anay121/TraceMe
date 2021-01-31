@@ -172,8 +172,10 @@ contract SupplyChain {
         return pid;
     }
 
-    function setEncProps(uint _productId, string memory encProductProps) public {
-
+    function setEncProps(uint _productId, string memory _encProductProps) public {
+        Product memory p = getProduct(_productId);
+        p.encProdProps = _encProductProps;
+        products[_productId] = p;
     }
 
     function TransferOwnership(

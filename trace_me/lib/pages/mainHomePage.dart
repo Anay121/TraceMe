@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class MainHomePage extends StatelessWidget {
@@ -24,8 +26,7 @@ class MainHomePage extends StatelessWidget {
               children: [
                 Text(
                   'Welcome to TraceMe',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 12),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 15),
                 RaisedButton(
@@ -63,8 +64,18 @@ class MainHomePage extends StatelessWidget {
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 RaisedButton(
-                  onPressed: () =>
-                      {Navigator.pushNamed(context, "ProductPage")},
+                  onPressed: () => {
+                    Navigator.pushNamed(context, "ReceiverStatusPage",
+                        arguments: jsonEncode({
+                          "product": "Sugarcane",
+                          "quantity": "1000",
+                          "sender":
+                              "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
+                          "prodid": "8"
+                        }))
+                  },
+
+                  // onPressed: () => {Navigator.pushNamed(context, "QRScanPage")},
                 )
               ],
             ),

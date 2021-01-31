@@ -19,8 +19,7 @@ class _RegisterState extends State<RegisterPage> {
   bool _passwordShow;
   RegisterData _data = RegisterData();
 
-  Future<dynamic> checkData(
-      String uname, String pass, String fullname, String role) {
+  Future<dynamic> checkData(String uname, String pass, String fullname, String role) {
     return http.post(Helper.url + '/register',
         body: json.encode({
           'username': uname,
@@ -50,9 +49,7 @@ class _RegisterState extends State<RegisterPage> {
               children: [
                 Text(
                   'Register Page',
-                  style: TextStyle(
-                      height: 5,
-                      fontSize: MediaQuery.of(context).size.width / 10),
+                  style: TextStyle(height: 5, fontSize: MediaQuery.of(context).size.width / 10),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 20),
                 Form(
@@ -67,23 +64,19 @@ class _RegisterState extends State<RegisterPage> {
                               decoration: InputDecoration(
                                   hintText: 'Enter Username',
                                   border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(32.0))),
+                                      borderRadius: BorderRadius.circular(32.0))),
                               onSaved: (val) {
                                 _data.uname = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 40),
+                            SizedBox(height: MediaQuery.of(context).size.height / 40),
                             TextFormField(
                               obscureText: !_passwordShow,
                               decoration: InputDecoration(
                                   hintText: 'Enter Password',
                                   suffixIcon: IconButton(
-                                    icon: Icon(_passwordShow
-                                        ? Icons.visibility
-                                        : Icons.visibility_off),
+                                    icon: Icon(
+                                        _passwordShow ? Icons.visibility : Icons.visibility_off),
                                     onPressed: () {
                                       setState(() {
                                         _passwordShow = !_passwordShow;
@@ -92,29 +85,23 @@ class _RegisterState extends State<RegisterPage> {
                                   ),
                                   // errorText: "Invalid username or password",
                                   border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(32.0))),
+                                      borderRadius: BorderRadius.circular(32.0))),
                               onSaved: (val) {
                                 _data.password = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 40),
+                            SizedBox(height: MediaQuery.of(context).size.height / 40),
                             TextFormField(
                               obscureText: false,
                               decoration: InputDecoration(
                                   hintText: 'Enter Your name',
                                   border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(32.0))),
+                                      borderRadius: BorderRadius.circular(32.0))),
                               onSaved: (val) {
                                 _data.fullname = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 40),
+                            SizedBox(height: MediaQuery.of(context).size.height / 40),
                             DropdownButtonFormField(
                               value: _roleValue,
                               items: [
@@ -137,27 +124,33 @@ class _RegisterState extends State<RegisterPage> {
                               },
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(32.0))),
+                                      borderRadius: BorderRadius.circular(32.0))),
                               onSaved: (val) {
                                 _data.role = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 40),
+                            SizedBox(height: MediaQuery.of(context).size.height / 40),
                             ElevatedButton(
                               child: Text("Submit"),
                               onPressed: () {
                                 if (_formKey.currentState.validate()) {
                                   _formKey.currentState.save();
                                   // print(_data.fullname);
-                                  checkData(_data.uname, _data.password,
-                                          _data.fullname, _data.role)
+                                  checkData(_data.uname, _data.password, _data.fullname, _data.role)
                                       .then((val) {
                                     // check validation
-
+                                    print(val.statusCode);
+                                    if (val.statusCode != '200') {
+                                      print('something went wrong');
+                                    }
                                     // redirect with params
+                                    else {
+                                      dynamic data = json.decode(val.body);
+                                      // print(data);
+                                      print(data['userid']);
+                                      Session().setter(data);
+                                      Navigator.pushNamed(context, 'DisplayProductsPage');
+                                    }
 
                                     print(val.body);
                                   });

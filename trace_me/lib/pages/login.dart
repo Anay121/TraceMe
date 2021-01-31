@@ -50,16 +50,14 @@ class _LoginState extends State<LoginPage> {
               children: [
                 Text(
                   'Login Page',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 10),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 10),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 20),
                 TextField(
                   obscureText: false,
                   decoration: InputDecoration(
                       hintText: 'Enter Username',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32.0))),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
                   controller: unameController,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
@@ -67,31 +65,25 @@ class _LoginState extends State<LoginPage> {
                   obscureText: !_passwordShow,
                   decoration: InputDecoration(
                       hintText: 'Enter Password',
-                      errorText: _validateError
-                          ? "Invalid username or password"
-                          : null,
+                      errorText: _validateError ? "Invalid username or password" : null,
                       suffixIcon: IconButton(
-                        icon: Icon(_passwordShow
-                            ? Icons.visibility
-                            : Icons.visibility_off),
+                        icon: Icon(_passwordShow ? Icons.visibility : Icons.visibility_off),
                         onPressed: () {
                           setState(() {
                             _passwordShow = !_passwordShow;
                           });
                         },
                       ),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(32.0))),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
                   controller: passController,
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 ElevatedButton(
                   onPressed: () => {
-                    checkData(unameController.text, passController.text)
-                        .then((val) {
+                    checkData(unameController.text, passController.text).then((val) {
                       // check validation
                       print(val.statusCode);
-                      if (val.statusCode == '401') {
+                      if (val.statusCode != 200) {
                         setState(() {
                           _validateError = true;
                         });

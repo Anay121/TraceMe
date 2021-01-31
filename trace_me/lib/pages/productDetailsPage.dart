@@ -22,9 +22,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   String _prodId = "8";
 
-  String _owner =
-      "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a";
+  String _owner = "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a";
   bool _doGenerateQR = false;
+  bool flag = true;
 
   Future<dynamic> addTransaction() {
     return http.post(Helper.url + '/makeTransaction',
@@ -35,7 +35,21 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   }
 
   Future<dynamic> deleteTransaction() {
-    return http.post(Helper.url + '/removeTransaction',
+    if (flag) {
+      flag = !flag;
+      return Future<String>.value('This is a string');
+      // return Future.delayed(Duration.zero);
+    } else {
+      return http.post(Helper.url + '/removeTransaction',
+          body: json.encode({
+            'username': _owner,
+            'product_id': _prodId,
+          }));
+    }
+  }
+
+  Future<dynamic> getStatus() async {
+    return http.post(Helper.url + '/transactionInfo',
         body: json.encode({
           'username': _owner,
           'product_id': _prodId,
@@ -55,8 +69,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               children: [
                 Text(
                   "Product Information",
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 12),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
                 ),
                 Container(
                   alignment: Alignment.center,
@@ -117,9 +130,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                           if (snapshot.hasData) {
                                             return Container(
                                               child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 children: [
                                                   QrImage(
                                                     data: json.encode({
@@ -129,10 +140,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                       "prodid": _prodId,
                                                     }),
                                                     version: QrVersions.auto,
-                                                    size: MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        2,
+                                                    size: MediaQuery.of(context).size.width / 2,
                                                   ),
                                                   ButtonTheme(
                                                     minWidth: 100,
@@ -145,9 +153,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                       child: Text(
                                                         "Cancel",
                                                         style: TextStyle(
-                                                            fontSize: 17,
-                                                            color:
-                                                                Colors.white),
+                                                            fontSize: 17, color: Colors.white),
                                                       ),
                                                     ),
                                                   ),
@@ -174,9 +180,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                 },
                                                 child: Text(
                                                   "Generate a QR",
-                                                  style: TextStyle(
-                                                      fontSize: 17,
-                                                      color: Colors.white),
+                                                  style:
+                                                      TextStyle(fontSize: 17, color: Colors.white),
                                                 ),
                                               ),
                                             );
@@ -184,7 +189,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             return CircularProgressIndicator();
                                           }
                                         },
-                                      )
+                                      ),
                               ],
                             ),
                           )
