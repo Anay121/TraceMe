@@ -418,3 +418,16 @@ def deleteTransaction():
                 del pendingTransactions[username]
     print(pendingTransactions, 'this')
     return 'done', 200
+
+@app.route('/sendMoreProps', methods=['POST'])
+def sendMoreProps():
+    input_json = request.get_json(force=True)
+    product_id = input_json['product_id']
+    enc_props = input_json['enc_props']
+    product = conn.functions.getProduct(product_id).call()
+    new_props = json.loads(product[1])
+    new_props['transfer'] = enc_props
+    tx_hash = conn.functions.setEncProps(product_id, new_props).transact()
+    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    print('tx_receipt', tx_receipt)
+    return 'done', 200

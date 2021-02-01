@@ -14,6 +14,7 @@ contract SupplyChain {
         string password;
         string fullname;
         string role;
+        string rating;
     }
 
     // Trace Struct
@@ -126,7 +127,8 @@ contract SupplyChain {
             _username,
             _password,
             _fullname,
-            _role
+            _role,
+            "0"
         );
         string memory uid = hashedId;
         participant[uid] = p;
@@ -176,6 +178,12 @@ contract SupplyChain {
         Product memory p = getProduct(_productId);
         p.encProdProps = _encProductProps;
         products[_productId] = p;
+    }
+
+    function setRating(string memory _username, string memory _newRating) public {
+        Participant memory p = getParticipant(_username);
+        p.rating = _newRating;
+        participant[_username] = p;
     }
 
     function TransferOwnership(
