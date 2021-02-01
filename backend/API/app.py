@@ -4,8 +4,8 @@ import time
 import os
 
 from web3 import method
-from .web3connection import Connection
-from .treeStruct import makeTree
+from web3connection import Connection
+from treeStruct import makeTree
 from hashlib import sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
