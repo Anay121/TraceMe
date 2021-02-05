@@ -374,14 +374,15 @@ def trace():
     product_id = int(input_json.get('product_id', ''))
     user_id = input_json.get('user_id', '')
     is_owned = conn.functions.isOwner(user_id, product_id).call()
-    if not is_owned:
-        return "Can't view trace of unowned products", 402
+    # why?
+    # if not is_owned:
+    #     return "Can't view trace of unowned products", 402
     product = conn.functions.getProduct(product_id).call()
     # print(product, 'product')
-    makeTree.conn = conn
-    t = makeTree(product, product_id)
-    print(t)
-    return 'Kay', 200
+    # makeTree.conn = conn
+    t = makeTree(product, product_id, conn)
+    # print("t",type(json.dumps(t)))
+    return jsonify({"t": "works"})
     
 @app.route('/transactionInfo', methods=['POST'])
 def transactionInfo():
