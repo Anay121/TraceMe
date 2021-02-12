@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
+import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:trace_me/helper.dart';
 
 // class QrScanPage extends StatefulWidget {
 //   @override
@@ -11,8 +15,15 @@ class QrScanPage extends StatelessWidget {
   Future<dynamic> doScan() async {
     await Permission.camera.request();
     String cameraScanResult = await scanner.scan();
-
     return cameraScanResult;
+  }
+
+  Future<dynamic> getStatus(String _owner, String _prodId) async {
+    return http.post(Helper.url + '/transactionInfo',
+        body: json.encode({
+          'username': _owner,
+          'product_id': _prodId,
+        }));
   }
 
   @override
@@ -27,9 +38,20 @@ class QrScanPage extends StatelessWidget {
                 future: doScan(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    Navigator.popAndPushNamed(context, 'ReceiverStatusPage',
-                        arguments: snapshot.data);
-                    return Text(snapshot.data.toString());
+                    Map val = json.decode(snapshot.data);
+                    getStatus(val['sender'], val['product_id']).then((returnValue) {
+                      // if status is 1, go to receiver page otherwise redirect to status page
+                      print(returnValue);
+                      if (json.decode(returnValue.body)['status'] == 1) {
+                        Navigator.popAndPushNamed(context, 'ReceiverPage',
+                            arguments: snapshot.data);
+                      } else {
+                        val['status'] = json.decode(returnValue.body)['status'];
+                        Navigator.popAndPushNamed(context, 'StatusReceiverPage',
+                            arguments: json.encode(val));
+                      }
+                    });
+                    return Text('Just a Moment...');
                   } else {
                     return CircularProgressIndicator();
                   }

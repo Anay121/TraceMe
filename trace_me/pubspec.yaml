@@ -11,11 +11,13 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.12.2
+  fluttertoast: ^3.1.0
   cupertino_icons: ^1.0.0
   qr_flutter: ^3.1.0
   flutter_session: ^0.1.1
   qrscan: ^0.2.22
   permission_handler: ^5.0.1+1
+  flutter_rating_bar: ^3.2.0+1
 
 dev_dependencies:
   flutter_test:

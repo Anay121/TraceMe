@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, jsonify
+from flask import Flask, request, jsonify
 import json
 import time
 import os
@@ -6,7 +6,7 @@ import os
 from web3 import method
 from .web3connection import Connection
 from .treeStruct import makeTree
-from hashlib import sha256
+from hashlib import new, sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     jwt_refresh_token_required, create_refresh_token,
@@ -23,7 +23,7 @@ print("connection:", conn)
 print("connection address:", conn.address)
 
 # user : {product : status}
-#status: 1=added, 2=transaction deets added by recv, 3=deets accepted by sender
+#status: 1=added, 2=transaction deets added by recv, 3=rejected by receiver, 4=deets accepted by sender, 5=rejected by sender
 pendingTransactions = {}
 
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities,enc_props):  # TODO user string
@@ -387,20 +387,25 @@ def trace():
 def transactionInfo():
     input_json = request.get_json(force=True)
     username = input_json['username']
-    product_id = input_json['product_id']
+    product_id = int(input_json['product_id'])
+    print(username, product_id)
+    print(pendingTransactions)
     if username not in pendingTransactions:
         return json.dumps({'status':0}), 200
     else:
+        # print(pendingTransactions[username])
         if product_id not in pendingTransactions[username]:
             return json.dumps({'status':0}), 200
         else:
+            print('right')
             return json.dumps({'status':pendingTransactions[username][product_id]}), 200
 
 @app.route('/makeTransaction', methods=['POST'])
 def addTransaction():
     input_json = request.get_json(force=True)
     username = input_json['username']
-    product_id = input_json['product_id']
+    product_id = int(input_json['product_id'])
+    print(product_id)
     if username not in pendingTransactions:
         pendingTransactions[username] = {product_id : 1}
     print(pendingTransactions)
@@ -410,7 +415,7 @@ def addTransaction():
 def deleteTransaction():
     input_json = request.get_json(force=True)
     username = input_json['username']
-    product_id = input_json['product_id']
+    product_id = int(input_json['product_id'])
     if username in pendingTransactions:
         if product_id in pendingTransactions[username]:
             del pendingTransactions[username][product_id]
@@ -422,12 +427,95 @@ def deleteTransaction():
 @app.route('/sendMoreProps', methods=['POST'])
 def sendMoreProps():
     input_json = request.get_json(force=True)
-    product_id = input_json['product_id']
+    product_id = int(input_json['product_id'])
     enc_props = input_json['enc_props']
+    sender = input_json['owner']
+
     product = conn.functions.getProduct(product_id).call()
     new_props = json.loads(product[1])
     new_props['transfer'] = enc_props
-    tx_hash = conn.functions.setEncProps(product_id, new_props).transact()
+    
+    print(new_props)
+
+    tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    print('tx_receipt', tx_receipt)
+
+    if sender in pendingTransactions:
+        if product_id in pendingTransactions[sender]:
+            pendingTransactions[sender][product_id] = 2
+        else:
+            return 'unable', 404
+    else:
+        return 'unable', 404
+    return 'done', 200 
+
+
+@app.route('/getTransactionProps', methods=['POST'])
+def getTransactionProps():
+    input_json = request.get_json(force=True)
+    product_id = int(input_json['product_id'])
+    
+    val = conn.functions.getProduct(product_id).call()
+    print(json.loads(val[1]))
+    return json.loads(val[1])['transfer']
+
+@app.route('/reject', methods=['POST'])
+def reject():
+    input_json = request.get_json(force=True)
+    product_id = int(input_json['product_id'])
+    sender = input_json['owner']
+    person = input_json['person']
+
+    if sender in pendingTransactions:
+        if product_id in pendingTransactions[sender]:
+            if person == 'sender':
+                pendingTransactions[sender][product_id] = 5
+            else:
+                pendingTransactions[sender][product_id] = 3
+        else:
+            return 'unable', 404
+    else:
+        return 'unable', 404
+    print(pendingTransactions)
+    return 'done', 200
+
+@app.route('/ownerAccept', methods=['POST'])
+def senderAccept():
+    input_json = request.get_json(force=True)
+    product_id = int(input_json['product_id'])
+    sender = input_json['owner']
+    if sender in pendingTransactions:
+        if product_id in pendingTransactions[sender]:
+            pendingTransactions[sender][product_id] = 4
+            #TODO: Also add a thingy for actual transfer of product
+
+        else:
+            return 'unable', 404
+    else:
+        return 'unable', 404
+    print(pendingTransactions)
+    return 'done', 200
+
+@app.route('/rate', methods = ['POST'])
+def rate():
+    input_json = request.get_json(force=True)
+    rating = float(input_json['rating'])
+    sender = input_json['owner']
+
+    # p = conn.functions.getParticipant(sender).call()
+    # print(p, p[4])
+    
+    x = p[4].split('#')
+    if len(x) < 2:
+        x.append('0')
+
+    new_rating = round((float(x[0])*int(x[1]) + rating) / (int(x[1]) + 1), 2)
+    new_rating_str = str(new_rating) + '#' + str(int(x[1]) + 1)
+
+    tx_hash = conn.functions.setRating(sender, new_rating_str).transact()
+    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
+    # p = conn.functions.getParticipant(sender).call()
+    # print(p, p[4])
+
     return 'done', 200

@@ -95,7 +95,7 @@ content-type: application/json
     "product_name":"Juice",
     "product_properties":{"quantity":1000},
     "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
-    "parent_ids": [2,4]
+    "parent_ids": []
 }
 
 

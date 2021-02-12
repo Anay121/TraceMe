@@ -63,19 +63,29 @@ class MainHomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
-                RaisedButton(
-                  onPressed: () => {
-                    Navigator.pushNamed(context, "ReceiverStatusPage",
-                        arguments: jsonEncode({
-                          "product": "Sugarcane",
-                          "quantity": "1000",
-                          "sender":
-                              "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
-                          "prodid": "8"
-                        }))
-                  },
-
-                  // onPressed: () => {Navigator.pushNamed(context, "QRScanPage")},
+                Row(
+                  children: [
+                    RaisedButton(
+                      child: Text('rcvr'),
+                      onPressed: () => {
+                        Navigator.pushNamed(
+                          context,
+                          "QRScanPage",
+                          // arguments: jsonEncode({
+                          //   "product": "Juice",
+                          //   "quantity": "1000",
+                          //   "sender":
+                          //       "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
+                          //   "product_id": "1"
+                          // }),
+                        ),
+                      },
+                    ),
+                    RaisedButton(
+                      child: Text('sndr'),
+                      onPressed: () => {Navigator.pushNamed(context, 'ProductPage')},
+                    )
+                  ],
                 )
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:trace_me/helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   ProductDetailsPage(String args) {
@@ -16,11 +17,11 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  String _prodName = "Sugarcane";
+  String _prodName = "Juice";
 
   String _quantity = "1000";
 
-  String _prodId = "8";
+  String _prodId = "1";
 
   String _owner = "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a";
   bool _doGenerateQR = false;
@@ -114,7 +115,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             ),
                           ),
                           Container(
-                            height: MediaQuery.of(context).size.height / 3,
+                            height: MediaQuery.of(context).size.height / 2.5,
                             child: TabBarView(
                               children: [
                                 Container(
@@ -137,10 +138,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                       "product": _prodName,
                                                       "quantity": _quantity,
                                                       "sender": _owner,
-                                                      "prodid": _prodId,
+                                                      "product_id": _prodId,
                                                     }),
                                                     version: QrVersions.auto,
-                                                    size: MediaQuery.of(context).size.width / 2,
+                                                    size: MediaQuery.of(context).size.width / 2.5,
                                                   ),
                                                   ButtonTheme(
                                                     minWidth: 100,
@@ -152,6 +153,44 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                       },
                                                       child: Text(
                                                         "Cancel",
+                                                        style: TextStyle(
+                                                            fontSize: 17, color: Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  ButtonTheme(
+                                                    minWidth: 100,
+                                                    child: RaisedButton(
+                                                      onPressed: () {
+                                                        getStatus().then((value) {
+                                                          if (json.decode(value.body)['status'] ==
+                                                                  0 ||
+                                                              json.decode(value.body)['status'] ==
+                                                                  1) {
+                                                            // make toast
+                                                            Fluttertoast.showToast(
+                                                              msg:
+                                                                  "Waiting for Receiver Confirmation",
+                                                              toastLength: Toast.LENGTH_LONG,
+                                                              gravity: ToastGravity.BOTTOM,
+                                                            );
+                                                          } else {
+                                                            //redirect
+                                                            Navigator.pushNamed(
+                                                              context,
+                                                              'StatusSenderPage',
+                                                              arguments: json.encode({
+                                                                'status': json
+                                                                    .decode(value.body)['status'],
+                                                                'productId': _prodId,
+                                                                'owner': _owner,
+                                                              }),
+                                                            );
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        "Check Status",
                                                         style: TextStyle(
                                                             fontSize: 17, color: Colors.white),
                                                       ),

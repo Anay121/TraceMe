@@ -128,7 +128,7 @@ contract SupplyChain {
             _password,
             _fullname,
             _role,
-            "0"
+            "0#0"
         );
         string memory uid = hashedId;
         participant[uid] = p;
