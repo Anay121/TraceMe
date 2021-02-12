@@ -374,14 +374,15 @@ def trace():
     product_id = int(input_json.get('product_id', ''))
     user_id = input_json.get('user_id', '')
     is_owned = conn.functions.isOwner(user_id, product_id).call()
-    if not is_owned:
-        return "Can't view trace of unowned products", 402
+    # why?
+    # if not is_owned:
+    #     return "Can't view trace of unowned products", 402
     product = conn.functions.getProduct(product_id).call()
     # print(product, 'product')
-    makeTree.conn = conn
-    t = makeTree(product, product_id)
-    print(t)
-    return 'Kay', 200
+    # makeTree.conn = conn
+    t = makeTree(product, product_id, conn)
+    # print("t",type(json.dumps(t)))
+    return jsonify({"t": "works"})
     
 @app.route('/transactionInfo', methods=['POST'])
 def transactionInfo():
@@ -502,7 +503,7 @@ def rate():
     rating = float(input_json['rating'])
     sender = input_json['owner']
 
-    # p = conn.functions.getParticipant(sender).call()
+    p = conn.functions.getParticipant(sender).call()
     # print(p, p[4])
     
     x = p[4].split('#')
@@ -515,7 +516,7 @@ def rate():
     tx_hash = conn.functions.setRating(sender, new_rating_str).transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
-    # p = conn.functions.getParticipant(sender).call()
-    # print(p, p[4])
+    p = conn.functions.getParticipant(sender).call()
+    print(p, p[4])
 
     return 'done', 200

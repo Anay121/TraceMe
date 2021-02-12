@@ -10,6 +10,7 @@ import 'package:trace_me/pages/registerPage.dart';
 import 'package:trace_me/pages/productDetailsPage.dart';
 import 'package:trace_me/pages/qrScanPage.dart';
 import 'package:trace_me/pages/statusSender.dart';
+import 'package:trace_me/pages/traceProduct.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   print(settings.arguments);
@@ -38,6 +39,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => StatusSender(arguments));
     case 'StatusReceiverPage':
       return MaterialPageRoute(builder: (context) => StatusReceiver(arguments));
+    case 'TraceProductPage':
+      return MaterialPageRoute(builder: (context) => TraceProductPage(arguments));
     default:
       return MaterialPageRoute(builder: (context) => LoginPage());
   }

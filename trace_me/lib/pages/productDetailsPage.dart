@@ -6,8 +6,11 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:trace_me/helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+int args;
+
 class ProductDetailsPage extends StatefulWidget {
-  ProductDetailsPage(String args) {
+  ProductDetailsPage(int arg) {
+    args = arg;
     print(args);
     // String values = json.decode(args);
   }
@@ -234,6 +237,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           )
                         ],
                       )),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: RaisedButton(
+                      onPressed: () => {
+                        Navigator.pushNamed(context, 'TraceProductPage', arguments: args),
+                      },
+                      child: Text("DISPLAY TRACE"),
+                    ),
+                  ),
                 ),
               ],
             ),

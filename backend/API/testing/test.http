@@ -5,9 +5,9 @@ POST http://127.0.0.1:5000/split HTTP/1.1
 content-type: application/json
 
 {
-    "product_id": 7,
-    "quantities": ["300","700"],
-    "user_id":"ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
+    "product_id": 59,
+    "quantities": ["1200","800"],
+    "user_id":"10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484"
 }
 
 
@@ -30,9 +30,9 @@ POST http://127.0.0.1:5000/transfer HTTP/2
 content-type: application/json
 
 {
-    "senderId": "84e8c99ed1593f69837a5c811b1a29148feee1251d4345e28f01017a8e8037a1",
-    "receiverId": "4e7fd341b5813a112c19f88a866bf2bbbee72f5d44ba94f17a754b302454f7aa",
-    "productId": "1",
+    "senderId": "10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484",
+    "receiverId": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
+    "productId": "61",
     "props":"good Condition",
     "location": "Mumbai"
 }
@@ -92,16 +92,19 @@ POST http://127.0.0.1:5000/add_product HTTP/1.1
 content-type: application/json
 
 {
-    "product_name":"Juice",
-    "product_properties":{"quantity":1000},
-    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
-    "parent_ids": []
+    "product_name":"Prod 2",
+    "product_properties":{"quantity":2000},
+    "user_id": "10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484",
+    "parent_ids": [58]
 }
 
 
 ###
 # Testing the /get_products [GET] endpoint
 GET http://127.0.0.1:5000/get_products/10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484 HTTP/1.1
+###
+
+GET http://127.0.0.1:5000/get_products/ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a HTTP/1.1
 ###
 # GET http://127.0.0.1:5000/get_products HTTP/1.1
 # content-type: application/json
@@ -114,6 +117,6 @@ POST http://127.0.0.1:5000/trace HTTP/2
 content-type: application/json
 
 {
-    "product_id": "5",
-    "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
+    "product_id": "61",
+    "user_id": "10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484"
 }
