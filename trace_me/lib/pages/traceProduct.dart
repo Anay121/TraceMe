@@ -1,5 +1,7 @@
 import 'dart:convert';
+// import 'dart:html';
 import 'package:flutter/material.dart';
+import 'package:flutter_tree/flutter_tree.dart';
 import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
@@ -8,6 +10,7 @@ var args;
 class TraceProductPage extends StatefulWidget {
   TraceProductPage(int arg) {
     args = arg;
+    args = args.toString();
     print(args);
   }
 
@@ -46,7 +49,7 @@ class _TraceProductState extends State<TraceProductPage> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(MediaQuery.of(context).size.height / 30),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.height / 120),
           child: Container(
             child: Column(
               children: [
@@ -60,8 +63,12 @@ class _TraceProductState extends State<TraceProductPage> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         Map data = json.decode(snapshot.data.body);
-                        print(data);
-                        return Text(json.encode(data));
+                        print("HEREE");
+                        print(data["t"][args]);
+                        print(data["t"][args]["parents"]);
+                        var treeNode = addNodes(context, data["t"],
+                            data["t"][args]["parents"], args);
+                        return treeNode;
                       } else {
                         return CircularProgressIndicator();
                       }
@@ -73,6 +80,38 @@ class _TraceProductState extends State<TraceProductPage> {
       ]),
     );
   }
+}
+
+addNodes(context, prodDict, parents, id) {
+  print("here");
+  print(prodDict[id]["parents"]);
+  return TreeNode(
+    title: Card(
+        child: Row(children: <Widget>[
+      GestureDetector(
+        onTap: () => {
+          // print(prodDict[args]['name']),
+        },
+        child: Text("Product $id",
+            style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: Colors.blue,
+                fontSize: MediaQuery.of(context).size.width / 15)),
+      )
+    ])),
+    expaned: true,
+    children: <Widget>[
+      if (parents[0] != "-1")
+        for (var i in parents)
+          addNodes(context, prodDict, prodDict[i]["parents"], i)
+      // TreeNode(
+      //   title: Text('This is a title!'),
+      //   children: <Widget>[
+      //       TreeNode(title: Text('This is a title!')),
+      //   ],
+      // ),
+    ],
+  );
 }
 
 class BezierClipper extends CustomClipper<Path> {

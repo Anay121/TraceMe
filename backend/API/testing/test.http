@@ -17,10 +17,10 @@ POST http://127.0.0.1:5000/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "alpha",
-    "password": "password",
-    "fullname": "anayk",
-    "role": "Retailer"
+    "username": "al",
+    "password": "pw",
+    "fullname": "fatema",
+    "role": "Distributor"
 }
 
 
@@ -30,9 +30,9 @@ POST http://127.0.0.1:5000/transfer HTTP/2
 content-type: application/json
 
 {
-    "senderId": "10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484",
-    "receiverId": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
-    "productId": "61",
+    "senderId": "30c952fab122c3f9759f02a6d95c3758b246b4fee239957b2d4fee46e26170c4",
+    "receiverId": "7d9071962a52f85673ec2654d4dd24f667d5e6f21591fa480b0ddc2920d98eb7",
+    "productId": "8",
     "props":"good Condition",
     "location": "Mumbai"
 }
@@ -60,7 +60,7 @@ POST http://127.0.0.1:5000/login HTTP/2
 content-type: application/json
 
 {
-    "username": "alpha",
+    "username": "fate",
     "password": "password"
 }
 
@@ -92,19 +92,19 @@ POST http://127.0.0.1:5000/add_product HTTP/1.1
 content-type: application/json
 
 {
-    "product_name":"Prod 2",
+    "product_name":"Prod 1",
     "product_properties":{"quantity":2000},
-    "user_id": "10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484",
-    "parent_ids": [58]
+    "user_id": "c63c7f7fef43745b2b3f0f96c6e4703012959c145843ccf9d3bdadc6364306a0",
+    "parent_ids": [-1]
 }
 
 
 ###
 # Testing the /get_products [GET] endpoint
-GET http://127.0.0.1:5000/get_products/10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484 HTTP/1.1
+GET http://127.0.0.1:5000/get_products/c63c7f7fef43745b2b3f0f96c6e4703012959c145843ccf9d3bdadc6364306a0 HTTP/1.1
 ###
 
-GET http://127.0.0.1:5000/get_products/ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a HTTP/1.1
+GET http://127.0.0.1:5000/get_products/30c952fab122c3f9759f02a6d95c3758b246b4fee239957b2d4fee46e26170c4 HTTP/1.1
 ###
 # GET http://127.0.0.1:5000/get_products HTTP/1.1
 # content-type: application/json
@@ -117,6 +117,6 @@ POST http://127.0.0.1:5000/trace HTTP/2
 content-type: application/json
 
 {
-    "product_id": "61",
-    "user_id": "10d98c494dede35e8b542c44eb9b01efe935934166ddef63e18313410d39b484"
+    "product_id": "2",
+    "user_id": "c63c7f7fef43745b2b3f0f96c6e4703012959c145843ccf9d3bdadc6364306a0"
 }

@@ -4,8 +4,8 @@ import time
 import os
 
 from web3 import method
-from .web3connection import Connection
-from .treeStruct import makeTree
+from web3connection import Connection
+from treeStruct import makeTree
 from hashlib import new, sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -25,6 +25,23 @@ print("connection address:", conn.address)
 # user : {product : status}
 #status: 1=added, 2=transaction deets added by recv, 3=rejected by receiver, 4=deets accepted by sender, 5=rejected by sender
 pendingTransactions = {}
+
+# tracing function
+@app.route('/trace', methods=['POST'])
+def trace():
+    input_json = request.get_json(force=True)
+    product_id = int(input_json.get('product_id', ''))
+    user_id = input_json.get('user_id', '')
+    is_owned = conn.functions.isOwner(user_id, product_id).call()
+    # why?
+    # if not is_owned:
+    #     return "Can't view trace of unowned products", 402
+    product = conn.functions.getProduct(product_id).call()
+    # print(product, 'product')
+    # makeTree.conn = conn
+    t = makeTree(product, product_id, conn)
+    print("t",type(t))
+    return jsonify({"t": t})
 
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities,enc_props):  # TODO user string
     children = []
@@ -365,24 +382,6 @@ def get_products(user_id):
         }
     print(product_dict)
     return jsonify({"product_dict": product_dict})
-
-
-# tracing function
-@app.route('/trace', methods=['POST'])
-def trace():
-    input_json = request.get_json(force=True)
-    product_id = int(input_json.get('product_id', ''))
-    user_id = input_json.get('user_id', '')
-    is_owned = conn.functions.isOwner(user_id, product_id).call()
-    # why?
-    # if not is_owned:
-    #     return "Can't view trace of unowned products", 402
-    product = conn.functions.getProduct(product_id).call()
-    # print(product, 'product')
-    # makeTree.conn = conn
-    t = makeTree(product, product_id, conn)
-    # print("t",type(json.dumps(t)))
-    return jsonify({"t": "works"})
     
 @app.route('/transactionInfo', methods=['POST'])
 def transactionInfo():
