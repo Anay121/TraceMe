@@ -168,15 +168,6 @@ class _SplitProductState extends State<SplitProductPage> {
           ),
         ),
       ]),
-
-      // bottomNavigationBar: BottomNavigationBar(
-      //     currentIndex: 0, // this will be set when a new tab is tapped
-      //     items: [
-      //       BottomNavigationBarItem(
-      //         icon: new Icon(Icons.add),
-      //         label: 'Add Product',
-      //       ),
-      //     ]),
     );
   }
 }
