@@ -9,6 +9,10 @@ class AddNewProductPage extends StatefulWidget {
   AddNewProductPage(List<int> arg) {
     args = arg;
     print(args);
+    // fields.add(DataRow(
+    //   false,
+    //   key: 'location',
+    // ));
   }
 
   @override
@@ -20,31 +24,26 @@ class _AddNewProductState extends State<AddNewProductPage> {
   final quantController = TextEditingController();
   final key1Controller = TextEditingController();
   final value1Controller = TextEditingController();
+  List<DataRow> fields = List<DataRow>();
   bool _validateError = false;
 
-  Future<dynamic> addProduct(String productName, Map prodProps) async {
-    // Future<dynamic> value;
-    // Session().getter('userid').then((val) {
-    //   return http.get(Helper.url + '/get_products/' + val);
-    // });
+  Future<dynamic> addProduct(String productName) async {
+    Map object = Map();
+    object["quantity"] = quantController.text;
+    for (int i = 0; i < fields.length; i++) {
+      Map val = fields[i].getData();
+      object[val['key']] = val['value'];
+    }
+    print(object);
     String val = await Session().getter('userid');
     return http.post(Helper.url + '/add_product',
         body: json.encode({
           "product_name": productName,
-          "product_properties": prodProps,
+          "product_properties": object,
           "user_id": val,
           "parent_ids": args
         }));
   }
-
-  // Future<dynamic> addProduct(String productName, Map prodProps, String userId) {
-  //   return http.post(Helper.url + '/add_product',
-  //       body: json.encode({
-  //         "product_name": productName,
-  //         "product_properties": prodProps,
-  //         "user_id": userId
-  //       }));
-  // }
 
   @override
   void initState() {
@@ -67,68 +66,88 @@ class _AddNewProductState extends State<AddNewProductPage> {
         Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.height / 30),
           child: Container(
-            child: Column(
-              children: [
-                Text(
-                  'ADD PRODUCT',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 15),
-                ),
-                TextFormField(
-                    decoration: InputDecoration(labelText: 'Product Name..'),
-                    controller: pnameController),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      child: TextFormField(
-                          decoration: InputDecoration(labelText: 'Quantity..'),
-                          controller: quantController),
-                    ),
-                    IconButton(
+              child: Column(
+            children: [
+              Text(
+                'ADD PRODUCT',
+                style:
+                    TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
+              ),
+              TextFormField(
+                  decoration: InputDecoration(labelText: 'Product Name..'),
+                  controller: pnameController),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Flexible(
+                    child: TextFormField(
+                        decoration: InputDecoration(labelText: 'Quantity..'),
+                        controller: quantController),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    color: Colors.grey,
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.remove),
+                    color: Colors.grey,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // DataRow(),
+                  Column(
+                    children: List.generate(
+                        fields.length, (int index) => fields[index]),
+                  ),
+                  CircleAvatar(
+                    backgroundColor: Color.fromRGBO(255, 91, 53, 1),
+                    radius: 30,
+                    child: IconButton(
                       icon: Icon(Icons.add),
-                      color: Colors.grey,
-                      onPressed: () {},
+                      color: Colors.white,
+                      onPressed: () {
+                        setState(() {
+                          fields.insert(0, DataRow(true));
+                        });
+                      },
                     ),
-                    IconButton(
-                      icon: Icon(Icons.remove),
-                      color: Colors.grey,
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Flexible(
-                        child: TextFormField(
-                            decoration: InputDecoration(labelText: 'KEY'),
-                            controller: key1Controller),
-                      ),
-                      SizedBox(
-                        width: 20.0,
-                      ),
-                      Flexible(
-                        child: TextFormField(
-                            decoration: InputDecoration(labelText: 'VALUE'),
-                            controller: value1Controller),
-                      ),
-                    ]),
-              ],
-            ),
-          ),
+                  ),
+                  // Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //     children: [
+                  //       Flexible(
+                  //         child: TextFormField(
+                  //             decoration: InputDecoration(labelText: 'KEY'),
+                  //             controller: key1Controller),
+                  //       ),
+                  //       SizedBox(
+                  //         width: 20.0,
+                  //       ),
+                  //       Flexible(
+                  //         child: TextFormField(
+                  //             decoration: InputDecoration(labelText: 'VALUE'),
+                  //             controller: value1Controller),
+                  //       ),
+                  //     ]),
+                ],
+              )
+            ],
+          )),
         ),
         Expanded(
           child: Align(
             alignment: Alignment.bottomCenter,
             child: RaisedButton(
               onPressed: () => {
-                print("here"),
-                print(pnameController.text),
-                addProduct(pnameController.text, {
-                  "quantity": quantController.text,
-                  key1Controller.text: value1Controller.text
-                }).then((val) {
+                // print("here"),
+                // print(pnameController.text),
+                addProduct(pnameController.text).then((val) {
                   // check validation
                   print(val.statusCode);
                   if (val.statusCode == '401') {
@@ -156,6 +175,55 @@ class _AddNewProductState extends State<AddNewProductPage> {
       //         label: 'Add Product',
       //       ),
       //     ]),
+    );
+  }
+}
+
+class DataRow extends StatelessWidget {
+  final _key = TextEditingController();
+  final _value = TextEditingController();
+  final bool allowNull;
+
+  DataRow(this.allowNull, {String key = ''}) {
+    _key.text = key;
+  }
+
+  Map<String, String> getData() {
+    String key = _key.text;
+    String value = _value.text;
+    return {'key': key, 'value': value};
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            // flex: 3,
+            // fit: FlexFit.loose,
+            child: TextFormField(
+              controller: _key,
+              decoration: InputDecoration(labelText: 'KEY'),
+            ),
+          ),
+          SizedBox(
+            width: 20.0,
+          ),
+          Flexible(
+            // flex: 3,
+            // fit: FlexFit.loose,
+            child: TextFormField(
+              controller: _value,
+              decoration: InputDecoration(labelText: 'VALUE'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

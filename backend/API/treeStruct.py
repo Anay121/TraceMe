@@ -18,9 +18,9 @@ class treeNode:
 def generateNode(product, product_id, direction, conn, trace_dict):
     t = treeNode(product[0])
     trace_dict[str(product_id)]={"name":product[0]} #add to dict
-    print("TYPE",type(product[2]))
+    # print("TYPE",type(product[2]))
     trace_dict[str(product_id)]["parents"] = [str(x) for x in product[2]]
-    trace_dict[str(product_id)]["children"] = [str(x) for x in product[3]]
+    # trace_dict[str(product_id)]["children"] = [str(x) for x in product[3]]
 
     # trace = makeTree.conn.functions.getTrace(product_id).call()
     trace = conn.functions.getTrace(product_id).call()
@@ -28,15 +28,21 @@ def generateNode(product, product_id, direction, conn, trace_dict):
     print('product', product)
     arr = []
     t.quantity = json.loads(product[1])['quantity']
-    trace_dict[str(product_id)]["quantity"] = t.quantity
+    # trace_dict[str(product_id)]["quantity"] = t.quantity
 
     if trace:
         t.maker = trace[0][2]
-        trace_dict[str(product_id)]["maker"] = trace[0][2] #add to dict
+        maker_details = conn.functions.getParticipant(trace[0][2]).call()
+        trace_dict[str(product_id)]["maker"] = [trace[0][2], maker_details[2],maker_details[3]]#add to dict
         t.owner = trace[-1][3]
-        trace_dict[str(product_id)]["owner"] = trace[-1][3] #add to dict
+        owner_details = conn.functions.getParticipant(trace[-1][3]).call()
+        trace_dict[str(product_id)]["owner"] = [trace[-1][3],owner_details[2],owner_details[3]]#add to dict
         for i in trace: 
-            arr.append(f'Transfered to {i[3]}')
+            sender_details = conn.functions.getParticipant(i[2]).call()
+            # print('Sender Details', sender_details[2],sender_details[3])
+            receiver_details = conn.functions.getParticipant(i[3]).call()
+            # print('receiver Details', receiver_details[2],receiver_details[3])
+            arr.append([[i[2],sender_details[2],sender_details[3]], [i[3],receiver_details[2],receiver_details[3]]])
         t.trace = arr
         trace_dict[str(product_id)]["trace"] = arr #add to dict
     else:
@@ -44,6 +50,7 @@ def generateNode(product, product_id, direction, conn, trace_dict):
         trace_dict[str(product_id)]["maker"] = product[4] #add to dict
         t.owner = product[4]
         trace_dict[str(product_id)]["owner"] = product[4] #add to dict
+        trace_dict[str(product_id)]["trace"] = arr
     
     if direction == 'child' or direction == 'all':
         for i in product[3]:

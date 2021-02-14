@@ -1,5 +1,6 @@
 import 'dart:convert';
 // import 'dart:html';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tree/flutter_tree.dart';
 import 'package:http/http.dart' as http;
@@ -65,7 +66,6 @@ class _TraceProductState extends State<TraceProductPage> {
                         Map data = json.decode(snapshot.data.body);
                         print("HEREE");
                         print(data["t"][args]);
-                        print(data["t"][args]["parents"]);
                         var treeNode = addNodes(context, data["t"],
                             data["t"][args]["parents"], args);
                         return treeNode;
@@ -83,21 +83,67 @@ class _TraceProductState extends State<TraceProductPage> {
 }
 
 addNodes(context, prodDict, parents, id) {
-  print("here");
-  print(prodDict[id]["parents"]);
+  TextStyle defaultStyle = TextStyle(color: Colors.grey);
+  print("here ");
+  // print(prodDict[id]["trace"]);
+  if (prodDict[id]["trace"].length != 0)
+    for (var i in prodDict[id]["trace"])
+      print("${i[0][1]} - ${i[0][2]} TO ${i[1][1]} - ${i[1][2]}");
   return TreeNode(
     title: Card(
         child: Row(children: <Widget>[
-      GestureDetector(
-        onTap: () => {
-          // print(prodDict[args]['name']),
-        },
-        child: Text("Product $id",
-            style: TextStyle(
-                decoration: TextDecoration.underline,
-                color: Colors.blue,
-                fontSize: MediaQuery.of(context).size.width / 15)),
-      )
+      Column(children: [
+        GestureDetector(
+            onTap: () => {
+                  print("Call product details for $id"),
+                },
+            child: Column(children: [
+              Text("ID $id : ${prodDict[id]["name"]}",
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Colors.blue,
+                      fontSize: MediaQuery.of(context).size.width / 20)),
+            ])),
+        // Text("Maker: ${prodDict[id]["maker"][1]} - ${prodDict[id]["maker"][2]}",
+        //     style: defaultStyle),
+        // Text("Owner: ${prodDict[id]["owner"][1]} - ${prodDict[id]["owner"][2]}",
+        //     style: defaultStyle),
+        // Text("Transactions:-"),
+        Column(children: [
+          if (prodDict[id]["trace"].length != 0)
+            for (var i in prodDict[id]["trace"])
+              Column(children: [
+                RichText(
+                    text: TextSpan(style: defaultStyle, children: <TextSpan>[
+                  TextSpan(text: "FROM "),
+                  TextSpan(
+                      text: "${i[0][1]}",
+                      style: TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          print('Go to sender page ${i[0][0]}');
+                        }),
+                  TextSpan(text: " - ${i[0][2]}")
+                ])),
+                RichText(
+                    text: TextSpan(style: defaultStyle, children: <TextSpan>[
+                  TextSpan(text: "TO "),
+                  TextSpan(
+                      text: "${i[1][1]}",
+                      style: TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          print('Go to receiver page ${i[1][0]}');
+                        }),
+                  TextSpan(text: " - ${i[1][2]}")
+                ])),
+              ])
+        ])
+      ]),
     ])),
     expaned: true,
     children: <Widget>[
