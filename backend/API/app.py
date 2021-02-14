@@ -455,10 +455,14 @@ def sendMoreProps():
 def getTransactionProps():
     input_json = request.get_json(force=True)
     product_id = int(input_json['product_id'])
-    
+    transfer = input_json['product_id']
     val = conn.functions.getProduct(product_id).call()
     print(json.loads(val[1]))
-    return json.loads(val[1])['transfer']
+    if transfer == 'true':
+        print(json.loads(val[1]))
+        return json.loads(val[1])['transfer']
+    else:
+        return json.loads(val[1])
 
 @app.route('/reject', methods=['POST'])
 def reject():
@@ -490,6 +494,12 @@ def senderAccept():
             pendingTransactions[sender][product_id] = 4
             #TODO: Also add a thingy for actual transfer of product
 
+            product = conn.functions.getProduct(product_id).call()
+            new_props = json.loads(product[1])
+            if 'transfer' in new_props:
+                del new_props['transfer']
+            tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact()
+            tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
         else:
             return 'unable', 404
     else:
@@ -504,7 +514,7 @@ def rate():
     sender = input_json['owner']
 
     p = conn.functions.getParticipant(sender).call()
-    # print(p, p[4])
+    print(p, p[4])
     
     x = p[4].split('#')
     if len(x) < 2:

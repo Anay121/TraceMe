@@ -69,7 +69,7 @@ class _StatusReceiverState extends State<StatusReceiver> {
                       Column(
                         children: [
                           RatingBar(
-                            initialRating: 3,
+                            initialRating: 2.5,
                             direction: Axis.horizontal,
                             itemSize: 50,
                             allowHalfRating: true,

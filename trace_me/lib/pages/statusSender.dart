@@ -32,7 +32,7 @@ class StatusSenderState extends State<StatusSender> {
   Future<dynamic> getTransactionProps() {
     return http.post(
       Helper.url + '/getTransactionProps',
-      body: json.encode({'product_id': _productId}),
+      body: json.encode({'product_id': _productId, 'transfer': 'true'}),
     );
   }
 

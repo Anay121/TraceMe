@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 contract SupplyChain {
     uint256 pid = 0;
 
-    // SRUCTS
+    // STRUCTS
 
     // Participant Struct
     struct Participant {

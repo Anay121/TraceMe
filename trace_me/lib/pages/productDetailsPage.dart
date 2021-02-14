@@ -38,6 +38,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         }));
   }
 
+  Future<dynamic> getProps() {
+    return http.post(
+      Helper.url + '/getTransactionProps',
+      body: json.encode({'product_id': _prodId, 'transfer': 'true'}),
+    );
+  }
+
   Future<dynamic> deleteTransaction() {
     if (flag) {
       flag = !flag;
@@ -122,7 +129,54 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             child: TabBarView(
                               children: [
                                 Container(
-                                  child: Text('Tab details'),
+                                  child: FutureBuilder(
+                                    future: getProps(),
+                                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                      if (snapshot.hasData) {
+                                        Map map = Map();
+                                        map['KEY'] = 'VALUE';
+                                        map.addAll(json.decode(snapshot.data.body));
+                                        return SingleChildScrollView(
+                                          child: Table(
+                                            border: TableBorder(
+                                              horizontalInside: BorderSide(
+                                                  width: 1,
+                                                  color: Colors.blue,
+                                                  style: BorderStyle.solid),
+                                            ),
+                                            defaultVerticalAlignment:
+                                                TableCellVerticalAlignment.middle,
+                                            children: map.entries.map((entry) {
+                                              return TableRow(
+                                                children: [
+                                                  TableCell(
+                                                    child: Container(
+                                                        padding: EdgeInsets.all(10),
+                                                        child: Text(
+                                                          entry.key.toString(),
+                                                          textAlign: TextAlign.center,
+                                                          style: TextStyle(fontSize: 20),
+                                                        )),
+                                                  ),
+                                                  TableCell(
+                                                    child: Container(
+                                                      child: Text(
+                                                        entry.value.toString(),
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(fontSize: 20),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            }).toList(),
+                                          ),
+                                        );
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    },
+                                  ),
                                 ),
                                 Container(
                                   child: Text("QR for sharing"),
