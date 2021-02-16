@@ -351,6 +351,20 @@ def add_product():
 
     return jsonify({"product_id": child_id})
 
+#get participant details
+@app.route("/get_participant/<user_id>", methods=["GET"])
+def get_participant(user_id):
+    p = conn.functions.getParticipant(user_id).call()
+    return jsonify({"fullname":p[2],"role":p[3],"rating":p[4]})
+
+
+
+#get participant details
+@app.route("/get_transactions/<product_id>", methods=["GET"])
+def get_transactions(product_id):
+    trace = conn.functions.getTrace(int(product_id)).call()
+    print('trace', trace)
+    # return jsonify({"fullname":p[2],"role":p[3],"rating":p[4]})
 
 #get products owned
 @app.route("/get_products/<user_id>", methods=["GET"])

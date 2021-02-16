@@ -33,7 +33,7 @@ content-type: application/json
     "senderId": "c63c7f7fef43745b2b3f0f96c6e4703012959c145843ccf9d3bdadc6364306a0",
     "receiverId": "30c952fab122c3f9759f02a6d95c3758b246b4fee239957b2d4fee46e26170c4",
     "productId": "7",
-    "props":"good Condition",
+    "props":{"Location":"Mumbai","Temp":"-5"},
     "location": "Mumbai"
 }
 
@@ -106,13 +106,10 @@ GET http://127.0.0.1:5000/get_products/c63c7f7fef43745b2b3f0f96c6e4703012959c145
 
 GET http://127.0.0.1:5000/get_products/7d9071962a52f85673ec2654d4dd24f667d5e6f21591fa480b0ddc2920d98eb7 HTTP/1.1
 ###
-# GET http://127.0.0.1:5000/get_products HTTP/1.1
-# content-type: application/json
 
-# {
-#     "user_id": "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a"
-# }
+GET http://127.0.0.1:5000/get_transactions/8 HTTP/1.1
 ###
+
 POST http://127.0.0.1:5000/trace HTTP/2
 content-type: application/json
 
