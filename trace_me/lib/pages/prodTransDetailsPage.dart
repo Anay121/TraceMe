@@ -27,6 +27,10 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
     );
   }
 
+  Future<dynamic> getTransactions() {
+    return http.get(Helper.url + '/get_transactions/' + args[0].toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     TextStyle keyStyle = TextStyle(
@@ -97,6 +101,7 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                         map['KEY'] = 'VALUE';
                                         map.addAll(
                                             json.decode(snapshot.data.body));
+                                        print("MAPP TYPE  ${map.runtimeType}");
                                         return SingleChildScrollView(
                                             child: Column(children: [
                                           SizedBox(
@@ -157,7 +162,7 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                                           textAlign:
                                                               TextAlign.center,
                                                           style: TextStyle(
-                                                              fontSize: 20),
+                                                              fontSize: 15),
                                                         )),
                                                   ),
                                                   TableCell(
@@ -167,7 +172,7 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                                         textAlign:
                                                             TextAlign.center,
                                                         style: TextStyle(
-                                                            fontSize: 20),
+                                                            fontSize: 15),
                                                       ),
                                                     ),
                                                   ),
@@ -183,8 +188,116 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                   ),
                                 ),
                                 Container(
-                                  child: Text("Transaction details"),
-                                ),
+                                    child: FutureBuilder(
+                                        future: getTransactions(),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot snapshot) {
+                                          if (snapshot.hasData) {
+                                            var d =
+                                                json.decode(snapshot.data.body);
+                                            List<Map> data = List<Map>();
+                                            for (var i = 0; i < d.length; i++) {
+                                              Map map = Map();
+                                              map['KEY'] = 'VALUE';
+                                              print(d[i].runtimeType);
+                                              map.addAll((d[i]));
+                                              map["Sender"] = d[i]["Sender"][1];
+                                              map["Receiver"] =
+                                                  d[i]["Receiver"][1];
+                                              print("map i is : $map");
+                                              data.add(map);
+                                            }
+                                            print(data);
+                                            return SingleChildScrollView(
+                                                child: Column(children: [
+                                              for (var i = 0;
+                                                  i < data.length;
+                                                  i++)
+                                                Column(children: [
+                                                  SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              40),
+                                                  Text("Transaction ${(i + 1)}",
+                                                      style: TextStyle(
+                                                          color: Color.fromRGBO(
+                                                              255, 91, 53, 1),
+                                                          fontWeight:
+                                                              FontWeight.bold)),
+                                                  Table(
+                                                    border: TableBorder(
+                                                      horizontalInside:
+                                                          BorderSide(
+                                                              width: 1,
+                                                              color:
+                                                                  Color
+                                                                      .fromRGBO(
+                                                                          255,
+                                                                          91,
+                                                                          53,
+                                                                          1),
+                                                              style: BorderStyle
+                                                                  .solid),
+                                                    ),
+                                                    defaultVerticalAlignment:
+                                                        TableCellVerticalAlignment
+                                                            .middle,
+                                                    children: data[i]
+                                                        .entries
+                                                        .map((entry) {
+                                                      return TableRow(
+                                                        children: [
+                                                          TableCell(
+                                                            child: Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(
+                                                                            10),
+                                                                child: Text(
+                                                                  entry.key
+                                                                      .toString(),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15),
+                                                                )),
+                                                          ),
+                                                          TableCell(
+                                                            child: Container(
+                                                              child: Text(
+                                                                entry.value
+                                                                    .toString(),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        10),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }).toList(),
+                                                  ),
+                                                  Container(
+                                                    height: 3,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    color: Color(0xFFE98D39),
+                                                  )
+                                                ])
+                                            ]));
+                                          } else {
+                                            return CircularProgressIndicator();
+                                          }
+                                        })),
                               ],
                             ),
                           )

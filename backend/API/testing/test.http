@@ -17,9 +17,9 @@ POST http://127.0.0.1:5000/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "al",
-    "password": "pw",
-    "fullname": "fatema",
+    "username": "y",
+    "password": "m",
+    "fullname": "YM",
     "role": "Distributor"
 }
 
@@ -30,10 +30,10 @@ POST http://127.0.0.1:5000/transfer HTTP/2
 content-type: application/json
 
 {
-    "senderId": "c63c7f7fef43745b2b3f0f96c6e4703012959c145843ccf9d3bdadc6364306a0",
-    "receiverId": "30c952fab122c3f9759f02a6d95c3758b246b4fee239957b2d4fee46e26170c4",
-    "productId": "7",
-    "props":{"Location":"Mumbai","Temp":"-5"},
+    "senderId": "3a09a4084d463b8a0ccb7eca3b61ffa3701593a764d3f47ce3030305115a5194",
+    "receiverId": "4dde0ce25f6d8a57b63954aa0a1c208c4a14f467861d30c8bdeb8a5963a7691e",
+    "productId": "16",
+    "props":{"Amount":"50000","Temp":"-5"},
     "location": "Mumbai"
 }
 
@@ -92,8 +92,8 @@ POST http://127.0.0.1:5000/add_product HTTP/1.1
 content-type: application/json
 
 {
-    "product_name":"Prod 1",
-    "product_properties":{"quantity":2000},
+    "product_name":"Prod 273",
+    "product_properties":{"quantity":50},
     "user_id": "c63c7f7fef43745b2b3f0f96c6e4703012959c145843ccf9d3bdadc6364306a0",
     "parent_ids": [-1]
 }
@@ -107,13 +107,22 @@ GET http://127.0.0.1:5000/get_products/c63c7f7fef43745b2b3f0f96c6e4703012959c145
 GET http://127.0.0.1:5000/get_products/7d9071962a52f85673ec2654d4dd24f667d5e6f21591fa480b0ddc2920d98eb7 HTTP/1.1
 ###
 
-GET http://127.0.0.1:5000/get_transactions/8 HTTP/1.1
+GET http://127.0.0.1:5000/get_transactions/16 HTTP/1.1
 ###
 
 POST http://127.0.0.1:5000/trace HTTP/2
 content-type: application/json
 
 {
-    "product_id": "2",
-    "user_id": "c63c7f7fef43745b2b3f0f96c6e4703012959c145843ccf9d3bdadc6364306a0"
+    "product_id": "16",
+    "user_id": "4dde0ce25f6d8a57b63954aa0a1c208c4a14f467861d30c8bdeb8a5963a7691e"
+}
+
+###
+
+POST http://127.0.0.1:5000/getTransactionProps HTTP/2
+content-type: application/json
+
+{
+    "product_id": "16",
 }

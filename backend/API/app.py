@@ -252,7 +252,7 @@ def transfer_owner():
     receiver_id = input_json['receiverId']
     product_id = int(input_json['productId'])
     location = input_json['location']
-    props = input_json.get('props', '')
+    props = json.dumps(input_json.get('props', ''))
     # do the encoding
 
     # assume only one product is being transfered
@@ -364,7 +364,22 @@ def get_participant(user_id):
 def get_transactions(product_id):
     trace = conn.functions.getTrace(int(product_id)).call()
     print('trace', trace)
-    # return jsonify({"fullname":p[2],"role":p[3],"rating":p[4]})
+    t = []
+    for i in trace:
+        d = {}
+        d["Timestamp"] = i[0]
+        d["Location"] = i[1]
+        p = conn.functions.getParticipant(i[2]).call()
+        d["Sender"] = [i[2],p[2]+" - "+ p[3]]
+        p = conn.functions.getParticipant(i[3]).call()
+        d["Receiver"] = [i[3],p[2]+" - "+ p[3]]
+        props = json.loads(i[4])
+        print(props)
+        for k,v in props.items():
+            d[k] = v
+        t.append(d)
+    print(t)
+    return jsonify(t)
 
 #get products owned
 @app.route("/get_products/<user_id>", methods=["GET"])

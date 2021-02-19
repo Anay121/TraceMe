@@ -22,8 +22,8 @@ class AddNewProductPage extends StatefulWidget {
 class _AddNewProductState extends State<AddNewProductPage> {
   final pnameController = TextEditingController();
   final quantController = TextEditingController();
-  final key1Controller = TextEditingController();
-  final value1Controller = TextEditingController();
+  // final key1Controller = TextEditingController();
+  // final value1Controller = TextEditingController();
   List<DataRow> fields = List<DataRow>();
   bool _validateError = false;
 
