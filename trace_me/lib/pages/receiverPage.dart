@@ -24,24 +24,32 @@ class _ReceiverPageState extends State<ReceiverPage> {
     fields.add(DataRow(
       false,
       key: 'location',
+      readOnly: true,
     ));
   }
 
   Future<dynamic> makeJsonData() {
     Map object = Map();
+    int count = 0;
     for (int i = 0; i < fields.length; i++) {
       Map val = fields[i].getData();
+      if (val['key'].isEmpty || val['value'].isEmpty) {
+        count += 1;
+      }
       object[val['key']] = val['value'];
     }
     print(object);
-    return http.post(
-      Helper.url + '/sendMoreProps',
-      body: json.encode({
-        'product_id': _qrData['product_id'],
-        'enc_props': json.encode(object),
-        'owner': _qrData['sender']
-      }),
-    );
+    if (count == 0) {
+      return http.post(
+        Helper.url + '/sendMoreProps',
+        body: json.encode({
+          'product_id': _qrData['product_id'],
+          'enc_props': json.encode(object),
+          'owner': _qrData['sender'],
+        }),
+      );
+    }
+    return Future.delayed(Duration(seconds: 0), () => 'error');
   }
 
   Future<dynamic> rejection() {
@@ -154,13 +162,22 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                                 gravity: ToastGravity.BOTTOM,
                                               );
                                               makeJsonData().then((val) {
-                                                print(val.body);
-                                                Fluttertoast.showToast(
-                                                  msg:
-                                                      "Added Successfully! Wait for sender to confirm",
-                                                  toastLength: Toast.LENGTH_LONG,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                );
+                                                if (val == 'error') {
+                                                  Fluttertoast.showToast(
+                                                    msg: "There's some error!",
+                                                    toastLength: Toast.LENGTH_LONG,
+                                                    gravity: ToastGravity.BOTTOM,
+                                                  );
+                                                } else {
+                                                  print(val.body);
+                                                  Fluttertoast.showToast(
+                                                    msg:
+                                                        "Added Successfully! Wait for sender to confirm",
+                                                    toastLength: Toast.LENGTH_LONG,
+                                                    gravity: ToastGravity.BOTTOM,
+                                                  );
+                                                }
+
                                                 // maybe close page or something?
                                               });
                                             },
@@ -218,8 +235,9 @@ class DataRow extends StatelessWidget {
   final _key = TextEditingController();
   final _value = TextEditingController();
   final bool allowNull;
+  final bool readOnly;
 
-  DataRow(this.allowNull, {String key = ''}) {
+  DataRow(this.allowNull, {String key = '', this.readOnly = false}) {
     _key.text = key;
   }
 
@@ -229,11 +247,19 @@ class DataRow extends StatelessWidget {
     return {'key': key, 'value': value};
   }
 
+  String valid(String input) {
+    if (input.isNotEmpty) {
+      return null;
+    } else {
+      return 'Cannot be kept blank';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-      height: 50,
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+      height: 100,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,6 +269,7 @@ class DataRow extends StatelessWidget {
             // fit: FlexFit.loose,
             child: TextFormField(
               controller: _key,
+              readOnly: readOnly,
               decoration: InputDecoration(
                 hintText: 'Key',
                 border: OutlineInputBorder(
@@ -256,8 +283,10 @@ class DataRow extends StatelessWidget {
             // fit: FlexFit.loose,
             child: TextFormField(
               controller: _value,
+              readOnly: readOnly,
               decoration: InputDecoration(
                 hintText: 'Value',
+                errorText: valid(_value.text),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
