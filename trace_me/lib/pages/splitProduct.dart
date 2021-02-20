@@ -5,12 +5,17 @@ import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
 var args = List<int>();
+List<DataRow> fields = List<DataRow>();
+TextEditingController quantLeft = new TextEditingController();
 
 class SplitProductPage extends StatefulWidget {
   SplitProductPage(List<int> arg) {
     args = arg;
-    // print("here");
     print(args);
+
+    //2 complusory for split
+    fields.add(DataRow());
+    fields.add(DataRow());
   }
 
   @override
@@ -18,25 +23,20 @@ class SplitProductPage extends StatefulWidget {
 }
 
 class _SplitProductState extends State<SplitProductPage> {
-  final q1Controller = TextEditingController();
-  final q2Controller = TextEditingController();
   bool _validateError = false;
 
   Future<dynamic> splitProduct(List quants) async {
-    Future<dynamic> value;
-    // Session().getter('userid').then((val) {
-    //   return http.get(Helper.url + '/get_products/' + val);
-    // });
+    // List object = List();
+    // for (int i = 0; i < fields.length; i++) {
+    //   object.add(fields[i].getData());
+    // }
+    // print(object);
+
     String val = await Session().getter('userid');
     return http.post(Helper.url + '/split',
         body: json.encode(
             {"product_id": args[0], "quantities": quants, "user_id": val}));
   }
-  // Future<dynamic> splitProduct(int prodId, List quants, String userId) {
-  //   return http.post(Helper.url + '/split',
-  //       body: json.encode(
-  //           {"product_id": prodId, "quantities": quants, "user_id": userId}));
-  // }
 
   @override
   void initState() {
@@ -47,6 +47,17 @@ class _SplitProductState extends State<SplitProductPage> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
+    TextStyle keyStyle = TextStyle(
+        color: Color.fromRGBO(255, 91, 53, 1),
+        fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle =
+        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+    List object = List();
+    List<int> lint = List<int>();
+    int objSum;
+
+    quantLeft.text = args[1].toString();
+
     return Scaffold(
       body: Column(children: [
         ClipPath(
@@ -66,45 +77,44 @@ class _SplitProductState extends State<SplitProductPage> {
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width / 15),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      child: TextFormField(
-                          decoration: InputDecoration(labelText: 'QUANTITY'),
-                          controller: q1Controller),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.add),
-                      color: Colors.grey,
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.remove),
-                      color: Colors.grey,
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Flexible(
-                        child: TextFormField(
-                            decoration: InputDecoration(labelText: 'QUANTITY'),
-                            controller: q2Controller),
+                      SizedBox(height: MediaQuery.of(context).size.height / 40),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            new Text("TOTAL QUANTITY", style: keyStyle),
+                            new Text("${args[1]}", style: valueStyle)
+                          ]),
+                      SizedBox(height: MediaQuery.of(context).size.height / 40),
+                      // Row(
+                      // //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      // //     children: [
+                      // //       new Text("QUANTITY LEFT", style: keyStyle),
+                      // //       new TextField(
+                      // //           enabled: false, controller: quantLeft),
+                      // //     ]),
+                      // // SizedBox(height: MediaQuery.of(context).size.height / 40),
+                      Column(
+                        children: List.generate(
+                            fields.length, (int index) => fields[index]),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.add),
-                        color: Colors.grey,
-                        onPressed: () {},
+                      CircleAvatar(
+                        backgroundColor: Color.fromRGBO(255, 91, 53, 1),
+                        radius: 30,
+                        child: IconButton(
+                          icon: Icon(Icons.add),
+                          color: Colors.white,
+                          onPressed: () {
+                            setState(() {
+                              fields.insert(0, DataRow());
+                            });
+                          },
+                        ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.remove),
-                        color: Colors.grey,
-                        onPressed: () {},
-                      ),
-                    ]),
+                    ])
               ],
             ),
           ),
@@ -114,12 +124,16 @@ class _SplitProductState extends State<SplitProductPage> {
             alignment: Alignment.bottomCenter,
             child: RaisedButton(
               onPressed: () => {
-                if (int.parse(q1Controller.text) +
-                        int.parse(q2Controller.text) ==
-                    args[1])
+                for (int i = 0; i < fields.length; i++)
+                  {object.add(fields[i].getData())},
+                // print(object),
+                for (var i in object) {lint.add(int.parse(i))},
+                // print(lint),
+                objSum = lint.reduce((a, b) => a + b),
+                print(objSum),
+                if (objSum == args[1])
                   {
-                    splitProduct([q1Controller.text, q2Controller.text])
-                        .then((val) {
+                    splitProduct(object).then((val) {
                       // check validation
                       print(val.statusCode);
                       if (val.statusCode == '401') {
@@ -133,18 +147,10 @@ class _SplitProductState extends State<SplitProductPage> {
                       }
                     }),
                   }
-                else if (int.parse(q1Controller.text) +
-                        int.parse(q2Controller.text) <
-                    args[1])
+                else if (objSum < args[1])
                   {
-                    splitProduct([
-                      q1Controller.text,
-                      q2Controller.text,
-                      (args[1] -
-                              (int.parse(q1Controller.text) +
-                                  int.parse(q2Controller.text)))
-                          .toString()
-                    ]).then((val) {
+                    object.add((args[1] - objSum).toString()),
+                    splitProduct(object).then((val) {
                       // check validation
                       print(val.statusCode);
                       if (val.statusCode == '401') {
@@ -166,6 +172,68 @@ class _SplitProductState extends State<SplitProductPage> {
               child: Text("SPLIT PRODUCT"),
             ),
           ),
+        ),
+      ]),
+    );
+  }
+}
+
+class DataRow extends StatelessWidget {
+  var _value = TextEditingController();
+  DataRow() {
+    // _value.addListener(changeQuantityLeft());
+  }
+
+  String getData() {
+    String value = _value.text;
+    return value;
+  }
+
+  changeQuantityLeft() {
+    List obj = List();
+    List lint;
+    var sum;
+    for (int i = 0; i < fields.length; i++) {
+      obj.add(fields[i].getData());
+    }
+    // print(obj),
+    for (var i in obj) {
+      lint.add(int.parse(i));
+    }
+    // print(lint),
+    sum = lint.reduce((a, b) => a + b);
+
+    quantLeft.text = (args[1] - sum).toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      height: 50,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        Flexible(
+          child: TextFormField(
+            decoration: InputDecoration(labelText: 'QUANTITY'),
+            controller: _value,
+            onChanged: (text) {
+              changeQuantityLeft();
+            },
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.add),
+          color: Colors.grey,
+          onPressed: () {
+            _value.text = (int.parse(_value.text) + 1).toString();
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.remove),
+          color: Colors.grey,
+          onPressed: () {
+            _value.text = (int.parse(_value.text) - 1).toString();
+          },
         ),
       ]),
     );

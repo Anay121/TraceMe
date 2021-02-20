@@ -26,7 +26,8 @@ class MainHomePage extends StatelessWidget {
               children: [
                 Text(
                   'Welcome to TraceMe',
-                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width / 12),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 15),
                 RaisedButton(
@@ -83,7 +84,8 @@ class MainHomePage extends StatelessWidget {
                     ),
                     RaisedButton(
                       child: Text('sndr'),
-                      onPressed: () => {Navigator.pushNamed(context, 'ProductPage')},
+                      onPressed: () =>
+                          {Navigator.pushNamed(context, 'ProductPage')},
                     )
                   ],
                 )

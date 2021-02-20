@@ -83,12 +83,13 @@ class _TraceProductState extends State<TraceProductPage> {
 }
 
 addNodes(context, prodDict, parents, id) {
-  TextStyle defaultStyle = TextStyle(color: Colors.grey);
-  print("here ");
+  TextStyle defaultStyle = TextStyle(
+      color: Colors.grey, fontSize: MediaQuery.of(context).size.width / 25);
+  // print("here ");
   // print(prodDict[id]["trace"]);
-  if (prodDict[id]["trace"].length != 0)
-    for (var i in prodDict[id]["trace"])
-      print("${i[0][1]} - ${i[0][2]} TO ${i[1][1]} - ${i[1][2]}");
+  // if (prodDict[id]["trace"].length != 0)
+  //   for (var i in prodDict[id]["trace"])
+  //     print("${i[0][1]} - ${i[0][2]} TO ${i[1][1]} - ${i[1][2]}");
   return TreeNode(
     title: Card(
         child: Row(children: <Widget>[
@@ -96,6 +97,19 @@ addNodes(context, prodDict, parents, id) {
         GestureDetector(
             onTap: () => {
                   print("Call product details for $id"),
+                  Navigator.pushNamed(context, 'ProdTransDetailsPage',
+                      arguments: [
+                        int.parse(id),
+                        prodDict[id]["name"],
+                        [
+                          prodDict[id]["maker"][0],
+                          "${prodDict[id]["maker"][1]} - ${prodDict[id]["maker"][2]}"
+                        ],
+                        [
+                          prodDict[id]["owner"][0],
+                          "${prodDict[id]["owner"][1]} - ${prodDict[id]["owner"][2]}"
+                        ]
+                      ]),
                 },
             child: Column(children: [
               Text("ID $id : ${prodDict[id]["name"]}",
@@ -113,6 +127,7 @@ addNodes(context, prodDict, parents, id) {
           if (prodDict[id]["trace"].length != 0)
             for (var i in prodDict[id]["trace"])
               Column(children: [
+                SizedBox(height: MediaQuery.of(context).size.height / 75),
                 RichText(
                     text: TextSpan(style: defaultStyle, children: <TextSpan>[
                   TextSpan(text: "FROM "),
@@ -124,9 +139,12 @@ addNodes(context, prodDict, parents, id) {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           print('Go to sender page ${i[0][0]}');
+                          Navigator.pushNamed(context, 'UserInfoPage',
+                              arguments: i[0][0]);
                         }),
                   TextSpan(text: " - ${i[0][2]}")
                 ])),
+                SizedBox(height: MediaQuery.of(context).size.height / 200),
                 RichText(
                     text: TextSpan(style: defaultStyle, children: <TextSpan>[
                   TextSpan(text: "TO "),
@@ -138,9 +156,12 @@ addNodes(context, prodDict, parents, id) {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           print('Go to receiver page ${i[1][0]}');
+                          Navigator.pushNamed(context, 'UserInfoPage',
+                              arguments: i[1][0]);
                         }),
                   TextSpan(text: " - ${i[1][2]}")
                 ])),
+                SizedBox(height: MediaQuery.of(context).size.height / 75),
               ])
         ])
       ]),
