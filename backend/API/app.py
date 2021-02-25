@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import json
 import time
 import os
-
+from datetime import date
 from web3 import method
 from web3connection import Connection
 from treeStruct import makeTree
@@ -43,7 +43,17 @@ def trace():
     print("t",type(t))
     return jsonify({"t": t})
 
+@app.route("/getErrors/<product_id>", methods=["GET"])
+def getErrors(product_id):
+    errors = conn.functions.getErrors(int(product_id)).call()
+    print('errors',errors)
+    return jsonify({"errors":errors})
+
 def split_product(p_id, p_name, parent_array, children_array, user_id, quantities,enc_props):  # TODO user string
+    #get errors of parent to pass to children
+    errors = conn.functions.getErrors(int(p_id)).call()
+    print('errors',errors)
+    
     children = []
     print("split_products() called with quantities", quantities)
     for q in quantities:
@@ -57,6 +67,11 @@ def split_product(p_id, p_name, parent_array, children_array, user_id, quantitie
             print(event)
             # the id of the child newly produced, already added to products owned.
             children.append(event['args']['_child'])
+            #add error if any of parent to children
+            for e in errors:
+                tx_hash = conn.functions.setError(event['args']['_child'], e).transact()
+                tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
         # check and change ownership
     # remove from parent
     tx_hash = conn.functions.removeFromOwner(str(user_id), p_id).transact()
@@ -333,6 +348,7 @@ def add_product():
     # parent_id and children_id are populated by calling split (?) at the front ent
     parent_id = input_json["parent_ids"]
     print("HERE",parent_id,type(parent_id))
+
     children_id = []
 
     # transacting the data to the blockchain using the addProduct function defined in the smart contract
@@ -349,6 +365,33 @@ def add_product():
         child_id = event['args']['_child']
         print("id of the newly added child:", child_id)
 
+    #check for type of SCM of parent here (for sugarcane) and if it exists calculate cruch-harvest = 2
+    #also add parent product erros to child
+    if parent_id[0]!=-1:
+        for pid in parent_id:
+            p = conn.functions.getProduct(pid).call()
+            errors = conn.functions.getErrors(int(pid)).call()
+            # print('errors',errors)
+
+            for k, v in json.loads(p[1]).items():
+                if(k == "type" and v == "sugarcane_scm"):
+                    # print("here!")
+                    crush_date = json.loads(product_properties)["Crush date"]
+                    # print(crush_date)
+                    crush = date(int(crush_date[6:]),int(crush_date[3:5]),int(crush_date[0:2]))
+                    # print(crush)
+                    harvest_date = json.loads(p[1])["Harvest date"] 
+                    # print(harvest_date)
+                    harvest = date(int(harvest_date[6:]),int(harvest_date[3:5]),int(harvest_date[0:2]))
+                    # print(harvest)
+                    if (crush-harvest).days>2:
+                        tx_hash = conn.functions.setError(child_id, "Sugarcane exceeded crushing date! ID:"+str(pid)).transact()
+                        tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+            
+            for e in errors:
+                tx_hash = conn.functions.setError(child_id, e).transact()
+                tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
     return jsonify({"product_id": child_id})
 
 #get participant details
@@ -356,7 +399,6 @@ def add_product():
 def get_participant(user_id):
     p = conn.functions.getParticipant(user_id).call()
     return jsonify({"fullname":p[2],"role":p[3],"rating":p[4]})
-
 
 
 #get participant details

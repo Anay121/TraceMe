@@ -34,6 +34,10 @@ class _AddNewProductState extends State<AddNewProductPage> {
       Map val = fields[i].getData();
       object[val['key']] = val['value'];
     }
+    //add type of scm "sugarcane_scm" if SCM starts with sugarcane crop
+    if (productName.toLowerCase().contains("sugarcane") && args[0] == -1) {
+      object["type"] = "sugarcane_scm";
+    }
     print(object);
     String val = await Session().getter('userid');
     return http.post(Helper.url + '/add_product',
@@ -118,23 +122,6 @@ class _AddNewProductState extends State<AddNewProductPage> {
                       },
                     ),
                   ),
-                  // Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //     children: [
-                  //       Flexible(
-                  //         child: TextFormField(
-                  //             decoration: InputDecoration(labelText: 'KEY'),
-                  //             controller: key1Controller),
-                  //       ),
-                  //       SizedBox(
-                  //         width: 20.0,
-                  //       ),
-                  //       Flexible(
-                  //         child: TextFormField(
-                  //             decoration: InputDecoration(labelText: 'VALUE'),
-                  //             controller: value1Controller),
-                  //       ),
-                  //     ]),
                 ],
               )
             ],
@@ -147,6 +134,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
               onPressed: () => {
                 // print("here"),
                 // print(pnameController.text),
+
                 addProduct(pnameController.text).then((val) {
                   // check validation
                   print(val.statusCode);
@@ -166,15 +154,6 @@ class _AddNewProductState extends State<AddNewProductPage> {
           ),
         ),
       ]),
-
-      // bottomNavigationBar: BottomNavigationBar(
-      //     currentIndex: 0, // this will be set when a new tab is tapped
-      //     items: [
-      //       BottomNavigationBarItem(
-      //         icon: new Icon(Icons.add),
-      //         label: 'Add Product',
-      //       ),
-      //     ]),
     );
   }
 }
