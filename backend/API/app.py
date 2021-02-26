@@ -221,6 +221,15 @@ def transfer_owner():
 
     transf_props = json.loads(new_props['transfer'])
     location = transf_props['location']
+    p = conn.functions.getProduct(product_id).call()
+    if p[0].lower().find("juice"):
+        if "temperature" in transf_props:
+            if int(transf_props["temperature"])>-5:
+                sender_details = conn.functions.getParticipant(i[2]).call()
+                receiver_details = conn.functions.getParticipant(i[3]).call()
+                tx_hash = conn.functions.setError(product_id,"Temperature of "+str(product_id)+" is not maintained during transfer from "+str(sender_details[2])+" to "+str(receiver_details[2])).transact()
+                tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
     
     if 'transfer' in new_props:
         del new_props['transfer']
