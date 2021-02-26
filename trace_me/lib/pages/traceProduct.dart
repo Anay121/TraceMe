@@ -32,6 +32,10 @@ class _TraceProductState extends State<TraceProductPage> {
         body: json.encode({"product_id": args, "user_id": val}));
   }
 
+  Future<dynamic> getErrors() async {
+    return http.get(Helper.url + '/getErrors/' + args);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -59,6 +63,27 @@ class _TraceProductState extends State<TraceProductPage> {
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.width / 15),
                 ),
+                FutureBuilder(
+                    future: getErrors(), //of userid 1
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        var data = json.decode(snapshot.data.body);
+                        if (data != []) {
+                          return Column(children: [
+                            for (var i in data["errors"])
+                              Text(
+                                'Error: $i',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width / 25,
+                                    color: Colors.red),
+                              )
+                          ]);
+                        }
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    }),
                 FutureBuilder(
                     future: getTrace(), //of userid 1
                     builder: (context, snapshot) {

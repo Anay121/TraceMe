@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 contract SupplyChain {
     uint256 pid = 0;
 
-    // STRUCTS
+    // SRUCTS
 
     // Participant Struct
     struct Participant {
@@ -47,6 +47,8 @@ contract SupplyChain {
     mapping(string => uint256[]) productsOwned; // ParticipantId -> current products
 
     mapping(uint256 => Trace[]) productTrace; // productId -> Trace array
+    
+    mapping(uint256 => string[]) productError; // productId -> Error array
 
     mapping(uint256 => Product) products; // productId -> Product Object
 
@@ -72,6 +74,9 @@ contract SupplyChain {
     
 
     // VIEW FUNCTIONS
+    function getErrors(uint _pid) public view returns(string[] memory) {
+        return productError[_pid];
+    }
 
     function getProductsOwned(string memory _id)
         public
@@ -172,6 +177,10 @@ contract SupplyChain {
 
         emit childAdded(pid);
         return pid;
+    }
+    
+    function setError(uint _productId, string memory _errors) public {
+        productError[_productId].push(_errors);
     }
 
     function setEncProps(uint _productId, string memory _encProductProps) public {

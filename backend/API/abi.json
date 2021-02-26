@@ -1,56 +1,5 @@
 [
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "_child",
-				"type": "uint256"
-			}
-		],
-		"name": "childAdded",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_senderId",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_receiverId",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_productId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_location",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_time",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_encProps",
-				"type": "string"
-			}
-		],
-		"name": "TransferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "string",
@@ -147,6 +96,147 @@
 		"type": "function"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "_child",
+				"type": "uint256"
+			}
+		],
+		"name": "childAdded",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "_childrenIds",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "string",
+				"name": "_ownerId",
+				"type": "string"
+			}
+		],
+		"name": "deleteProducts",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_ownerId",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_productId",
+				"type": "uint256"
+			}
+		],
+		"name": "removeFromOwner",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_productId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_encProductProps",
+				"type": "string"
+			}
+		],
+		"name": "setEncProps",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_productId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_errors",
+				"type": "string"
+			}
+		],
+		"name": "setError",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_username",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_newRating",
+				"type": "string"
+			}
+		],
+		"name": "setRating",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_senderId",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_receiverId",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_productId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_location",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_time",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_encProps",
+				"type": "string"
+			}
+		],
+		"name": "TransferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "string",
@@ -173,19 +263,20 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256[]",
-				"name": "_childrenIds",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "string",
-				"name": "_ownerId",
-				"type": "string"
+				"internalType": "uint256",
+				"name": "_pid",
+				"type": "uint256"
 			}
 		],
-		"name": "deleteProducts",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "getErrors",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -391,60 +482,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_ownerId",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_productId",
-				"type": "uint256"
-			}
-		],
-		"name": "removeFromOwner",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_productId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_encProductProps",
-				"type": "string"
-			}
-		],
-		"name": "setEncProps",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_username",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_newRating",
-				"type": "string"
-			}
-		],
-		"name": "setRating",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
