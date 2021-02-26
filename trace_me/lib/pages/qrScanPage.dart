@@ -6,11 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:trace_me/helper.dart';
 
-// class QrScanPage extends StatefulWidget {
-//   @override
-//   _QrScanPageState createState() => _QrScanPageState();
-// }
-
 class QrScanPage extends StatelessWidget {
   Future<dynamic> doScan() async {
     await Permission.camera.request();
@@ -39,18 +34,28 @@ class QrScanPage extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     Map val = json.decode(snapshot.data);
-                    getStatus(val['sender'], val['product_id']).then((returnValue) {
-                      // if status is 1, go to receiver page otherwise redirect to status page
-                      print(returnValue);
-                      if (json.decode(returnValue.body)['status'] == 1) {
-                        Navigator.popAndPushNamed(context, 'ReceiverPage',
-                            arguments: snapshot.data);
-                      } else {
-                        val['status'] = json.decode(returnValue.body)['status'];
-                        Navigator.popAndPushNamed(context, 'StatusReceiverPage',
-                            arguments: json.encode(val));
-                      }
-                    });
+                    if (val['type'] == 'transfer') {
+                      getStatus(val['sender'], val['product_id']).then((returnValue) {
+                        // if status is 1, go to receiver page otherwise redirect to status page
+                        print(returnValue);
+                        if (json.decode(returnValue.body)['status'] == 1) {
+                          Navigator.popAndPushNamed(context, 'ReceiverPage',
+                              arguments: snapshot.data);
+                        } else {
+                          val['status'] = json.decode(returnValue.body)['status'];
+                          Navigator.popAndPushNamed(context, 'StatusReceiverPage',
+                              arguments: json.encode(val));
+                        }
+                      });
+                    } else {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        Navigator.popAndPushNamed(
+                          context,
+                          'TraceProductPage',
+                          arguments: int.parse(val['product_id']),
+                        );
+                      });
+                    }
                     return Text('Just a Moment...');
                   } else {
                     return CircularProgressIndicator();

@@ -94,7 +94,7 @@ class _LoginState extends State<LoginPage> {
                         print(data);
                         print(data['userid']);
                         Session().setter(data);
-                        Navigator.pushNamed(context, 'DisplayProductsPage');
+                        Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                       }
                     })
                   },

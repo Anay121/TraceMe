@@ -1,7 +1,7 @@
 import 'package:flutter_session/flutter_session.dart';
 
 class Helper {
-  static final String url = 'http://b32f59d76201.ngrok.io';
+  static final String url = 'https://13fa44a7a033.ngrok.io';
 }
 
 class Session {

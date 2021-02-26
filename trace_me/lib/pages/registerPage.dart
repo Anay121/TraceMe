@@ -140,7 +140,7 @@ class _RegisterState extends State<RegisterPage> {
                                       .then((val) {
                                     // check validation
                                     print(val.statusCode);
-                                    if (val.statusCode != '200') {
+                                    if (val.statusCode != 200) {
                                       print('something went wrong');
                                     }
                                     // redirect with params
@@ -149,7 +149,7 @@ class _RegisterState extends State<RegisterPage> {
                                       // print(data);
                                       print(data['userid']);
                                       Session().setter(data);
-                                      Navigator.pushNamed(context, 'DisplayProductsPage');
+                                      Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                                     }
 
                                     print(val.body);

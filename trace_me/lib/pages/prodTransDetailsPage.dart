@@ -34,10 +34,8 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
   @override
   Widget build(BuildContext context) {
     TextStyle keyStyle = TextStyle(
-        color: Color.fromRGBO(255, 91, 53, 1),
-        fontSize: MediaQuery.of(context).size.width / 23);
-    TextStyle valueStyle =
-        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+        color: Color.fromRGBO(255, 91, 53, 1), fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle = TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     return Scaffold(
       body: Center(
         child: Container(
@@ -49,8 +47,7 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
               children: [
                 Text(
                   "Product Information",
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 12),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
                 ),
                 Container(
                   alignment: Alignment.center,
@@ -94,85 +91,56 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                 Container(
                                   child: FutureBuilder(
                                     future: getProps(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot snapshot) {
+                                    builder: (BuildContext context, AsyncSnapshot snapshot) {
                                       if (snapshot.hasData) {
                                         Map map = Map();
                                         map['KEY'] = 'VALUE';
-                                        map.addAll(
-                                            json.decode(snapshot.data.body));
+                                        map.addAll(json.decode(snapshot.data.body));
                                         print("MAPP TYPE  ${map.runtimeType}");
                                         return SingleChildScrollView(
                                             child: Column(children: [
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  40),
+                                          SizedBox(height: MediaQuery.of(context).size.height / 40),
                                           Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                new Text("MANUFACTURER",
-                                                    style: keyStyle),
-                                                new Text("${args[2][1]}",
-                                                    style: valueStyle)
+                                                new Text("MANUFACTURER", style: keyStyle),
+                                                new Text("${args[2][1]}", style: valueStyle)
                                               ]),
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  40),
+                                          SizedBox(height: MediaQuery.of(context).size.height / 40),
                                           Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                new Text("OWNER",
-                                                    style: keyStyle),
-                                                new Text("${args[3][1]}",
-                                                    style: valueStyle)
+                                                new Text("OWNER", style: keyStyle),
+                                                new Text("${args[3][1]}", style: valueStyle)
                                               ]),
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  40),
+                                          SizedBox(height: MediaQuery.of(context).size.height / 40),
                                           Table(
                                             border: TableBorder(
                                               horizontalInside: BorderSide(
                                                   width: 1,
-                                                  color: Color.fromRGBO(
-                                                      255, 91, 53, 1),
+                                                  color: Color.fromRGBO(255, 91, 53, 1),
                                                   style: BorderStyle.solid),
                                             ),
                                             defaultVerticalAlignment:
-                                                TableCellVerticalAlignment
-                                                    .middle,
+                                                TableCellVerticalAlignment.middle,
                                             children: map.entries.map((entry) {
                                               return TableRow(
                                                 children: [
                                                   TableCell(
                                                     child: Container(
-                                                        padding:
-                                                            EdgeInsets.all(10),
+                                                        padding: EdgeInsets.all(10),
                                                         child: Text(
                                                           entry.key.toString(),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                              fontSize: 15),
+                                                          textAlign: TextAlign.center,
+                                                          style: TextStyle(fontSize: 15),
                                                         )),
                                                   ),
                                                   TableCell(
                                                     child: Container(
                                                       child: Text(
                                                         entry.value.toString(),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                            fontSize: 15),
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(fontSize: 15),
                                                       ),
                                                     ),
                                                   ),
@@ -190,11 +158,9 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                 Container(
                                     child: FutureBuilder(
                                         future: getTransactions(),
-                                        builder: (BuildContext context,
-                                            AsyncSnapshot snapshot) {
+                                        builder: (BuildContext context, AsyncSnapshot snapshot) {
                                           if (snapshot.hasData) {
-                                            var d =
-                                                json.decode(snapshot.data.body);
+                                            var d = json.decode(snapshot.data.body);
                                             List<Map> data = List<Map>();
                                             for (var i = 0; i < d.length; i++) {
                                               Map map = Map();
@@ -202,81 +168,49 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                               print(d[i].runtimeType);
                                               map.addAll((d[i]));
                                               map["Sender"] = d[i]["Sender"][1];
-                                              map["Receiver"] =
-                                                  d[i]["Receiver"][1];
+                                              map["Receiver"] = d[i]["Receiver"][1];
                                               print("map i is : $map");
                                               data.add(map);
                                             }
                                             print(data);
                                             return SingleChildScrollView(
                                                 child: Column(children: [
-                                              for (var i = 0;
-                                                  i < data.length;
-                                                  i++)
+                                              for (var i = 0; i < data.length; i++)
                                                 Column(children: [
                                                   SizedBox(
                                                       height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height /
-                                                              40),
+                                                          MediaQuery.of(context).size.height / 40),
                                                   Text("Transaction ${(i + 1)}",
                                                       style: TextStyle(
-                                                          color: Color.fromRGBO(
-                                                              255, 91, 53, 1),
-                                                          fontWeight:
-                                                              FontWeight.bold)),
+                                                          color: Color.fromRGBO(255, 91, 53, 1),
+                                                          fontWeight: FontWeight.bold)),
                                                   Table(
                                                     border: TableBorder(
-                                                      horizontalInside:
-                                                          BorderSide(
-                                                              width: 1,
-                                                              color:
-                                                                  Color
-                                                                      .fromRGBO(
-                                                                          255,
-                                                                          91,
-                                                                          53,
-                                                                          1),
-                                                              style: BorderStyle
-                                                                  .solid),
+                                                      horizontalInside: BorderSide(
+                                                          width: 1,
+                                                          color: Color.fromRGBO(255, 91, 53, 1),
+                                                          style: BorderStyle.solid),
                                                     ),
                                                     defaultVerticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .middle,
-                                                    children: data[i]
-                                                        .entries
-                                                        .map((entry) {
+                                                        TableCellVerticalAlignment.middle,
+                                                    children: data[i].entries.map((entry) {
                                                       return TableRow(
                                                         children: [
                                                           TableCell(
                                                             child: Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            10),
+                                                                padding: EdgeInsets.all(10),
                                                                 child: Text(
-                                                                  entry.key
-                                                                      .toString(),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          15),
+                                                                  entry.key.toString(),
+                                                                  textAlign: TextAlign.center,
+                                                                  style: TextStyle(fontSize: 15),
                                                                 )),
                                                           ),
                                                           TableCell(
                                                             child: Container(
                                                               child: Text(
-                                                                entry.value
-                                                                    .toString(),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        10),
+                                                                entry.value.toString(),
+                                                                textAlign: TextAlign.center,
+                                                                style: TextStyle(fontSize: 10),
                                                               ),
                                                             ),
                                                           ),
@@ -286,10 +220,7 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                                   ),
                                                   Container(
                                                     height: 3,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
+                                                    width: MediaQuery.of(context).size.width,
                                                     color: Color(0xFFE98D39),
                                                   )
                                                 ])

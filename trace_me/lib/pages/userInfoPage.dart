@@ -31,10 +31,8 @@ class _UserInfoState extends State<UserInfoPage> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
     TextStyle keyStyle = TextStyle(
-        color: Color.fromRGBO(255, 91, 53, 1),
-        fontSize: MediaQuery.of(context).size.width / 23);
-    TextStyle valueStyle =
-        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+        color: Color.fromRGBO(255, 91, 53, 1), fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle = TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     return Scaffold(
       body: Column(children: [
         ClipPath(
@@ -53,8 +51,7 @@ class _UserInfoState extends State<UserInfoPage> {
               children: [
                 Text(
                   'STAKEHOLDER INFORMATION',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 15),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 20),
                 FutureBuilder(
@@ -63,45 +60,39 @@ class _UserInfoState extends State<UserInfoPage> {
                       if (snapshot.hasData) {
                         Map data = json.decode(snapshot.data.body);
                         print(data);
-                        return new Column(children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                new Text("FULL NAME", style: keyStyle),
-                                new Text("${data["fullname"]}",
-                                    style: valueStyle)
-                              ]),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height / 40),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                new Text("ROLE", style: keyStyle),
-                                new Text("${data["role"]}", style: valueStyle)
-                              ]),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height / 40),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                new Text("RATING", style: keyStyle),
-                                // new Text("${data["rating"]}", style: valueStyle)
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(5, (index) {
-                                    return Icon(
-                                      index <
-                                              int.parse(data["rating"]
-                                                  .substring(data["rating"]
-                                                          .indexOf('#') +
-                                                      1))
-                                          ? Icon(Icons.star,
-                                              color: Colors.yellow)
-                                          : Icons.star_border,
-                                    );
-                                  }),
-                                )
-                              ]),
+                        return Column(children: [
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Text("FULL NAME", style: keyStyle),
+                            Text("${data["fullname"]}", style: valueStyle)
+                          ]),
+                          SizedBox(height: MediaQuery.of(context).size.height / 40),
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Text("ROLE", style: keyStyle),
+                            Text("${data["role"]}", style: valueStyle)
+                          ]),
+                          SizedBox(height: MediaQuery.of(context).size.height / 40),
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Text("RATING", style: keyStyle),
+                            // new Text("${data["rating"]}", style: valueStyle)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(5, (index) {
+                                print(double.parse(
+                                    data["rating"].substring(0, data["rating"].indexOf('#'))));
+                                return index <
+                                        double.parse(data["rating"]
+                                            .substring(0, data["rating"].indexOf('#')))
+                                    ? Icon(Icons.star, color: Colors.yellow[700])
+                                    : Icon(Icons.star_border);
+                              }),
+                            ),
+                          ]),
+                          SizedBox(height: MediaQuery.of(context).size.height / 40),
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Text("RATED BY", style: keyStyle),
+                            Text(data["rating"].substring(data["rating"].indexOf('#') + 1),
+                                style: keyStyle)
+                          ]),
                         ]);
 
                         // print("here");

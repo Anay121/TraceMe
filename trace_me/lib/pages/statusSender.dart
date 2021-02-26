@@ -147,6 +147,8 @@ class StatusSenderState extends State<StatusSender> {
                                   toastLength: Toast.LENGTH_LONG,
                                   gravity: ToastGravity.BOTTOM,
                                 );
+
+                                Navigator.pop(context);
                               });
                             },
                             child: Text(
@@ -166,6 +168,7 @@ class StatusSenderState extends State<StatusSender> {
                                   toastLength: Toast.LENGTH_LONG,
                                   gravity: ToastGravity.BOTTOM,
                                 );
+                                Navigator.pop(context);
                               });
                             },
                             child: Text(
@@ -194,6 +197,7 @@ class StatusSenderState extends State<StatusSender> {
                           deleteTransaction().then((val) {
                             // TODO
                             // redirect to display page
+                            Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                           });
                         },
                         child: Text(

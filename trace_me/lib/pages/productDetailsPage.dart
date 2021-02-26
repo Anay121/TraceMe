@@ -9,26 +9,28 @@ import 'package:fluttertoast/fluttertoast.dart';
 int args;
 
 class ProductDetailsPage extends StatefulWidget {
-  ProductDetailsPage(int arg) {
-    args = arg;
-    print(args);
-    // String values = json.decode(args);
-  }
+  final String args;
+  ProductDetailsPage(this.args);
 
   @override
-  _ProductDetailsPageState createState() => _ProductDetailsPageState();
+  _ProductDetailsPageState createState() => _ProductDetailsPageState(args);
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  String _prodName = "Juice";
-
-  String _quantity = "1000";
-
-  String _prodId = "1";
-
-  String _owner = "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a";
+  String _prodName;
+  String _quantity;
+  String _prodId;
+  String _owner;
   bool _doGenerateQR = false;
   bool flag = true;
+
+  _ProductDetailsPageState(String args) {
+    Map values = json.decode(args);
+    _prodName = values['product_name'];
+    _quantity = values['qty'];
+    _prodId = values['product_id'];
+    _owner = values['owner'];
+  }
 
   Future<dynamic> addTransaction() {
     return http.post(Helper.url + '/makeTransaction',
@@ -41,7 +43,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Future<dynamic> getProps() {
     return http.post(
       Helper.url + '/getTransactionProps',
-      body: json.encode({'product_id': _prodId, 'transfer': 'true'}),
+      body: json.encode({'product_id': _prodId, 'transfer': 'false'}),
     );
   }
 
@@ -136,6 +138,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         Map map = Map();
                                         map['KEY'] = 'VALUE';
                                         map.addAll(json.decode(snapshot.data.body));
+                                        print(map);
                                         return SingleChildScrollView(
                                           child: Table(
                                             border: TableBorder(
@@ -146,7 +149,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             ),
                                             defaultVerticalAlignment:
                                                 TableCellVerticalAlignment.middle,
-                                            children: map.entries.map((entry) {
+                                            children: Map.fromEntries(map.entries.expand((e) => [
+                                                  if (e.key != 'transfer') MapEntry(e.key, e.value)
+                                                ])).entries.map((entry) {
+                                              // if (entry.key != 'transfer') {
                                               return TableRow(
                                                 children: [
                                                   TableCell(
@@ -169,6 +175,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                   ),
                                                 ],
                                               );
+                                              // }
                                             }).toList(),
                                           ),
                                         );
@@ -179,7 +186,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   ),
                                 ),
                                 Container(
-                                  child: Text("QR for sharing"),
+                                  child: QrImage(
+                                    data: json.encode({
+                                      "type": "display",
+                                      "product_id": _prodId,
+                                    }),
+                                    version: QrVersions.auto,
+                                    size: MediaQuery.of(context).size.width / 2.5,
+                                  ),
                                 ),
                                 _doGenerateQR
                                     ? FutureBuilder(
@@ -192,6 +206,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                 children: [
                                                   QrImage(
                                                     data: json.encode({
+                                                      "type": "transfer",
                                                       "product": _prodName,
                                                       "quantity": _quantity,
                                                       "sender": _owner,
@@ -297,7 +312,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     alignment: Alignment.bottomCenter,
                     child: RaisedButton(
                       onPressed: () => {
-                        Navigator.pushNamed(context, 'TraceProductPage', arguments: args),
+                        Navigator.pushNamed(context, 'TraceProductPage',
+                            arguments: int.parse(_prodId)),
                       },
                       child: Text("DISPLAY TRACE"),
                     ),

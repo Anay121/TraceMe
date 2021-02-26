@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
@@ -25,6 +26,18 @@ class _StatusReceiverState extends State<StatusReceiver> {
     _owner = val['sender'];
     _statusCode = val['status'];
     _productId = val['product_id'];
+    _rating = 3.5;
+    if (_statusCode == 4) {
+      transact();
+    }
+  }
+
+  void transact() async {
+    String receiver = await Session().getter('userid');
+    http.post(
+      Helper.url + '/transfer',
+      body: json.encode({'senderId': _owner, 'productId': _productId, 'receiverId': receiver}),
+    );
   }
 
   Future<dynamic> deleteTransaction() {
@@ -99,8 +112,17 @@ class _StatusReceiverState extends State<StatusReceiver> {
                             child: RaisedButton(
                               onPressed: () {
                                 rate().then((val) {
-                                  print('kay done');
+                                  Fluttertoast.showToast(
+                                    msg:
+                                        "Rating Submitted. Redirecting you back to the products page.",
+                                    toastLength: Toast.LENGTH_LONG,
+                                    gravity: ToastGravity.BOTTOM,
+                                  );
                                 });
+                                Future.delayed(Duration(seconds: 2), () => 1).then(
+                                  (_) => Navigator.pushReplacementNamed(
+                                      context, 'DisplayProductsPage'),
+                                );
                               },
                               child: Text(
                                 "Submit Rating",

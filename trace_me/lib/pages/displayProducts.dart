@@ -5,13 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
 
 String alertBoxMsg = "";
-var productList = List<Widget>();
-var productsSelected = List<int>();
-var parentsOfProductsSelected = Map();
-Map productsSelectedQuantities = Map();
-Map parentsToChildren = Map();
-var splitArgs = List<int>();
-bool checked = false;
 
 class DisplayProductsPage extends StatefulWidget {
   @override
@@ -19,31 +12,104 @@ class DisplayProductsPage extends StatefulWidget {
 }
 
 class _DisplayProductsState extends State<DisplayProductsPage> {
+  var productList = List<Widget>();
+  var productsSelected = List<int>();
+  var parentsOfProductsSelected = Map();
+  Map productsSelectedQuantities = Map();
+  Map parentsToChildren = Map();
+  var splitArgs = List<int>();
+  bool checked = false;
+
   Future<dynamic> getProducts() async {
-    // Session().getter('userid').then((val) {
-    //   return http.get(Helper.url + '/get_products/' + val);
-    // });
     String val = await Session().getter('userid');
     return http.get(Helper.url + '/get_products/' + val);
-    // print(value);
-    // return value;
   }
 
   Future<dynamic> mergeProducts(List childrenIds) async {
-    // Session().getter('userid').then((val) {
-    //   return http.get(Helper.url + '/get_products/' + val);
-    // });
     String val = await Session().getter('userid');
     return http.post(Helper.url + '/merge',
         body: json.encode({"childrenIds": childrenIds, "ownerId": val}));
-    // print(value);
-    // return value;
   }
 
   @override
   void initState() {
-    //
     super.initState();
+  }
+
+  addInProductList(BuildContext context, int id, String name, String quant, String parentsArray) {
+    productList.add(Card(
+      child: Row(
+        children: <Widget>[
+          StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+            return Checkbox(
+                value: checked,
+                activeColor: Colors.green,
+                onChanged: (bool newValue) {
+                  setState(() {
+                    checked = newValue;
+                    if (checked) {
+                      productsSelected.add(id);
+                      productsSelectedQuantities[id] = int.parse(quant);
+                      if (parentsOfProductsSelected.containsKey(json.encode(parentsArray))) {
+                        parentsOfProductsSelected[json.encode(parentsArray)] += 1;
+                      } else {
+                        parentsOfProductsSelected[json.encode(parentsArray)] = 1;
+                      }
+                    } else {
+                      productsSelected.remove(id);
+                      productsSelectedQuantities.remove(quant);
+                      if (parentsOfProductsSelected[json.encode(parentsArray)] == 1) {
+                        parentsOfProductsSelected.remove(json.encode(parentsArray));
+                      } else {
+                        parentsOfProductsSelected[json.encode(parentsArray)] -= 1;
+                      }
+                    }
+                    print(productsSelected);
+                    print(productsSelectedQuantities);
+                    print(parentsOfProductsSelected);
+                  });
+                });
+          }),
+          GestureDetector(
+            onTap: () async {
+              print("tapping");
+              String owner = await Session().getter('userid');
+              Navigator.pushNamed(
+                context,
+                "ProductPage",
+                arguments: json.encode({
+                  'product_id': id.toString(),
+                  'product_name': name,
+                  'qty': quant,
+                  'owner': owner,
+                }),
+              );
+            },
+            child: Row(
+              children: [
+                Container(
+                  height: 50,
+                  width: 5,
+                  color: Color(0xFFE98D39),
+                ),
+                Container(
+                  child: Column(children: [
+                    Container(
+                        // width: MediaQuery.of(context).size.width * 0.6,
+                        margin: EdgeInsets.all(10),
+                        child: Text(name)),
+                    Container(
+                        // width: MediaQuery.of(context).size.width * 0.6,
+                        margin: EdgeInsets.all(10),
+                        child: Text("QTY - $quant"))
+                  ]),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ));
   }
 
   @override
@@ -67,8 +133,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
               children: [
                 Text(
                   'Your Products',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 15),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -78,8 +143,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         onPressed: () => {
                           if (productsSelected.isEmpty)
                             {
-                              Navigator.pushNamed(context, 'AddNewProductPage',
-                                  arguments: [-1])
+                              Navigator.pushNamed(context, 'AddNewProductPage', arguments: [-1])
                             }
                           else
                             {
@@ -104,21 +168,14 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 productsSelected[0],
                                 productsSelectedQuantities[productsSelected[0]]
                               ],
-                              Navigator.pushNamed(context, 'SplitProductPage',
-                                  arguments: splitArgs)
+                              Navigator.pushNamed(context, 'SplitProductPage', arguments: splitArgs)
                             }
                           else
                             {
                               if (productsSelected.isEmpty)
-                                {
-                                  alertBoxMsg =
-                                      "Please select the product you want to split."
-                                }
+                                {alertBoxMsg = "Please select the product you want to split."}
                               else
-                                {
-                                  alertBoxMsg =
-                                      "Please select only one product."
-                                },
+                                {alertBoxMsg = "Please select only one product."},
                               showAlertDialog(context)
                             }
                         },
@@ -146,8 +203,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 }
                                 // redirect with params
                                 else {
-                                  Navigator.pushNamed(
-                                      context, 'DisplayProductsPage');
+                                  Navigator.pushNamed(context, 'DisplayProductsPage');
                                 }
                               }),
                             }
@@ -177,24 +233,23 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
 
                         for (var k in data["product_dict"].keys) {
                           int id = int.parse(k);
-                          var parentsArray = List<int>.from(
-                              data["product_dict"][k]["parent_id_list"]);
+                          var parentsArray =
+                              List<int>.from(data["product_dict"][k]["parent_id_list"]);
                           print(parentsArray);
                           // if (parentsArray[0] != -1) {
-                          if (parentsToChildren
-                              .containsKey(json.encode(parentsArray))) {
+                          if (parentsToChildren.containsKey(json.encode(parentsArray))) {
                             parentsToChildren[json.encode(parentsArray)].add([
                               id,
-                              json.decode(data["product_dict"][k]
-                                  ["encoded_properties"])["quantity"],
+                              json.decode(
+                                  data["product_dict"][k]["encoded_properties"])["quantity"],
                               data["product_dict"][k]["name"]
                             ]);
                           } else {
                             parentsToChildren[json.encode(parentsArray)] = [
                               [
                                 id,
-                                json.decode(data["product_dict"][k]
-                                    ["encoded_properties"])["quantity"],
+                                json.decode(
+                                    data["product_dict"][k]["encoded_properties"])["quantity"],
                                 data["product_dict"][k]["name"]
                               ]
                             ];
@@ -207,11 +262,9 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         for (var k in parentsToChildren.keys) {
                           var parentsArray = k;
                           var val = parentsToChildren[k];
-                          if (json.decode(parentsArray)[0] == -1 ||
-                              val.length == 1) {
+                          if (json.decode(parentsArray)[0] == -1 || val.length == 1) {
                             for (var i in val) {
-                              addInProductList(context, i[0], i[2],
-                                  i[1].toString(), parentsArray);
+                              addInProductList(context, i[0], i[2], i[1].toString(), parentsArray);
                             }
                           } else {
                             var pos = 0;
@@ -222,19 +275,19 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                   width: MediaQuery.of(context).size.width,
                                   color: Color(0xFFE98D39),
                                 ));
-                                addInProductList(context, i[0], i[2],
-                                    i[1].toString(), parentsArray);
+                                addInProductList(
+                                    context, i[0], i[2], i[1].toString(), parentsArray);
                               } else if (pos == val.length - 1) {
-                                addInProductList(context, i[0], i[2],
-                                    i[1].toString(), parentsArray);
+                                addInProductList(
+                                    context, i[0], i[2], i[1].toString(), parentsArray);
                                 productList.add(Container(
                                   height: 3,
                                   width: MediaQuery.of(context).size.width,
                                   color: Color(0xFFE98D39),
                                 ));
                               } else {
-                                addInProductList(context, i[0], i[2],
-                                    i[1].toString(), parentsArray);
+                                addInProductList(
+                                    context, i[0], i[2], i[1].toString(), parentsArray);
                               }
                               pos = pos + 1;
                             }
@@ -262,72 +315,6 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
       ]),
     );
   }
-}
-
-addInProductList(BuildContext context, int id, String name, String quant,
-    String parentsArray) {
-  productList.add(Card(
-    child: Row(
-      children: <Widget>[
-        StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return Checkbox(
-              value: checked,
-              activeColor: Colors.green,
-              onChanged: (bool newValue) {
-                setState(() {
-                  checked = newValue;
-                  if (checked) {
-                    productsSelected.add(id);
-                    productsSelectedQuantities[id] = int.parse(quant);
-                    if (parentsOfProductsSelected
-                        .containsKey(json.encode(parentsArray))) {
-                      parentsOfProductsSelected[json.encode(parentsArray)] += 1;
-                    } else {
-                      parentsOfProductsSelected[json.encode(parentsArray)] = 1;
-                    }
-                  } else {
-                    productsSelected.remove(id);
-                    productsSelectedQuantities.remove(quant);
-                    if (parentsOfProductsSelected[json.encode(parentsArray)] ==
-                        1) {
-                      parentsOfProductsSelected
-                          .remove(json.encode(parentsArray));
-                    } else {
-                      parentsOfProductsSelected[json.encode(parentsArray)] -= 1;
-                    }
-                  }
-                  print(productsSelected);
-                  print(productsSelectedQuantities);
-                  print(parentsOfProductsSelected);
-                });
-              });
-        }),
-        Container(
-          height: 50,
-          width: 5,
-          color: Color(0xFFE98D39),
-        ),
-        GestureDetector(
-            onTap: () => {
-                  // Scaffold.of(context)
-                  //     .showSnackBar(SnackBar(content: Text("Opening..."))),
-                  print("tapping"),
-                  Navigator.pushNamed(context, "ProductPage", arguments: id),
-                },
-            child: (Container(
-                child: Column(children: [
-              Container(
-                  // width: MediaQuery.of(context).size.width * 0.6,
-                  margin: EdgeInsets.all(10),
-                  child: Text(name)),
-              Container(
-                  // width: MediaQuery.of(context).size.width * 0.6,
-                  margin: EdgeInsets.all(10),
-                  child: Text("QTY - $quant"))
-            ]))))
-      ],
-    ),
-  ));
 }
 
 showAlertDialog(BuildContext context) {

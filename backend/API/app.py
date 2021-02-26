@@ -251,22 +251,28 @@ def transfer_owner():
     sender_id = input_json['senderId']
     receiver_id = input_json['receiverId']
     product_id = int(input_json['productId'])
-    location = input_json['location']
-    props = json.dumps(input_json.get('props', ''))
-    # do the encoding
+    
+    product = conn.functions.getProduct(product_id).call()
+    new_props = json.loads(product[1])
+    print('new', new_props)
 
-    # assume only one product is being transfered
-    # call transfer
+    transf_props = json.loads(new_props['transfer'])
+    location = transf_props['location']
+    
+    if 'transfer' in new_props:
+        del new_props['transfer']
+    tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact()
+    tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
     try:
         tx_hash = conn.functions.TransferOwnership(
-            sender_id, receiver_id, product_id, location, str(time.time()), props).transact()
+            sender_id, receiver_id, product_id, location, str(time.time()), json.dumps(transf_props)).transact()
         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     # print(tx_receipt)
     except Exception as e:
         print(e)
         return str(e), 400
-    # after returning maybe smoe way to send an OK message to both the parties
-    #
+
     return (f'Transfer completed between {sender_id} and {receiver_id}', 204)
 
 
@@ -483,9 +489,9 @@ def sendMoreProps():
 def getTransactionProps():
     input_json = request.get_json(force=True)
     product_id = int(input_json['product_id'])
-    transfer = input_json['product_id']
+    transfer = input_json['transfer']
     val = conn.functions.getProduct(product_id).call()
-    print(json.loads(val[1]))
+    print(transfer, type(transfer))
     if transfer == 'true':
         print(json.loads(val[1]))
         return json.loads(val[1])['transfer']
@@ -520,14 +526,6 @@ def senderAccept():
     if sender in pendingTransactions:
         if product_id in pendingTransactions[sender]:
             pendingTransactions[sender][product_id] = 4
-            #TODO: Also add a thingy for actual transfer of product
-
-            product = conn.functions.getProduct(product_id).call()
-            new_props = json.loads(product[1])
-            if 'transfer' in new_props:
-                del new_props['transfer']
-            tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact()
-            tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
         else:
             return 'unable', 404
     else:

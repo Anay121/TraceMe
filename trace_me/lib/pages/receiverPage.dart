@@ -65,6 +65,42 @@ class _ReceiverPageState extends State<ReceiverPage> {
     );
   }
 
+  void showAlert(String title, String content, {void onYesPress()}) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          ButtonTheme(
+            minWidth: 100,
+            child: RaisedButton(
+              onPressed: () {
+                onYesPress();
+              },
+              child: Text(
+                "Yes",
+                style: TextStyle(fontSize: 17, color: Colors.white),
+              ),
+            ),
+          ),
+          ButtonTheme(
+            minWidth: 100,
+            child: RaisedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                "No",
+                style: TextStyle(fontSize: 17, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,29 +192,35 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                           minWidth: 100,
                                           child: RaisedButton(
                                             onPressed: () {
-                                              Fluttertoast.showToast(
-                                                msg: "Waiting to send...",
-                                                toastLength: Toast.LENGTH_LONG,
-                                                gravity: ToastGravity.BOTTOM,
-                                              );
-                                              makeJsonData().then((val) {
-                                                if (val == 'error') {
-                                                  Fluttertoast.showToast(
-                                                    msg: "There's some error!",
-                                                    toastLength: Toast.LENGTH_LONG,
-                                                    gravity: ToastGravity.BOTTOM,
-                                                  );
-                                                } else {
-                                                  print(val.body);
-                                                  Fluttertoast.showToast(
-                                                    msg:
-                                                        "Added Successfully! Wait for sender to confirm",
-                                                    toastLength: Toast.LENGTH_LONG,
-                                                    gravity: ToastGravity.BOTTOM,
-                                                  );
-                                                }
+                                              showAlert(
+                                                  'Confirm', 'Are you sure you want to confirm?',
+                                                  onYesPress: () {
+                                                Fluttertoast.showToast(
+                                                  msg: "Waiting to send...",
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                );
+                                                Navigator.pop(context);
+                                                makeJsonData().then((val) {
+                                                  if (val == 'error') {
+                                                    Fluttertoast.showToast(
+                                                      msg: "There's some error!",
+                                                      toastLength: Toast.LENGTH_LONG,
+                                                      gravity: ToastGravity.BOTTOM,
+                                                    );
+                                                  } else {
+                                                    print(val.body);
 
-                                                // maybe close page or something?
+                                                    Fluttertoast.showToast(
+                                                      msg:
+                                                          "Added Successfully! Wait for sender to confirm",
+                                                      toastLength: Toast.LENGTH_LONG,
+                                                      gravity: ToastGravity.BOTTOM,
+                                                    );
+                                                    Navigator.pop(context);
+                                                  }
+                                                  // maybe close page or something?
+                                                });
                                               });
                                             },
                                             child: Text(
@@ -196,6 +238,8 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                               rejection().then((val) {
                                                 // TODO
                                                 // redirect to products page
+                                                Navigator.pushReplacementNamed(
+                                                    context, 'DisplayProductsPage');
                                               });
                                             },
                                             child: Text(
@@ -209,11 +253,39 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                         ),
                                       ],
                                     ),
+                                    ButtonTheme(
+                                      minWidth: 100,
+                                      child: RaisedButton(
+                                        onPressed: () {
+                                          Navigator.pushNamed(context, 'TraceProductPage',
+                                              arguments: int.parse(_qrData['product_id']));
+                                        },
+                                        child: Text(
+                                          "View Product Trace",
+                                          style: TextStyle(fontSize: 17, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
                               Container(
-                                child: Text("Senders stufff"),
+                                child: ButtonTheme(
+                                  minWidth: 100,
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      Navigator.pushNamed(
+                                        context,
+                                        'UserInfoPage',
+                                        arguments: _qrData['sender'],
+                                      );
+                                    },
+                                    child: Text(
+                                      "View Sender Information",
+                                      style: TextStyle(fontSize: 17, color: Colors.white),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -236,6 +308,7 @@ class DataRow extends StatelessWidget {
   final _value = TextEditingController();
   final bool allowNull;
   final bool readOnly;
+  bool _validateValue = false;
 
   DataRow(this.allowNull, {String key = '', this.readOnly = false}) {
     _key.text = key;
@@ -247,11 +320,11 @@ class DataRow extends StatelessWidget {
     return {'key': key, 'value': value};
   }
 
-  String valid(String input) {
+  void valid(String input) {
     if (input.isNotEmpty) {
-      return null;
+      _validateValue = true;
     } else {
-      return 'Cannot be kept blank';
+      _validateValue = false;
     }
   }
 
@@ -283,10 +356,9 @@ class DataRow extends StatelessWidget {
             // fit: FlexFit.loose,
             child: TextFormField(
               controller: _value,
-              readOnly: readOnly,
               decoration: InputDecoration(
                 hintText: 'Value',
-                errorText: valid(_value.text),
+                errorText: _validateValue ? '' : 'Cannot be kept empty',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(32.0),
                 ),
