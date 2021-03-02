@@ -151,6 +151,7 @@ class _StatusReceiverState extends State<StatusReceiver> {
                           deleteTransaction().then((val) {
                             // TODO
                             // redirect to display page
+                            Navigator.pop(context);
                           });
                         },
                         child: Text(

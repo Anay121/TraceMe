@@ -37,6 +37,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
   }
 
   addInProductList(BuildContext context, int id, String name, String quant, String parentsArray) {
+    // productList.clear();
     productList.add(Card(
       child: Row(
         children: <Widget>[
@@ -203,7 +204,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 }
                                 // redirect with params
                                 else {
-                                  Navigator.pushNamed(context, 'DisplayProductsPage');
+                                  Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                                 }
                               }),
                             }
@@ -258,7 +259,10 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         }
                         print("parentstochildren");
                         print(parentsToChildren);
-
+                        productList.clear();
+                        productsSelected.clear();
+                        productsSelectedQuantities.clear();
+                        parentsOfProductsSelected.clear();
                         for (var k in parentsToChildren.keys) {
                           var parentsArray = k;
                           var val = parentsToChildren[k];

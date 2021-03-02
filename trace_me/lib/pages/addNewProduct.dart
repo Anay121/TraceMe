@@ -8,7 +8,7 @@ var args = new List<int>();
 class AddNewProductPage extends StatefulWidget {
   AddNewProductPage(List<int> arg) {
     args = arg;
-    print(args);
+    print('args, $args');
     // fields.add(DataRow(
     //   false,
     //   key: 'location',
@@ -74,8 +74,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
             children: [
               Text(
                 'ADD PRODUCT',
-                style:
-                    TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
+                style: TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
               ),
               TextFormField(
                   decoration: InputDecoration(labelText: 'Product Name..'),
@@ -106,8 +105,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
                 children: [
                   // DataRow(),
                   Column(
-                    children: List.generate(
-                        fields.length, (int index) => fields[index]),
+                    children: List.generate(fields.length, (int index) => fields[index]),
                   ),
                   CircleAvatar(
                     backgroundColor: Color.fromRGBO(255, 91, 53, 1),
@@ -145,7 +143,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
                   }
                   // redirect with params
                   else {
-                    Navigator.pushNamed(context, 'DisplayProductsPage');
+                    Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                   }
                 }),
               },
