@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 class MainHomePage extends StatelessWidget {
@@ -7,94 +5,93 @@ class MainHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.50;
     return Scaffold(
-        body: Column(children: [
-      ClipPath(
-        clipper: BezierClipper(),
-        child: Container(
-          color: Color.fromRGBO(255, 91, 53, 1),
-          height: height,
+      body: Column(children: [
+        ClipPath(
+          clipper: BezierClipper(),
+          child: Container(
+            color: Color.fromRGBO(255, 91, 53, 1),
+            height: height,
+          ),
         ),
-      ),
-      Center(
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.height / 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Welcome to TraceMe',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 12),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height / 15),
-                RaisedButton(
-                  onPressed: () => {
-                    // print(unameController.text + passController.text)
-                    Navigator.pushNamed(context, 'LoginPage')
-                  },
-                  child: Text(
-                    'Login',
+        Center(
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.height / 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Welcome to TraceMe',
+                    style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
                   ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height / 60),
-                Row(children: <Widget>[
-                  Expanded(
-                      child: Divider(
-                    thickness: 2,
-                    endIndent: 10,
-                  )),
-                  Text("OR"),
-                  Expanded(
-                      child: Divider(
-                    thickness: 2,
-                    indent: 10,
-                  )),
-                ]),
-                SizedBox(height: MediaQuery.of(context).size.height / 60),
-                RaisedButton(
-                  onPressed: () => {
-                    // print(unameController.text + passController.text)
-                    Navigator.pushNamed(context, 'RegisterPage')
-                  },
-                  child: Text(
-                    'Register',
-                  ),
-                ),
-                SizedBox(height: MediaQuery.of(context).size.height / 40),
-                Row(
-                  children: [
-                    RaisedButton(
-                      child: Text('rcvr'),
-                      onPressed: () => {
-                        Navigator.pushNamed(
-                          context,
-                          "QRScanPage",
-                          // arguments: jsonEncode({
-                          //   "product": "Juice",
-                          //   "quantity": "1000",
-                          //   "sender":
-                          //       "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
-                          //   "product_id": "1"
-                          // }),
-                        ),
-                      },
+                  SizedBox(height: MediaQuery.of(context).size.height / 15),
+                  RaisedButton(
+                    onPressed: () => {
+                      // print(unameController.text + passController.text)
+                      Navigator.pushNamed(context, 'LoginPage')
+                    },
+                    child: Text(
+                      'Login',
                     ),
-                    RaisedButton(
-                      child: Text('sndr'),
-                      onPressed: () =>
-                          {Navigator.pushNamed(context, 'ProductPage')},
-                    )
-                  ],
-                )
-              ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height / 60),
+                  Row(children: <Widget>[
+                    Expanded(
+                        child: Divider(
+                      thickness: 2,
+                      endIndent: 10,
+                    )),
+                    Text("OR"),
+                    Expanded(
+                        child: Divider(
+                      thickness: 2,
+                      indent: 10,
+                    )),
+                  ]),
+                  SizedBox(height: MediaQuery.of(context).size.height / 60),
+                  RaisedButton(
+                    onPressed: () => {
+                      // print(unameController.text + passController.text)
+                      Navigator.pushNamed(context, 'RegisterPage')
+                    },
+                    child: Text(
+                      'Register',
+                    ),
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height / 40),
+                  Row(
+                    children: [
+                      RaisedButton(
+                        child: Text('rcvr'),
+                        onPressed: () => {
+                          Navigator.pushNamed(
+                            context,
+                            "QRScanPage",
+                            // arguments: jsonEncode({
+                            //   "product": "Juice",
+                            //   "quantity": "1000",
+                            //   "sender":
+                            //       "ad1b8786c138c0fbb3a68a3456b168f21cc81c6e16515db80172d500f6b6941a",
+                            //   "product_id": "1"
+                            // }),
+                          ),
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text('sndr'),
+                        onPressed: () => {Navigator.pushNamed(context, 'ProductPage')},
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    ]));
+      ]),
+    );
   }
 }
 

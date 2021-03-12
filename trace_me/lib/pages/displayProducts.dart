@@ -117,6 +117,41 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+                title: Text('Home'),
+                trailing: Icon(Icons.home),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, 'DisplayProductsPage');
+                }),
+            ListTile(
+              title: Text('Profile'),
+              trailing: Icon(Icons.person_rounded),
+              onTap: () async {
+                String val = await Session().getter('userid');
+                Navigator.pop(context);
+                Navigator.pushNamed(context, 'UserInfoPage', arguments: val);
+              },
+            ),
+            ListTile(
+              title: Text('Scan'),
+              trailing: Icon(Icons.qr_code_scanner_rounded),
+              onTap: () => Navigator.pushNamed(context, 'QRScanPage'),
+            ),
+            ListTile(
+              title: Text('Logout'),
+              trailing: Icon(Icons.logout),
+              onTap: () async {
+                Session().setter({'userid': "", 'JWTAccessToken': "", 'JWTRefreshToken': ""});
+                Navigator.pushNamedAndRemoveUntil(context, '/', (router) => false);
+              },
+            )
+          ],
+        ),
+      ),
       body: Column(children: [
         ClipPath(
           // clipper: BezierClipper(),
