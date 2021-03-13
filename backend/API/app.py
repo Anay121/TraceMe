@@ -330,7 +330,7 @@ def add_product():
     event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
     child_id = None
     for event in event_filter.get_all_entries():
-        print(event)
+        # print(event)
         child_id = event['args']['_child']
         print("id of the newly added child:", child_id)
 

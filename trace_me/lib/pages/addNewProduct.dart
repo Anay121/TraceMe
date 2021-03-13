@@ -8,7 +8,7 @@ var args = new List<int>();
 class AddNewProductPage extends StatefulWidget {
   AddNewProductPage(List<int> arg) {
     args = arg;
-    print('args, $args');
+    print(args);
     // fields.add(DataRow(
     //   false,
     //   key: 'location',
@@ -143,7 +143,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
                   }
                   // redirect with params
                   else {
-                    Navigator.popAndPushNamed(context, 'DisplayProductsPage');
+                    Navigator.pushNamed(context, 'DisplayProductsPage');
                   }
                 }),
               },
