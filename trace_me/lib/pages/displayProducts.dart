@@ -74,7 +74,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
             onTap: () async {
               print("tapping");
               String owner = await Session().getter('userid');
-              Navigator.pushNamed(
+              Navigator.popAndPushNamed(
                 context,
                 "ProductPage",
                 arguments: json.encode({
@@ -124,7 +124,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                 trailing: Icon(Icons.home),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, 'DisplayProductsPage');
+                  Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                 }),
             ListTile(
               title: Text('Profile'),
@@ -132,13 +132,13 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
               onTap: () async {
                 String val = await Session().getter('userid');
                 Navigator.pop(context);
-                Navigator.pushNamed(context, 'UserInfoPage', arguments: val);
+                Navigator.popAndPushNamed(context, 'UserInfoPage', arguments: val);
               },
             ),
             ListTile(
               title: Text('Scan'),
               trailing: Icon(Icons.qr_code_scanner_rounded),
-              onTap: () => Navigator.pushNamed(context, 'QRScanPage'),
+              onTap: () => Navigator.popAndPushNamed(context, 'QRScanPage'),
             ),
             ListTile(
               title: Text('Logout'),
@@ -178,11 +178,12 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         onPressed: () => {
                           if (productsSelected.isEmpty)
                             {
-                              Navigator.pushNamed(context, 'AddNewProductPage', arguments: [-1])
+                              Navigator.popAndPushNamed(context, 'AddNewProductPage',
+                                  arguments: [-1])
                             }
                           else
                             {
-                              Navigator.pushNamed(context, 'AddNewProductPage',
+                              Navigator.popAndPushNamed(context, 'AddNewProductPage',
                                   arguments: productsSelected)
                             }
                         },
@@ -203,7 +204,8 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 productsSelected[0],
                                 productsSelectedQuantities[productsSelected[0]]
                               ],
-                              Navigator.pushNamed(context, 'SplitProductPage', arguments: splitArgs)
+                              Navigator.popAndPushNamed(context, 'SplitProductPage',
+                                  arguments: splitArgs)
                             }
                           else
                             {

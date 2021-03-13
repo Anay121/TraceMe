@@ -143,7 +143,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
                   }
                   // redirect with params
                   else {
-                    Navigator.pushNamed(context, 'DisplayProductsPage');
+                    Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                   }
                 }),
               },
