@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:trace_me/helper.dart';
@@ -36,11 +35,13 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
     super.initState();
   }
 
-  addInProductList(BuildContext context, int id, String name, String quant, String parentsArray) {
+  addInProductList(BuildContext context, int id, String name, String quant,
+      String parentsArray) {
     productList.add(Card(
       child: Row(
         children: <Widget>[
-          StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
             return Checkbox(
                 value: checked,
                 activeColor: Colors.green,
@@ -50,18 +51,25 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                     if (checked) {
                       productsSelected.add(id);
                       productsSelectedQuantities[id] = int.parse(quant);
-                      if (parentsOfProductsSelected.containsKey(json.encode(parentsArray))) {
-                        parentsOfProductsSelected[json.encode(parentsArray)] += 1;
+                      if (parentsOfProductsSelected
+                          .containsKey(json.encode(parentsArray))) {
+                        parentsOfProductsSelected[json.encode(parentsArray)] +=
+                            1;
                       } else {
-                        parentsOfProductsSelected[json.encode(parentsArray)] = 1;
+                        parentsOfProductsSelected[json.encode(parentsArray)] =
+                            1;
                       }
                     } else {
                       productsSelected.remove(id);
                       productsSelectedQuantities.remove(quant);
-                      if (parentsOfProductsSelected[json.encode(parentsArray)] == 1) {
-                        parentsOfProductsSelected.remove(json.encode(parentsArray));
+                      if (parentsOfProductsSelected[
+                              json.encode(parentsArray)] ==
+                          1) {
+                        parentsOfProductsSelected
+                            .remove(json.encode(parentsArray));
                       } else {
-                        parentsOfProductsSelected[json.encode(parentsArray)] -= 1;
+                        parentsOfProductsSelected[json.encode(parentsArray)] -=
+                            1;
                       }
                     }
                     print(productsSelected);
@@ -74,7 +82,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
             onTap: () async {
               print("tapping");
               String owner = await Session().getter('userid');
-              Navigator.popAndPushNamed(
+              Navigator.pushNamed(
                 context,
                 "ProductPage",
                 arguments: json.encode({
@@ -116,87 +124,55 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            ListTile(
-                title: Text('Home'),
-                trailing: Icon(Icons.home),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.popAndPushNamed(context, 'DisplayProductsPage');
-                }),
-            ListTile(
-              title: Text('Profile'),
-              trailing: Icon(Icons.person_rounded),
-              onTap: () async {
-                String val = await Session().getter('userid');
-                Navigator.pop(context);
-                Navigator.popAndPushNamed(context, 'UserInfoPage', arguments: val);
-              },
-            ),
-            ListTile(
-              title: Text('Scan'),
-              trailing: Icon(Icons.qr_code_scanner_rounded),
-              onTap: () => Navigator.popAndPushNamed(context, 'QRScanPage'),
-            ),
-            ListTile(
-              title: Text('Logout'),
-              trailing: Icon(Icons.logout),
-              onTap: () async {
-                Session().setter({'userid': "", 'JWTAccessToken': "", 'JWTRefreshToken': ""});
-                Navigator.pushNamedAndRemoveUntil(context, '/', (router) => false);
-              },
-            )
-          ],
-        ),
-      ),
+      drawer: MenuDrawer(),
       body: Column(children: [
         ClipPath(
-          // clipper: BezierClipper(),
+          clipper: BezierClipper(),
           child: Container(
-            color: Color.fromRGBO(255, 91, 53, 1),
+            color: orange,
             height: height,
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(MediaQuery.of(context).size.height / 30),
+          padding: EdgeInsets.all(MediaQuery.of(context).size.height / 50),
           child: Container(
-            height: 400,
+            height: MediaQuery.of(context).size.height - 180,
             width: 400,
             child: Column(
               children: [
                 Text(
                   'Your Products',
-                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width / 15,
+                      fontWeight: FontWeight.bold),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height / 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
-                      child: RaisedButton(
+                      child: TextButton(
                         onPressed: () => {
                           if (productsSelected.isEmpty)
                             {
-                              Navigator.popAndPushNamed(context, 'AddNewProductPage',
+                              Navigator.pushNamed(context, 'AddNewProductPage',
                                   arguments: [-1])
                             }
                           else
                             {
-                              Navigator.popAndPushNamed(context, 'AddNewProductPage',
+                              Navigator.pushNamed(context, 'AddNewProductPage',
                                   arguments: productsSelected)
                             }
                         },
                         child: Text(
                           'Add new Product',
                         ),
-                        color: Color(0xFFCB672F),
-                        textColor: Colors.white,
+                        style: myOrangeButtonStyle,
                       ),
                     ),
                     SizedBox(width: MediaQuery.of(context).size.width / 20),
                     Expanded(
-                      child: (RaisedButton(
+                      child: (TextButton(
                         onPressed: () => {
                           if (productsSelected.length == 1)
                             {
@@ -204,28 +180,33 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 productsSelected[0],
                                 productsSelectedQuantities[productsSelected[0]]
                               ],
-                              Navigator.popAndPushNamed(context, 'SplitProductPage',
+                              Navigator.pushNamed(context, 'SplitProductPage',
                                   arguments: splitArgs)
                             }
                           else
                             {
                               if (productsSelected.isEmpty)
-                                {alertBoxMsg = "Please select the product you want to split."}
+                                {
+                                  alertBoxMsg =
+                                      "Please select the product you want to split."
+                                }
                               else
-                                {alertBoxMsg = "Please select only one product."},
+                                {
+                                  alertBoxMsg =
+                                      "Please select only one product."
+                                },
                               showAlertDialog(context)
                             }
                         },
                         child: Text(
-                          'Split Product',
+                          'Split a Product',
                         ),
-                        color: Color(0xFFCB672F),
-                        textColor: Colors.white,
+                        style: myOrangeButtonStyle,
                       )),
                     ),
                     SizedBox(width: MediaQuery.of(context).size.width / 20),
                     Expanded(
-                      child: (RaisedButton(
+                      child: (TextButton(
                         onPressed: () => {
                           if (parentsOfProductsSelected.length == 1 &&
                               parentsOfProductsSelected.values.elementAt(0) > 1)
@@ -240,7 +221,8 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 }
                                 // redirect with params
                                 else {
-                                  Navigator.pushNamed(context, 'DisplayProductsPage');
+                                  Navigator.pushNamed(
+                                      context, 'DisplayProductsPage');
                                 }
                               }),
                             }
@@ -254,8 +236,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         child: Text(
                           'Merge the split',
                         ),
-                        color: Color(0xFFCB672F),
-                        textColor: Colors.white,
+                        style: myOrangeButtonStyle,
                       )),
                     ),
                   ],
@@ -270,23 +251,24 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
 
                         for (var k in data["product_dict"].keys) {
                           int id = int.parse(k);
-                          var parentsArray =
-                              List<int>.from(data["product_dict"][k]["parent_id_list"]);
+                          var parentsArray = List<int>.from(
+                              data["product_dict"][k]["parent_id_list"]);
                           print(parentsArray);
                           // if (parentsArray[0] != -1) {
-                          if (parentsToChildren.containsKey(json.encode(parentsArray))) {
+                          if (parentsToChildren
+                              .containsKey(json.encode(parentsArray))) {
                             parentsToChildren[json.encode(parentsArray)].add([
                               id,
-                              json.decode(
-                                  data["product_dict"][k]["encoded_properties"])["quantity"],
+                              json.decode(data["product_dict"][k]
+                                  ["encoded_properties"])["quantity"],
                               data["product_dict"][k]["name"]
                             ]);
                           } else {
                             parentsToChildren[json.encode(parentsArray)] = [
                               [
                                 id,
-                                json.decode(
-                                    data["product_dict"][k]["encoded_properties"])["quantity"],
+                                json.decode(data["product_dict"][k]
+                                    ["encoded_properties"])["quantity"],
                                 data["product_dict"][k]["name"]
                               ]
                             ];
@@ -299,9 +281,11 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         for (var k in parentsToChildren.keys) {
                           var parentsArray = k;
                           var val = parentsToChildren[k];
-                          if (json.decode(parentsArray)[0] == -1 || val.length == 1) {
+                          if (json.decode(parentsArray)[0] == -1 ||
+                              val.length == 1) {
                             for (var i in val) {
-                              addInProductList(context, i[0], i[2], i[1].toString(), parentsArray);
+                              addInProductList(context, i[0], i[2],
+                                  i[1].toString(), parentsArray);
                             }
                           } else {
                             var pos = 0;
@@ -312,19 +296,19 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                   width: MediaQuery.of(context).size.width,
                                   color: Color(0xFFE98D39),
                                 ));
-                                addInProductList(
-                                    context, i[0], i[2], i[1].toString(), parentsArray);
+                                addInProductList(context, i[0], i[2],
+                                    i[1].toString(), parentsArray);
                               } else if (pos == val.length - 1) {
-                                addInProductList(
-                                    context, i[0], i[2], i[1].toString(), parentsArray);
+                                addInProductList(context, i[0], i[2],
+                                    i[1].toString(), parentsArray);
                                 productList.add(Container(
                                   height: 3,
                                   width: MediaQuery.of(context).size.width,
                                   color: Color(0xFFE98D39),
                                 ));
                               } else {
-                                addInProductList(
-                                    context, i[0], i[2], i[1].toString(), parentsArray);
+                                addInProductList(context, i[0], i[2],
+                                    i[1].toString(), parentsArray);
                               }
                               pos = pos + 1;
                             }
@@ -379,58 +363,4 @@ showAlertDialog(BuildContext context) {
       return alert;
     },
   );
-}
-
-class BezierClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    final double _xScaling = size.width / 550;
-    final double _yScaling = size.height / 250;
-    path.lineTo(478.296 * _xScaling, 161.15699999999998 * _yScaling);
-    path.cubicTo(
-      407.956 * _xScaling,
-      149.3021 * _yScaling,
-      302.774 * _xScaling,
-      107.2207 * _yScaling,
-      214 * _xScaling,
-      131 * _yScaling,
-    );
-    path.cubicTo(
-      67 * _xScaling,
-      170.376 * _yScaling,
-      16.203999999999994 * _xScaling,
-      86.2874 * _yScaling,
-      16.203999999999994 * _xScaling,
-      41 * _yScaling,
-    );
-    path.cubicTo(
-      16.203999999999994 * _xScaling,
-      -38.5 * _yScaling,
-      325.21000000000004 * _xScaling,
-      -56.843 * _yScaling,
-      460.796 * _xScaling,
-      -56.843 * _yScaling,
-    );
-    path.cubicTo(
-      596.3820000000001 * _xScaling,
-      -56.843 * _yScaling,
-      554.5 * _xScaling,
-      174 * _yScaling,
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-    );
-    path.cubicTo(
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-    );
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }

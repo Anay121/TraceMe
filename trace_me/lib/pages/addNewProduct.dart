@@ -32,7 +32,12 @@ class _AddNewProductState extends State<AddNewProductPage> {
     object["quantity"] = quantController.text;
     for (int i = 0; i < fields.length; i++) {
       Map val = fields[i].getData();
-      object[val['key']] = val['value'];
+      if (val['key'].toLowerCase().contains("harvest") ||
+          val['key'].toLowerCase().contains("crush")) {
+        object[val['key'].toLowerCase()] = val['value'];
+      } else {
+        object[val['key']] = val['value'];
+      }
     }
     //add type of scm "sugarcane_scm" if SCM starts with sugarcane crop
     if (productName.toLowerCase().contains("sugarcane") && args[0] == -1) {
@@ -59,11 +64,12 @@ class _AddNewProductState extends State<AddNewProductPage> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
     return Scaffold(
+      drawer: MenuDrawer(),
       body: Column(children: [
         ClipPath(
-          // clipper: BezierClipper(),
+          clipper: BezierClipper(),
           child: Container(
-            color: Color.fromRGBO(255, 91, 53, 1),
+            color: orange,
             height: height,
           ),
         ),
@@ -74,7 +80,9 @@ class _AddNewProductState extends State<AddNewProductPage> {
             children: [
               Text(
                 'ADD PRODUCT',
-                style: TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 15,
+                    fontWeight: FontWeight.bold),
               ),
               TextFormField(
                   decoration: InputDecoration(labelText: 'Product Name..'),
@@ -90,12 +98,18 @@ class _AddNewProductState extends State<AddNewProductPage> {
                   IconButton(
                     icon: Icon(Icons.add),
                     color: Colors.grey,
-                    onPressed: () {},
+                    onPressed: () {
+                      quantController.text =
+                          (int.parse(quantController.text) + 1).toString();
+                    },
                   ),
                   IconButton(
                     icon: Icon(Icons.remove),
                     color: Colors.grey,
-                    onPressed: () {},
+                    onPressed: () {
+                      quantController.text =
+                          (int.parse(quantController.text) - 1).toString();
+                    },
                   ),
                 ],
               ),
@@ -105,10 +119,11 @@ class _AddNewProductState extends State<AddNewProductPage> {
                 children: [
                   // DataRow(),
                   Column(
-                    children: List.generate(fields.length, (int index) => fields[index]),
+                    children: List.generate(
+                        fields.length, (int index) => fields[index]),
                   ),
                   CircleAvatar(
-                    backgroundColor: Color.fromRGBO(255, 91, 53, 1),
+                    backgroundColor: darker,
                     radius: 30,
                     child: IconButton(
                       icon: Icon(Icons.add),
@@ -127,29 +142,41 @@ class _AddNewProductState extends State<AddNewProductPage> {
         ),
         Expanded(
           child: Align(
-            alignment: Alignment.bottomCenter,
-            child: RaisedButton(
-              onPressed: () => {
-                // print("here"),
-                // print(pnameController.text),
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height / 12,
+                child: TextButton(
+                  onPressed: () => {
+                    // print("here"),
+                    // print(pnameController.text),
 
-                addProduct(pnameController.text).then((val) {
-                  // check validation
-                  print(val.statusCode);
-                  if (val.statusCode == '401') {
-                    setState(() {
-                      _validateError = true;
-                    });
-                  }
-                  // redirect with params
-                  else {
-                    Navigator.popAndPushNamed(context, 'DisplayProductsPage');
-                  }
-                }),
-              },
-              child: Text("ADD PRODUCT"),
-            ),
-          ),
+                    addProduct(pnameController.text).then((val) {
+                      // check validation
+                      print(val.statusCode);
+                      if (val.statusCode == '401') {
+                        setState(() {
+                          _validateError = true;
+                        });
+                      }
+                      // redirect with params
+                      else {
+                        Navigator.popAndPushNamed(
+                            context, 'DisplayProductsPage');
+                      }
+                    }),
+                  },
+                  child: Text("ADD PRODUCT"),
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(darker),
+                      foregroundColor:
+                          MaterialStateProperty.all<Color>(Colors.white),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ))),
+                ),
+              )),
         ),
       ]),
     );
@@ -203,58 +230,4 @@ class DataRow extends StatelessWidget {
       ),
     );
   }
-}
-
-class BezierClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    final double _xScaling = size.width / 550;
-    final double _yScaling = size.height / 250;
-    path.lineTo(478.296 * _xScaling, 161.15699999999998 * _yScaling);
-    path.cubicTo(
-      407.956 * _xScaling,
-      149.3021 * _yScaling,
-      302.774 * _xScaling,
-      107.2207 * _yScaling,
-      214 * _xScaling,
-      131 * _yScaling,
-    );
-    path.cubicTo(
-      67 * _xScaling,
-      170.376 * _yScaling,
-      16.203999999999994 * _xScaling,
-      86.2874 * _yScaling,
-      16.203999999999994 * _xScaling,
-      41 * _yScaling,
-    );
-    path.cubicTo(
-      16.203999999999994 * _xScaling,
-      -38.5 * _yScaling,
-      325.21000000000004 * _xScaling,
-      -56.843 * _yScaling,
-      460.796 * _xScaling,
-      -56.843 * _yScaling,
-    );
-    path.cubicTo(
-      596.3820000000001 * _xScaling,
-      -56.843 * _yScaling,
-      554.5 * _xScaling,
-      174 * _yScaling,
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-    );
-    path.cubicTo(
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-      478.296 * _xScaling,
-      161.15699999999998 * _yScaling,
-    );
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }

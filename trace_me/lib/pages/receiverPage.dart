@@ -86,6 +86,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
           ),
           ButtonTheme(
             minWidth: 100,
+            buttonColor: Colors.red,
             child: RaisedButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -114,11 +115,14 @@ class _ReceiverPageState extends State<ReceiverPage> {
               children: [
                 Text(
                   "Receiver Hub",
-                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width / 12,
+                      fontWeight: FontWeight.bold),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height / 40),
                 Container(
                   alignment: Alignment.center,
-                  color: Colors.blue[100],
+                  color: orange,
                   height: MediaQuery.of(context).size.height / 8,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -134,6 +138,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                     ],
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height / 40),
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 2,
                   // width: MediaQuery.of(context).size.width,
@@ -143,7 +148,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                       children: [
                         Container(
                           child: TabBar(
-                            labelColor: Colors.blue,
+                            labelColor: darker,
                             unselectedLabelColor: Colors.black,
                             tabs: [
                               Tab(
@@ -168,45 +173,52 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                   children: [
                                     // DataRow(),
                                     Column(
-                                      children: List.generate(
-                                          fields.length, (int index) => fields[index]),
+                                      children: List.generate(fields.length,
+                                          (int index) => fields[index]),
                                     ),
-                                    ButtonTheme(
-                                      minWidth: 100,
-                                      child: RaisedButton(
+                                    CircleAvatar(
+                                      backgroundColor: darker,
+                                      radius: 30,
+                                      child: IconButton(
+                                        icon: Icon(Icons.add),
+                                        color: Colors.white,
                                         onPressed: () {
                                           setState(() {
                                             fields.insert(0, DataRow(true));
                                           });
                                         },
-                                        child: Text(
-                                          "Add another field",
-                                          style: TextStyle(fontSize: 17, color: Colors.white),
-                                        ),
                                       ),
                                     ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                40),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
                                         ButtonTheme(
-                                          minWidth: 100,
-                                          child: RaisedButton(
+                                          child: RaisedButton.icon(
                                             onPressed: () {
-                                              showAlert(
-                                                  'Confirm', 'Are you sure you want to confirm?',
+                                              showAlert('Confirm',
+                                                  'Are you sure you want to confirm?',
                                                   onYesPress: () {
                                                 Fluttertoast.showToast(
                                                   msg: "Waiting to send...",
-                                                  toastLength: Toast.LENGTH_LONG,
+                                                  toastLength:
+                                                      Toast.LENGTH_LONG,
                                                   gravity: ToastGravity.BOTTOM,
                                                 );
                                                 Navigator.pop(context);
                                                 makeJsonData().then((val) {
                                                   if (val == 'error') {
                                                     Fluttertoast.showToast(
-                                                      msg: "There's some error!",
-                                                      toastLength: Toast.LENGTH_LONG,
-                                                      gravity: ToastGravity.BOTTOM,
+                                                      msg:
+                                                          "There's some error!",
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
                                                     );
                                                   } else {
                                                     print(val.body);
@@ -214,8 +226,10 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                                     Fluttertoast.showToast(
                                                       msg:
                                                           "Added Successfully! Wait for sender to confirm",
-                                                      toastLength: Toast.LENGTH_LONG,
-                                                      gravity: ToastGravity.BOTTOM,
+                                                      toastLength:
+                                                          Toast.LENGTH_LONG,
+                                                      gravity:
+                                                          ToastGravity.BOTTOM,
                                                     );
                                                     Navigator.pop(context);
                                                   }
@@ -223,49 +237,66 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                                 });
                                               });
                                             },
-                                            child: Text(
+                                            label: Text(
                                               "Confirm",
-                                              style: TextStyle(fontSize: 17, color: Colors.white),
+                                              style: TextStyle(
+                                                  fontSize: 17,
+                                                  color: Colors.white),
+                                            ),
+                                            icon: Icon(
+                                              Icons.check_circle,
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ),
                                         ButtonTheme(
-                                          minWidth: 100,
                                           buttonColor: Colors.red,
-                                          child: RaisedButton(
+                                          child: RaisedButton.icon(
                                             onPressed: () {
                                               // call rejection function
                                               rejection().then((val) {
                                                 // TODO
                                                 // redirect to products page
                                                 Navigator.pushReplacementNamed(
-                                                    context, 'DisplayProductsPage');
+                                                    context,
+                                                    'DisplayProductsPage');
                                               });
                                             },
-                                            child: Text(
+                                            label: Text(
                                               "Cancel",
                                               style: TextStyle(
                                                   fontSize: 17,
                                                   color: Colors.white,
                                                   backgroundColor: Colors.red),
                                             ),
+                                            icon: Icon(
+                                              Icons.cancel,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ],
                                     ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                40),
                                     ButtonTheme(
-                                      minWidth: 100,
-                                      child: RaisedButton(
-                                        onPressed: () {
-                                          Navigator.pushNamed(context, 'TraceProductPage',
-                                              arguments: int.parse(_qrData['product_id']));
-                                        },
-                                        child: Text(
-                                          "View Product Trace",
-                                          style: TextStyle(fontSize: 17, color: Colors.white),
+                                        child: RaisedButton(
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                context, 'TraceProductPage',
+                                                arguments: int.parse(
+                                                    _qrData['product_id']));
+                                          },
+                                          child: Text(
+                                            "Product Trace",
+                                            style: TextStyle(
+                                                fontSize: 17,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                      ),
-                                    ),
+                                        buttonColor: darker)
                                   ],
                                 ),
                               ),
@@ -282,9 +313,11 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                     },
                                     child: Text(
                                       "View Sender Information",
-                                      style: TextStyle(fontSize: 17, color: Colors.white),
+                                      style: TextStyle(
+                                          fontSize: 17, color: Colors.white),
                                     ),
                                   ),
+                                  buttonColor: Color(0xFFD3D3D3),
                                 ),
                               ),
                             ],
@@ -331,8 +364,8 @@ class DataRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
-      height: 100,
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+      height: 50,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -345,11 +378,11 @@ class DataRow extends StatelessWidget {
               readOnly: readOnly,
               decoration: InputDecoration(
                 hintText: 'Key',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0),
-                ),
               ),
             ),
+          ),
+          SizedBox(
+            width: 20.0,
           ),
           Flexible(
             // flex: 3,
@@ -358,10 +391,7 @@ class DataRow extends StatelessWidget {
               controller: _value,
               decoration: InputDecoration(
                 hintText: 'Value',
-                errorText: _validateValue ? '' : 'Cannot be kept empty',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32.0),
-                ),
+                // errorText: _validateValue ? '' : 'Cannot be kept empty',
               ),
             ),
           ),

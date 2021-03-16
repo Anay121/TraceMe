@@ -345,11 +345,11 @@ def add_product():
             for k, v in json.loads(p[1]).items():
                 if(k == "type" and v == "sugarcane_scm"):
                     # print("here!")
-                    crush_date = json.loads(product_properties)["Crush date"]
+                    crush_date = json.loads(product_properties)["crush date"]
                     # print(crush_date)
                     crush = date(int(crush_date[6:]),int(crush_date[3:5]),int(crush_date[0:2]))
                     # print(crush)
-                    harvest_date = json.loads(p[1])["Harvest date"] 
+                    harvest_date = json.loads(p[1])["harvest date"] 
                     # print(harvest_date)
                     harvest = date(int(harvest_date[6:]),int(harvest_date[3:5]),int(harvest_date[0:2]))
                     # print(harvest)
@@ -360,6 +360,9 @@ def add_product():
             for e in errors:
                 tx_hash = conn.functions.setError(child_id, e).transact()
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
+            #remove parents from owner as they no longer exist and have made new product
+            tx_hash = conn.functions.removeFromOwner(str(user_id), pid).transact()
 
     return jsonify({"product_id": child_id})
 

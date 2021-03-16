@@ -20,7 +20,8 @@ class StatusSender extends StatefulWidget {
   }
 
   @override
-  StatusSenderState createState() => StatusSenderState(_statusCode, _productId, _owner);
+  StatusSenderState createState() =>
+      StatusSenderState(_statusCode, _productId, _owner);
 }
 
 class StatusSenderState extends State<StatusSender> {
@@ -73,6 +74,10 @@ class StatusSenderState extends State<StatusSender> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle keyStyle = TextStyle(
+        color: darker, fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle =
+        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     return Scaffold(
       body: Center(
         child: Container(
@@ -99,9 +104,12 @@ class StatusSenderState extends State<StatusSender> {
                               child: Table(
                                 border: TableBorder(
                                   horizontalInside: BorderSide(
-                                      width: 1, color: Colors.blue, style: BorderStyle.solid),
+                                      width: 1,
+                                      color: darker,
+                                      style: BorderStyle.solid),
                                 ),
-                                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                defaultVerticalAlignment:
+                                    TableCellVerticalAlignment.middle,
                                 children: map.entries.map((entry) {
                                   return TableRow(
                                     children: [
@@ -111,7 +119,7 @@ class StatusSenderState extends State<StatusSender> {
                                             child: Text(
                                               entry.key,
                                               textAlign: TextAlign.center,
-                                              style: TextStyle(fontSize: 20),
+                                              style: keyStyle,
                                             )),
                                       ),
                                       TableCell(
@@ -119,7 +127,7 @@ class StatusSenderState extends State<StatusSender> {
                                           child: Text(
                                             entry.value,
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 20),
+                                            style: valueStyle,
                                           ),
                                         ),
                                       ),
@@ -138,8 +146,7 @@ class StatusSenderState extends State<StatusSender> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         ButtonTheme(
-                          minWidth: 100,
-                          child: RaisedButton(
+                          child: RaisedButton.icon(
                             onPressed: () {
                               acceptance().then((val) {
                                 Fluttertoast.showToast(
@@ -151,16 +158,20 @@ class StatusSenderState extends State<StatusSender> {
                                 Navigator.pop(context);
                               });
                             },
-                            child: Text(
+                            label: Text(
                               "Accept",
-                              style: TextStyle(fontSize: 17, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 17, color: Colors.white),
+                            ),
+                            icon: Icon(
+                              Icons.check_circle,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                         ButtonTheme(
-                          minWidth: 100,
                           buttonColor: Colors.red,
-                          child: RaisedButton(
+                          child: RaisedButton.icon(
                             onPressed: () {
                               rejection().then((val) {
                                 Fluttertoast.showToast(
@@ -171,9 +182,14 @@ class StatusSenderState extends State<StatusSender> {
                                 Navigator.pop(context);
                               });
                             },
-                            child: Text(
+                            label: Text(
                               "Reject",
-                              style: TextStyle(fontSize: 17, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 17, color: Colors.white),
+                            ),
+                            icon: Icon(
+                              Icons.cancel,
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -197,7 +213,8 @@ class StatusSenderState extends State<StatusSender> {
                           deleteTransaction().then((val) {
                             // TODO
                             // redirect to display page
-                            Navigator.popAndPushNamed(context, 'DisplayProductsPage');
+                            Navigator.popAndPushNamed(
+                                context, 'DisplayProductsPage');
                           });
                         },
                         child: Text(

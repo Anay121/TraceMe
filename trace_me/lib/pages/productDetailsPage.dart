@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:trace_me/helper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trace_me/helper.dart';
 
 int args;
 
@@ -71,37 +71,47 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle keyStyle = TextStyle(
+        color: darker, fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle =
+        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     return Scaffold(
+      drawer: MenuDrawer(),
       body: Center(
         child: Container(
           child: Padding(
             padding: EdgeInsets.all(MediaQuery.of(context).size.height / 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                SizedBox(height: MediaQuery.of(context).size.height / 40),
                 Text(
-                  "Product Information",
-                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
+                  "Product Details",
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width / 12,
+                      fontWeight: FontWeight.bold),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height / 40),
                 Container(
                   alignment: Alignment.center,
-                  color: Colors.blue[100],
+                  color: orange,
                   height: MediaQuery.of(context).size.height / 8,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
                         _prodName,
-                        style: TextStyle(fontSize: 25),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                       Text(
                         "Quantity: " + _quantity,
-                        style: TextStyle(fontSize: 15),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ],
                   ),
                 ),
+                SizedBox(height: MediaQuery.of(context).size.height / 40),
                 SizedBox(
                   height: MediaQuery.of(context).size.height / 2,
                   // width: MediaQuery.of(context).size.width,
@@ -111,7 +121,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         children: [
                           Container(
                             child: TabBar(
-                              labelColor: Colors.blue,
+                              labelColor: darker,
                               unselectedLabelColor: Colors.black,
                               tabs: [
                                 Tab(
@@ -133,43 +143,51 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 Container(
                                   child: FutureBuilder(
                                     future: getProps(),
-                                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot snapshot) {
                                       if (snapshot.hasData) {
                                         Map map = Map();
                                         map['KEY'] = 'VALUE';
-                                        map.addAll(json.decode(snapshot.data.body));
+                                        map.addAll(
+                                            json.decode(snapshot.data.body));
                                         print(map);
                                         return SingleChildScrollView(
                                           child: Table(
                                             border: TableBorder(
                                               horizontalInside: BorderSide(
                                                   width: 1,
-                                                  color: Colors.blue,
+                                                  color: darker,
                                                   style: BorderStyle.solid),
                                             ),
                                             defaultVerticalAlignment:
-                                                TableCellVerticalAlignment.middle,
-                                            children: Map.fromEntries(map.entries.expand((e) => [
-                                                  if (e.key != 'transfer') MapEntry(e.key, e.value)
-                                                ])).entries.map((entry) {
+                                                TableCellVerticalAlignment
+                                                    .middle,
+                                            children: Map.fromEntries(
+                                                map.entries.expand((e) => [
+                                                      if (e.key != 'transfer')
+                                                        MapEntry(e.key, e.value)
+                                                    ])).entries.map((entry) {
                                               // if (entry.key != 'transfer') {
                                               return TableRow(
                                                 children: [
                                                   TableCell(
                                                     child: Container(
-                                                        padding: EdgeInsets.all(10),
+                                                        padding:
+                                                            EdgeInsets.all(10),
                                                         child: Text(
                                                           entry.key.toString(),
-                                                          textAlign: TextAlign.center,
-                                                          style: TextStyle(fontSize: 20),
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: keyStyle,
                                                         )),
                                                   ),
                                                   TableCell(
                                                     child: Container(
                                                       child: Text(
                                                         entry.value.toString(),
-                                                        textAlign: TextAlign.center,
-                                                        style: TextStyle(fontSize: 20),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: valueStyle,
                                                       ),
                                                     ),
                                                   ),
@@ -192,7 +210,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                       "product_id": _prodId,
                                     }),
                                     version: QrVersions.auto,
-                                    size: MediaQuery.of(context).size.width / 2.5,
+                                    size:
+                                        MediaQuery.of(context).size.width / 2.5,
                                   ),
                                 ),
                                 _doGenerateQR
@@ -202,7 +221,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                           if (snapshot.hasData) {
                                             return Container(
                                               child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: [
                                                   QrImage(
                                                     data: json.encode({
@@ -213,61 +234,105 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                       "product_id": _prodId,
                                                     }),
                                                     version: QrVersions.auto,
-                                                    size: MediaQuery.of(context).size.width / 2.5,
+                                                    size: MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        2.5,
                                                   ),
-                                                  ButtonTheme(
-                                                    minWidth: 100,
-                                                    child: RaisedButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _doGenerateQR = false;
-                                                        });
-                                                      },
-                                                      child: Text(
-                                                        "Cancel",
-                                                        style: TextStyle(
-                                                            fontSize: 17, color: Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  ButtonTheme(
-                                                    minWidth: 100,
-                                                    child: RaisedButton(
-                                                      onPressed: () {
-                                                        getStatus().then((value) {
-                                                          if (json.decode(value.body)['status'] ==
-                                                                  0 ||
-                                                              json.decode(value.body)['status'] ==
-                                                                  1) {
-                                                            // make toast
-                                                            Fluttertoast.showToast(
-                                                              msg:
-                                                                  "Waiting for Receiver Confirmation",
-                                                              toastLength: Toast.LENGTH_LONG,
-                                                              gravity: ToastGravity.BOTTOM,
-                                                            );
-                                                          } else {
-                                                            //redirect
-                                                            Navigator.pushNamed(
-                                                              context,
-                                                              'StatusSenderPage',
-                                                              arguments: json.encode({
-                                                                'status': json
-                                                                    .decode(value.body)['status'],
-                                                                'productId': _prodId,
-                                                                'owner': _owner,
-                                                              }),
-                                                            );
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Text(
-                                                        "Check Status",
-                                                        style: TextStyle(
-                                                            fontSize: 17, color: Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceEvenly,
+                                                      children: [
+                                                        ButtonTheme(
+                                                          child:
+                                                              RaisedButton.icon(
+                                                            onPressed: () {
+                                                              getStatus().then(
+                                                                  (value) {
+                                                                if (json.decode(value.body)[
+                                                                            'status'] ==
+                                                                        0 ||
+                                                                    json.decode(
+                                                                            value.body)['status'] ==
+                                                                        1) {
+                                                                  // make toast
+                                                                  Fluttertoast
+                                                                      .showToast(
+                                                                    msg:
+                                                                        "Waiting for Receiver Confirmation",
+                                                                    toastLength:
+                                                                        Toast
+                                                                            .LENGTH_LONG,
+                                                                    gravity:
+                                                                        ToastGravity
+                                                                            .BOTTOM,
+                                                                  );
+                                                                } else {
+                                                                  //redirect
+                                                                  Navigator
+                                                                      .pushNamed(
+                                                                    context,
+                                                                    'StatusSenderPage',
+                                                                    arguments: json
+                                                                        .encode({
+                                                                      'status':
+                                                                          json.decode(
+                                                                              value.body)['status'],
+                                                                      'productId':
+                                                                          _prodId,
+                                                                      'owner':
+                                                                          _owner,
+                                                                    }),
+                                                                  );
+                                                                }
+                                                              });
+                                                            },
+                                                            label: Text(
+                                                              "Check Status",
+                                                              style: TextStyle(
+                                                                  fontSize: 17,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                            icon: Icon(
+                                                                Icons.check,
+                                                                color: Colors
+                                                                    .white),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                20),
+                                                        ButtonTheme(
+                                                          child:
+                                                              RaisedButton.icon(
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                _doGenerateQR =
+                                                                    false;
+                                                              });
+                                                            },
+                                                            label: Text(
+                                                              "Cancel",
+                                                              style: TextStyle(
+                                                                  fontSize: 17,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                            icon: Icon(
+                                                              Icons.cancel,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                          buttonColor:
+                                                              Colors.red,
+                                                        )
+                                                      ])
                                                 ],
                                               ),
                                             );
@@ -291,10 +356,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                 },
                                                 child: Text(
                                                   "Generate a QR",
-                                                  style:
-                                                      TextStyle(fontSize: 17, color: Colors.white),
+                                                  style: TextStyle(
+                                                      fontSize: 17,
+                                                      color: Colors.white),
                                                 ),
                                               ),
+                                              buttonColor: Color(0xFFD3D3D3),
                                             );
                                           } else {
                                             return CircularProgressIndicator();
@@ -309,15 +376,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
                 Expanded(
                   child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: RaisedButton(
-                      onPressed: () => {
-                        Navigator.pushNamed(context, 'TraceProductPage',
-                            arguments: int.parse(_prodId)),
-                      },
-                      child: Text("DISPLAY TRACE"),
-                    ),
-                  ),
+                      alignment: Alignment.bottomCenter,
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: MediaQuery.of(context).size.height / 12,
+                        child: TextButton(
+                          onPressed: () => {
+                            Navigator.pushNamed(context, 'TraceProductPage',
+                                arguments: int.parse(_prodId)),
+                          },
+                          child: Text("DISPLAY TRACE"),
+                          style: myOrangeButtonStyle,
+                        ),
+                      )),
                 ),
               ],
             ),

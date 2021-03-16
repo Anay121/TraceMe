@@ -36,7 +36,11 @@ class _StatusReceiverState extends State<StatusReceiver> {
     String receiver = await Session().getter('userid');
     http.post(
       Helper.url + '/transfer',
-      body: json.encode({'senderId': _owner, 'productId': _productId, 'receiverId': receiver}),
+      body: json.encode({
+        'senderId': _owner,
+        'productId': _productId,
+        'receiverId': receiver
+      }),
     );
   }
 
@@ -72,11 +76,11 @@ class _StatusReceiverState extends State<StatusReceiver> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Congratulations! \n\nThe deed is done!',
-                        style: TextStyle(fontSize: 30),
+                        'Congratulations! \n\nProduct successfully transferred',
+                        style: TextStyle(fontSize: 30, color: darker),
                       ),
                       Text(
-                        "Please Rate your experience",
+                        "Please rate your experience",
                         style: TextStyle(fontSize: 20),
                       ),
                       Column(
@@ -90,15 +94,15 @@ class _StatusReceiverState extends State<StatusReceiver> {
                             ratingWidget: RatingWidget(
                               full: Icon(
                                 Icons.star,
-                                color: Colors.blue,
+                                color: Colors.yellow[700],
                               ),
                               half: Icon(
                                 Icons.star_half,
-                                color: Colors.blue,
+                                color: Colors.yellow[700],
                               ),
                               empty: Icon(
                                 Icons.star_border,
-                                color: Colors.blue,
+                                color: Colors.yellow[700],
                               ),
                             ),
                             itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
@@ -109,6 +113,7 @@ class _StatusReceiverState extends State<StatusReceiver> {
                           ),
                           ButtonTheme(
                             minWidth: 100,
+                            buttonColor: darker,
                             child: RaisedButton(
                               onPressed: () {
                                 rate().then((val) {
@@ -119,14 +124,16 @@ class _StatusReceiverState extends State<StatusReceiver> {
                                     gravity: ToastGravity.BOTTOM,
                                   );
                                 });
-                                Future.delayed(Duration(seconds: 2), () => 1).then(
+                                Future.delayed(Duration(seconds: 2), () => 1)
+                                    .then(
                                   (_) => Navigator.pushReplacementNamed(
                                       context, 'DisplayProductsPage'),
                                 );
                               },
                               child: Text(
                                 "Submit Rating",
-                                style: TextStyle(fontSize: 17, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 17, color: Colors.white),
                               ),
                             ),
                           ),

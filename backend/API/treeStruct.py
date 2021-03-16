@@ -46,10 +46,11 @@ def generateNode(product, product_id, direction, conn, trace_dict):
         t.trace = arr
         trace_dict[str(product_id)]["trace"] = arr #add to dict
     else:
+        user_details = conn.functions.getParticipant(product[4]).call()
         t.maker = product[4]
-        trace_dict[str(product_id)]["maker"] = product[4] #add to dict
+        trace_dict[str(product_id)]["maker"] = [product[4],user_details[2],user_details[3]] #add to dict
         t.owner = product[4]
-        trace_dict[str(product_id)]["owner"] = product[4] #add to dict
+        trace_dict[str(product_id)]["owner"] = [product[4],user_details[2],user_details[3]] #add to dict
         trace_dict[str(product_id)]["trace"] = arr
     
     if direction == 'child' or direction == 'all':

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trace_me/helper.dart';
 
 class MainHomePage extends StatelessWidget {
   @override
@@ -7,9 +8,9 @@ class MainHomePage extends StatelessWidget {
     return Scaffold(
       body: Column(children: [
         ClipPath(
-          clipper: BezierClipper(),
+          clipper: mainPageBezierClipper(),
           child: Container(
-            color: Color.fromRGBO(255, 91, 53, 1),
+            color: orange,
             height: height,
           ),
         ),
@@ -17,25 +18,36 @@ class MainHomePage extends StatelessWidget {
           child: Container(
             color: Colors.white,
             child: Padding(
-              padding: EdgeInsets.all(MediaQuery.of(context).size.height / 20),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.height / 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Welcome to TraceMe',
-                    style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12),
+                    'TraceMe',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width / 12,
+                        fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height / 15),
-                  RaisedButton(
-                    onPressed: () => {
-                      // print(unameController.text + passController.text)
-                      Navigator.pushNamed(context, 'LoginPage')
-                    },
-                    child: Text(
-                      'Login',
-                    ),
+                  SizedBox(height: MediaQuery.of(context).size.height / 50),
+                  Text(
+                    'A BLOCKCHAIN POWERED AGRICULTURAL SUPPLY CHAIN TRACING SYSTEM',
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width / 28),
                   ),
+                  SizedBox(height: MediaQuery.of(context).size.height / 25),
+                  SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height / 13,
+                      child: TextButton(
+                          onPressed: () => {
+                                // print(unameController.text + passController.text)
+                                Navigator.pushNamed(context, 'LoginPage')
+                              },
+                          child: Text(
+                            'LOG IN',
+                          ),
+                          style: myOrangeButtonStyle)),
                   SizedBox(height: MediaQuery.of(context).size.height / 60),
                   Row(children: <Widget>[
                     Expanded(
@@ -51,15 +63,18 @@ class MainHomePage extends StatelessWidget {
                     )),
                   ]),
                   SizedBox(height: MediaQuery.of(context).size.height / 60),
-                  RaisedButton(
-                    onPressed: () => {
-                      // print(unameController.text + passController.text)
-                      Navigator.pushNamed(context, 'RegisterPage')
-                    },
-                    child: Text(
-                      'Register',
-                    ),
-                  ),
+                  SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height / 13,
+                      child: RaisedButton(
+                        onPressed: () => {
+                          // print(unameController.text + passController.text)
+                          Navigator.pushNamed(context, 'RegisterPage')
+                        },
+                        child: Text(
+                          'REGISTER',
+                        ),
+                      )),
                   SizedBox(height: MediaQuery.of(context).size.height / 40),
                 ],
               ),
@@ -69,58 +84,4 @@ class MainHomePage extends StatelessWidget {
       ]),
     );
   }
-}
-
-class BezierClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    final double _xScaling = size.width / 414;
-    final double _yScaling = size.height / 390;
-    path.lineTo(544 * _xScaling, 145.848 * _yScaling);
-    path.cubicTo(
-      544 * _xScaling,
-      243.139 * _yScaling,
-      426.574 * _xScaling,
-      402.21 * _yScaling,
-      242.836 * _xScaling,
-      351.132 * _yScaling,
-    );
-    path.cubicTo(
-      135.564 * _xScaling,
-      321.311 * _yScaling,
-      103.997 * _xScaling,
-      257.246 * _yScaling,
-      -137.763 * _xScaling,
-      165.793 * _yScaling,
-    );
-    path.cubicTo(
-      -228.251 * _xScaling,
-      83.582 * _yScaling,
-      19.6796 * _xScaling,
-      -111 * _yScaling,
-      206.227 * _xScaling,
-      -111 * _yScaling,
-    );
-    path.cubicTo(
-      392.774 * _xScaling,
-      -111 * _yScaling,
-      544 * _xScaling,
-      23.748 * _yScaling,
-      544 * _xScaling,
-      145.848 * _yScaling,
-    );
-    path.cubicTo(
-      544 * _xScaling,
-      145.848 * _yScaling,
-      544 * _xScaling,
-      145.848 * _yScaling,
-      544 * _xScaling,
-      145.848 * _yScaling,
-    );
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }
