@@ -74,7 +74,7 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
             onTap: () async {
               print("tapping");
               String owner = await Session().getter('userid');
-              Navigator.pushNamed(
+              Navigator.popAndPushNamed(
                 context,
                 "ProductPage",
                 arguments: json.encode({
@@ -116,6 +116,41 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+                title: Text('Home'),
+                trailing: Icon(Icons.home),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.popAndPushNamed(context, 'DisplayProductsPage');
+                }),
+            ListTile(
+              title: Text('Profile'),
+              trailing: Icon(Icons.person_rounded),
+              onTap: () async {
+                String val = await Session().getter('userid');
+                Navigator.pop(context);
+                Navigator.popAndPushNamed(context, 'UserInfoPage', arguments: val);
+              },
+            ),
+            ListTile(
+              title: Text('Scan'),
+              trailing: Icon(Icons.qr_code_scanner_rounded),
+              onTap: () => Navigator.popAndPushNamed(context, 'QRScanPage'),
+            ),
+            ListTile(
+              title: Text('Logout'),
+              trailing: Icon(Icons.logout),
+              onTap: () async {
+                Session().setter({'userid': "", 'JWTAccessToken': "", 'JWTRefreshToken': ""});
+                Navigator.pushNamedAndRemoveUntil(context, '/', (router) => false);
+              },
+            )
+          ],
+        ),
+      ),
       body: Column(children: [
         ClipPath(
           // clipper: BezierClipper(),
@@ -143,11 +178,12 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                         onPressed: () => {
                           if (productsSelected.isEmpty)
                             {
-                              Navigator.pushNamed(context, 'AddNewProductPage', arguments: [-1])
+                              Navigator.popAndPushNamed(context, 'AddNewProductPage',
+                                  arguments: [-1])
                             }
                           else
                             {
-                              Navigator.pushNamed(context, 'AddNewProductPage',
+                              Navigator.popAndPushNamed(context, 'AddNewProductPage',
                                   arguments: productsSelected)
                             }
                         },
@@ -168,7 +204,8 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                                 productsSelected[0],
                                 productsSelectedQuantities[productsSelected[0]]
                               ],
-                              Navigator.pushNamed(context, 'SplitProductPage', arguments: splitArgs)
+                              Navigator.popAndPushNamed(context, 'SplitProductPage',
+                                  arguments: splitArgs)
                             }
                           else
                             {

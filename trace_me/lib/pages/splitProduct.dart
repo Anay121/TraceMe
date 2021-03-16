@@ -34,8 +34,7 @@ class _SplitProductState extends State<SplitProductPage> {
 
     String val = await Session().getter('userid');
     return http.post(Helper.url + '/split',
-        body: json.encode(
-            {"product_id": args[0], "quantities": quants, "user_id": val}));
+        body: json.encode({"product_id": args[0], "quantities": quants, "user_id": val}));
   }
 
   @override
@@ -48,10 +47,8 @@ class _SplitProductState extends State<SplitProductPage> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
     TextStyle keyStyle = TextStyle(
-        color: Color.fromRGBO(255, 91, 53, 1),
-        fontSize: MediaQuery.of(context).size.width / 23);
-    TextStyle valueStyle =
-        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+        color: Color.fromRGBO(255, 91, 53, 1), fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle = TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     List object = List();
     List<int> lint = List<int>();
     int objSum;
@@ -74,20 +71,17 @@ class _SplitProductState extends State<SplitProductPage> {
               children: [
                 Text(
                   'SPLIT PRODUCT',
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 15),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 15),
                 ),
                 Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: MediaQuery.of(context).size.height / 40),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            new Text("TOTAL QUANTITY", style: keyStyle),
-                            new Text("${args[1]}", style: valueStyle)
-                          ]),
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                        new Text("TOTAL QUANTITY", style: keyStyle),
+                        new Text("${args[1]}", style: valueStyle)
+                      ]),
                       SizedBox(height: MediaQuery.of(context).size.height / 40),
                       // Row(
                       // //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -98,8 +92,7 @@ class _SplitProductState extends State<SplitProductPage> {
                       // //     ]),
                       // // SizedBox(height: MediaQuery.of(context).size.height / 40),
                       Column(
-                        children: List.generate(
-                            fields.length, (int index) => fields[index]),
+                        children: List.generate(fields.length, (int index) => fields[index]),
                       ),
                       CircleAvatar(
                         backgroundColor: Color.fromRGBO(255, 91, 53, 1),
@@ -124,8 +117,7 @@ class _SplitProductState extends State<SplitProductPage> {
             alignment: Alignment.bottomCenter,
             child: RaisedButton(
               onPressed: () => {
-                for (int i = 0; i < fields.length; i++)
-                  {object.add(fields[i].getData())},
+                for (int i = 0; i < fields.length; i++) {object.add(fields[i].getData())},
                 // print(object),
                 for (var i in object) {lint.add(int.parse(i))},
                 // print(lint),
@@ -143,7 +135,7 @@ class _SplitProductState extends State<SplitProductPage> {
                       }
                       // redirect with params
                       else {
-                        Navigator.pushNamed(context, 'DisplayProductsPage');
+                        Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                       }
                     }),
                   }
@@ -160,7 +152,7 @@ class _SplitProductState extends State<SplitProductPage> {
                       }
                       // redirect with params
                       else {
-                        Navigator.pushNamed(context, 'DisplayProductsPage');
+                        Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                       }
                     }),
                   }

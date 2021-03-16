@@ -23,7 +23,7 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
   Future<dynamic> getProps() {
     return http.post(
       Helper.url + '/getTransactionProps',
-      body: json.encode({'product_id': args[0], 'transfer': 'true'}),
+      body: json.encode({'product_id': args[0], 'transfer': 'false'}),
     );
   }
 

@@ -224,18 +224,24 @@ def transfer_owner():
     p = conn.functions.getProduct(product_id).call()
     if p[0].lower().find("juice"):
         if "temperature" in transf_props:
-            if int(transf_props["temperature"])>-5:
+            if int(transf_props["temperature"]) > -5:
                 sender_details = conn.functions.getParticipant(sender_id).call()
                 receiver_details = conn.functions.getParticipant(receiver_id).call()
                 tx_hash = conn.functions.setError(product_id,"Temperature of "+str(product_id)+" is not maintained during transfer from "+str(sender_details[2])+" to "+str(receiver_details[2])).transact()
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
-    
     if 'transfer' in new_props:
         del new_props['transfer']
+    pendingTransactions
     tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact()
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-
+    if sender_id in pendingTransactions:
+        if product_id in pendingTransactions[sender_id]:
+            del pendingTransactions[sender_id][product_id]
+            if len(pendingTransactions[sender_id]) == 0:
+                del pendingTransactions[sender_id]
+    
+    print(pendingTransactions, 'this')
     try:
         tx_hash = conn.functions.TransferOwnership(
             sender_id, receiver_id, product_id, location, str(time.time()), json.dumps(transf_props)).transact()
@@ -324,7 +330,7 @@ def add_product():
     event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
     child_id = None
     for event in event_filter.get_all_entries():
-        print(event)
+        # print(event)
         child_id = event['args']['_child']
         print("id of the newly added child:", child_id)
 

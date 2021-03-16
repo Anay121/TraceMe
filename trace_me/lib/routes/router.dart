@@ -26,16 +26,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case "DisplayProductsPage":
       return MaterialPageRoute(builder: (context) => DisplayProductsPage());
     case "AddNewProductPage":
-      return MaterialPageRoute(
-          builder: (context) => AddNewProductPage(arguments));
+      return MaterialPageRoute(builder: (context) => AddNewProductPage(arguments));
     case "SplitProductPage":
-      return MaterialPageRoute(
-          builder: (context) => SplitProductPage(arguments));
+      return MaterialPageRoute(builder: (context) => SplitProductPage(arguments));
     case 'RegisterPage':
       return MaterialPageRoute(builder: (context) => RegisterPage());
     case 'ProductPage':
-      return MaterialPageRoute(
-          builder: (context) => ProductDetailsPage(arguments));
+      return MaterialPageRoute(builder: (context) => ProductDetailsPage(arguments));
     case 'QRScanPage':
       return MaterialPageRoute(builder: (context) => QrScanPage());
     case 'ReceiverPage':
@@ -45,13 +42,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case 'StatusReceiverPage':
       return MaterialPageRoute(builder: (context) => StatusReceiver(arguments));
     case 'TraceProductPage':
-      return MaterialPageRoute(
-          builder: (context) => TraceProductPage(arguments));
+      return MaterialPageRoute(builder: (context) => TraceProductPage(arguments));
     case 'UserInfoPage':
       return MaterialPageRoute(builder: (context) => UserInfoPage(arguments));
     case "ProdTransDetailsPage":
-      return MaterialPageRoute(
-          builder: (context) => ProdTransDetailsPage(arguments));
+      return MaterialPageRoute(builder: (context) => ProdTransDetailsPage(arguments));
     default:
       return MaterialPageRoute(builder: (context) => LoginPage());
   }

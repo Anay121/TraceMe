@@ -6,6 +6,7 @@ class Helper {
 
 class Session {
   void setter(dynamic jsonVal) async {
+    print(jsonVal);
     await FlutterSession().set("userid", jsonVal['userid']);
     await FlutterSession().set("JWTAccess", jsonVal['JWTAccessToken']);
     await FlutterSession().set("JWTRefresh", jsonVal['JWTRefreshToken']);

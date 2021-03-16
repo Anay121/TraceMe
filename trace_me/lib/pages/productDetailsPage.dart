@@ -78,7 +78,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             padding: EdgeInsets.all(MediaQuery.of(context).size.height / 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   "Product Information",
