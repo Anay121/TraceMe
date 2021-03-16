@@ -4,8 +4,8 @@ import time
 import os
 from datetime import date
 from web3 import method
-from .web3connection import Connection
-from .treeStruct import makeTree
+from web3connection import Connection
+from treeStruct import makeTree
 from hashlib import new, sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -225,8 +225,8 @@ def transfer_owner():
     if p[0].lower().find("juice"):
         if "temperature" in transf_props:
             if int(transf_props["temperature"])>-5:
-                sender_details = conn.functions.getParticipant(i[2]).call()
-                receiver_details = conn.functions.getParticipant(i[3]).call()
+                sender_details = conn.functions.getParticipant(sender_id).call()
+                receiver_details = conn.functions.getParticipant(receiver_id).call()
                 tx_hash = conn.functions.setError(product_id,"Temperature of "+str(product_id)+" is not maintained during transfer from "+str(sender_details[2])+" to "+str(receiver_details[2])).transact()
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
