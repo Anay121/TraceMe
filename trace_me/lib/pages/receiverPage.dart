@@ -72,31 +72,33 @@ class _ReceiverPageState extends State<ReceiverPage> {
         title: Text(title),
         content: Text(content),
         actions: [
-          ButtonTheme(
-            minWidth: 100,
-            child: RaisedButton(
-              onPressed: () {
-                onYesPress();
-              },
-              child: Text(
-                "Yes",
-                style: TextStyle(fontSize: 17, color: Colors.white),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            ButtonTheme(
+              minWidth: 100,
+              child: RaisedButton(
+                onPressed: () {
+                  onYesPress();
+                },
+                child: Text(
+                  "Yes",
+                  style: TextStyle(fontSize: 17, color: Colors.white),
+                ),
               ),
             ),
-          ),
-          ButtonTheme(
-            minWidth: 100,
-            buttonColor: Colors.red,
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text(
-                "No",
-                style: TextStyle(fontSize: 17, color: Colors.white),
+            ButtonTheme(
+              minWidth: 100,
+              buttonColor: Colors.red,
+              child: RaisedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  "No",
+                  style: TextStyle(fontSize: 17, color: Colors.white),
+                ),
               ),
             ),
-          ),
+          ])
         ],
       ),
     );
@@ -391,6 +393,10 @@ class DataRow extends StatelessWidget {
               controller: _value,
               decoration: InputDecoration(
                 hintText: 'Value',
+                suffixText: '*',
+                suffixStyle: TextStyle(
+                  color: Colors.red,
+                ),
                 // errorText: _validateValue ? '' : 'Cannot be kept empty',
               ),
             ),

@@ -67,6 +67,10 @@ class _RegisterState extends State<RegisterPage> {
                               obscureText: false,
                               decoration: InputDecoration(
                                 hintText: 'Enter Username',
+                                suffixText: '*',
+                                suffixStyle: TextStyle(
+                                  color: Colors.red,
+                                ),
                               ),
                               onSaved: (val) {
                                 _data.uname = val;
@@ -79,6 +83,10 @@ class _RegisterState extends State<RegisterPage> {
                               obscureText: !_passwordShow,
                               decoration: InputDecoration(
                                 hintText: 'Enter Password',
+                                suffixText: '*',
+                                suffixStyle: TextStyle(
+                                  color: Colors.red,
+                                ),
                                 suffixIcon: IconButton(
                                   icon: Icon(_passwordShow
                                       ? Icons.visibility
@@ -101,7 +109,11 @@ class _RegisterState extends State<RegisterPage> {
                             TextFormField(
                               obscureText: false,
                               decoration: InputDecoration(
-                                hintText: 'Enter Your name',
+                                hintText: 'Enter organization name',
+                                suffixText: '*',
+                                suffixStyle: TextStyle(
+                                  color: Colors.red,
+                                ),
                               ),
                               onSaved: (val) {
                                 _data.fullname = val;
@@ -130,7 +142,12 @@ class _RegisterState extends State<RegisterPage> {
                                   _roleValue = value;
                                 });
                               },
-                              decoration: InputDecoration(),
+                              decoration: InputDecoration(
+                                suffixText: '*',
+                                suffixStyle: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
                               onSaved: (val) {
                                 _data.role = val;
                               },

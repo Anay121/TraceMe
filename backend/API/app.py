@@ -56,12 +56,13 @@ def split_product(p_id, p_name, parent_array, children_array, user_id, quantitie
     
     children = []
     print("split_products() called with quantities", quantities)
+    c=1
     for q in quantities:
         # TODO encode the quanitities and the prop what algo??
         #add parent properties but change quantity field
         enc_props["quantity"]=q
         tx_hash = conn.functions.addProduct(
-            p_name, parent_array, children_array, str(user_id), json.dumps(enc_props)).transact()
+             "C"+str(c)+"-"+str(p_id)+": "+p_name, parent_array, children_array, str(user_id), json.dumps(enc_props)).transact()
         event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
         for event in event_filter.get_all_entries():
             print(event)
@@ -71,6 +72,7 @@ def split_product(p_id, p_name, parent_array, children_array, user_id, quantitie
             for e in errors:
                 tx_hash = conn.functions.setError(event['args']['_child'], e).transact()
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+        c+=1
 
         # check and change ownership
     # remove from parent

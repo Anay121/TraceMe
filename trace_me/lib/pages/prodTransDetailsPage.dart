@@ -116,8 +116,30 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                               children: [
                                                 new Text("MANUFACTURER",
                                                     style: keyStyle),
-                                                new Text("${args[2][1]}",
-                                                    style: valueStyle)
+                                                new GestureDetector(
+                                                    onTap: () => {
+                                                          print(
+                                                              'Go to sender page ${args[2][0]}'),
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              'UserInfoPage',
+                                                              arguments: args[2]
+                                                                  [0])
+                                                        },
+                                                    child: Column(children: [
+                                                      Text("${args[2][1]}",
+                                                          style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                              color:
+                                                                  Colors.blue,
+                                                              fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  23))
+                                                    ])),
                                               ]),
                                           SizedBox(
                                               height: MediaQuery.of(context)
@@ -131,8 +153,30 @@ class _ProdTransDetailsPageState extends State<ProdTransDetailsPage> {
                                               children: [
                                                 new Text("OWNER",
                                                     style: keyStyle),
-                                                new Text("${args[3][1]}",
-                                                    style: valueStyle)
+                                                new GestureDetector(
+                                                    onTap: () => {
+                                                          print(
+                                                              'Go to sender page ${args[3][0]}'),
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              'UserInfoPage',
+                                                              arguments: args[3]
+                                                                  [0])
+                                                        },
+                                                    child: Column(children: [
+                                                      Text("${args[3][1]}",
+                                                          style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline,
+                                                              color:
+                                                                  Colors.blue,
+                                                              fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  23))
+                                                    ])),
                                               ]),
                                           SizedBox(
                                               height: MediaQuery.of(context)

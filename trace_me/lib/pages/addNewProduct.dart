@@ -223,7 +223,13 @@ class DataRow extends StatelessWidget {
             // fit: FlexFit.loose,
             child: TextFormField(
               controller: _value,
-              decoration: InputDecoration(labelText: 'VALUE'),
+              decoration: InputDecoration(
+                labelText: 'VALUE',
+                suffixText: '*',
+                suffixStyle: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
             ),
           ),
         ],

@@ -228,7 +228,13 @@ class DataRow extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         Flexible(
           child: TextFormField(
-            decoration: InputDecoration(labelText: 'QUANTITY'),
+            decoration: InputDecoration(
+              labelText: 'QUANTITY',
+              suffixText: '*',
+              suffixStyle: TextStyle(
+                color: Colors.red,
+              ),
+            ),
             controller: _value,
             onChanged: (text) {
               changeQuantityLeft();

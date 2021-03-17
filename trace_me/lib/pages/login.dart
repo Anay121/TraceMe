@@ -61,6 +61,10 @@ class _LoginState extends State<LoginPage> {
                     obscureText: false,
                     decoration: InputDecoration(
                       hintText: 'Enter Username',
+                      suffixText: '*',
+                      suffixStyle: TextStyle(
+                        color: Colors.red,
+                      ),
                     ),
                     controller: unameController,
                   ),
@@ -72,6 +76,10 @@ class _LoginState extends State<LoginPage> {
                         errorText: _validateError
                             ? "Invalid username or password"
                             : null,
+                        suffixText: '*',
+                        suffixStyle: TextStyle(
+                          color: Colors.red,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(_passwordShow
                               ? Icons.visibility
