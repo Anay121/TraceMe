@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=300px src="./assets/images/logo.png" alt="NewsBuster-logo"></a>
+ <img width=300px src="./assets/images/logo.png" alt="TraceMe-logo"></a>
 </p>
 
 # TraceMe
