@@ -77,7 +77,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             ButtonTheme(
               minWidth: 100,
-              child: RaisedButton(
+              child: ElevatedButton(
                 onPressed: () {
                   onYesPress();
                 },
@@ -90,7 +90,10 @@ class _ReceiverPageState extends State<ReceiverPage> {
             ButtonTheme(
               minWidth: 100,
               buttonColor: Colors.red,
-              child: RaisedButton(
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -198,7 +201,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         ButtonTheme(
-                                          child: RaisedButton.icon(
+                                          child: ElevatedButton.icon(
                                             onPressed: () {
                                               showAlert(
                                                   'Confirm', 'Are you sure you want to confirm?',
@@ -225,7 +228,8 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                                       toastLength: Toast.LENGTH_LONG,
                                                       gravity: ToastGravity.BOTTOM,
                                                     );
-                                                    Navigator.pop(context);
+                                                    Navigator.pushReplacementNamed(
+                                                        context, 'DisplayProductsPage');
                                                   }
                                                   // maybe close page or something?
                                                 });
@@ -243,12 +247,13 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                         ),
                                         ButtonTheme(
                                           buttonColor: Colors.red,
-                                          child: RaisedButton.icon(
+                                          child: ElevatedButton.icon(
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all<Color>(Colors.red)),
                                             onPressed: () {
                                               // call rejection function
                                               rejection().then((val) {
-                                                // TODO
-                                                // redirect to products page
                                                 Navigator.pushReplacementNamed(
                                                     context, 'DisplayProductsPage');
                                               });
@@ -256,9 +261,10 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                             label: Text(
                                               "Cancel",
                                               style: TextStyle(
-                                                  fontSize: 17,
-                                                  color: Colors.white,
-                                                  backgroundColor: Colors.red),
+                                                fontSize: 17,
+                                                color: Colors.white,
+                                                backgroundColor: Colors.red,
+                                              ),
                                             ),
                                             icon: Icon(
                                               Icons.cancel,
@@ -270,7 +276,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                     ),
                                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                                     ButtonTheme(
-                                        child: RaisedButton(
+                                        child: ElevatedButton(
                                           onPressed: () {
                                             Navigator.pushNamed(context, 'TraceProductPage',
                                                 arguments: int.parse(_qrData['product_id']));
@@ -287,7 +293,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                               Container(
                                 child: ButtonTheme(
                                   minWidth: 100,
-                                  child: RaisedButton(
+                                  child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.pushNamed(
                                         context,

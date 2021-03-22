@@ -70,10 +70,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle keyStyle = TextStyle(
-        color: darker, fontSize: MediaQuery.of(context).size.width / 23);
-    TextStyle valueStyle =
-        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle keyStyle = TextStyle(color: darker, fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle = TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     return Scaffold(
       drawer: MenuDrawer(),
       body: Center(
@@ -142,13 +140,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 Container(
                                   child: FutureBuilder(
                                     future: getProps(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot snapshot) {
+                                    builder: (BuildContext context, AsyncSnapshot snapshot) {
                                       if (snapshot.hasData) {
                                         Map map = Map();
                                         map['KEY'] = 'VALUE';
-                                        map.addAll(
-                                            json.decode(snapshot.data.body));
+                                        map.addAll(json.decode(snapshot.data.body));
                                         print(map);
                                         return SingleChildScrollView(
                                           child: Table(
@@ -159,24 +155,19 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                   style: BorderStyle.solid),
                                             ),
                                             defaultVerticalAlignment:
-                                                TableCellVerticalAlignment
-                                                    .middle,
-                                            children: Map.fromEntries(
-                                                map.entries.expand((e) => [
-                                                      if (e.key != 'transfer')
-                                                        MapEntry(e.key, e.value)
-                                                    ])).entries.map((entry) {
+                                                TableCellVerticalAlignment.middle,
+                                            children: Map.fromEntries(map.entries.expand((e) => [
+                                                  if (e.key != 'transfer') MapEntry(e.key, e.value)
+                                                ])).entries.map((entry) {
                                               // if (entry.key != 'transfer') {
                                               return TableRow(
                                                 children: [
                                                   TableCell(
                                                     child: Container(
-                                                        padding:
-                                                            EdgeInsets.all(10),
+                                                        padding: EdgeInsets.all(10),
                                                         child: Text(
                                                           entry.key.toString(),
-                                                          textAlign:
-                                                              TextAlign.center,
+                                                          textAlign: TextAlign.center,
                                                           style: keyStyle,
                                                         )),
                                                   ),
@@ -184,8 +175,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                     child: Container(
                                                       child: Text(
                                                         entry.value.toString(),
-                                                        textAlign:
-                                                            TextAlign.center,
+                                                        textAlign: TextAlign.center,
                                                         style: valueStyle,
                                                       ),
                                                     ),
@@ -209,8 +199,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                       "product_id": _prodId,
                                     }),
                                     version: QrVersions.auto,
-                                    size:
-                                        MediaQuery.of(context).size.width / 2.5,
+                                    size: MediaQuery.of(context).size.width / 2.5,
                                   ),
                                 ),
                                 _doGenerateQR
@@ -220,9 +209,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                           if (snapshot.hasData) {
                                             return Container(
                                               child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 children: [
                                                   QrImage(
                                                     data: json.encode({
@@ -233,55 +220,39 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                       "product_id": _prodId,
                                                     }),
                                                     version: QrVersions.auto,
-                                                    size: MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        2.5,
+                                                    size: MediaQuery.of(context).size.width / 2.5,
                                                   ),
                                                   Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
+                                                          MainAxisAlignment.spaceEvenly,
                                                       children: [
                                                         ButtonTheme(
-                                                          child:
-                                                              RaisedButton.icon(
+                                                          child: ElevatedButton.icon(
                                                             onPressed: () {
-                                                              getStatus().then(
-                                                                  (value) {
-                                                                if (json.decode(value.body)[
-                                                                            'status'] ==
+                                                              getStatus().then((value) {
+                                                                if (json.decode(
+                                                                            value.body)['status'] ==
                                                                         0 ||
                                                                     json.decode(
                                                                             value.body)['status'] ==
                                                                         1) {
                                                                   // make toast
-                                                                  Fluttertoast
-                                                                      .showToast(
+                                                                  Fluttertoast.showToast(
                                                                     msg:
                                                                         "Waiting for Receiver Confirmation",
-                                                                    toastLength:
-                                                                        Toast
-                                                                            .LENGTH_LONG,
-                                                                    gravity:
-                                                                        ToastGravity
-                                                                            .BOTTOM,
+                                                                    toastLength: Toast.LENGTH_LONG,
+                                                                    gravity: ToastGravity.BOTTOM,
                                                                   );
                                                                 } else {
                                                                   //redirect
-                                                                  Navigator
-                                                                      .pushNamed(
+                                                                  Navigator.pushNamed(
                                                                     context,
                                                                     'StatusSenderPage',
-                                                                    arguments: json
-                                                                        .encode({
-                                                                      'status':
-                                                                          json.decode(
-                                                                              value.body)['status'],
-                                                                      'productId':
-                                                                          _prodId,
-                                                                      'owner':
-                                                                          _owner,
+                                                                    arguments: json.encode({
+                                                                      'status': json.decode(
+                                                                          value.body)['status'],
+                                                                      'productId': _prodId,
+                                                                      'owner': _owner,
                                                                     }),
                                                                   );
                                                                 }
@@ -291,45 +262,35 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                               "Check Status",
                                                               style: TextStyle(
                                                                   fontSize: 17,
-                                                                  color: Colors
-                                                                      .white),
+                                                                  color: Colors.white),
                                                             ),
-                                                            icon: Icon(
-                                                                Icons.check,
-                                                                color: Colors
-                                                                    .white),
+                                                            icon: Icon(Icons.check,
+                                                                color: Colors.white),
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width /
-                                                                20),
+                                                            width:
+                                                                MediaQuery.of(context).size.width /
+                                                                    20),
                                                         ButtonTheme(
-                                                          child:
-                                                              RaisedButton.icon(
+                                                          child: ElevatedButton.icon(
                                                             onPressed: () {
                                                               setState(() {
-                                                                _doGenerateQR =
-                                                                    false;
+                                                                _doGenerateQR = false;
                                                               });
                                                             },
                                                             label: Text(
                                                               "Cancel",
                                                               style: TextStyle(
                                                                   fontSize: 17,
-                                                                  color: Colors
-                                                                      .white),
+                                                                  color: Colors.white),
                                                             ),
                                                             icon: Icon(
                                                               Icons.cancel,
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors.white,
                                                             ),
                                                           ),
-                                                          buttonColor:
-                                                              Colors.red,
+                                                          buttonColor: Colors.red,
                                                         )
                                                       ])
                                                 ],
@@ -347,7 +308,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             return ButtonTheme(
                                               // minWidth: 100,
                                               // height: 10,
-                                              child: RaisedButton(
+                                              child: ElevatedButton(
                                                 onPressed: () {
                                                   setState(() {
                                                     _doGenerateQR = true;
@@ -355,9 +316,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                 },
                                                 child: Text(
                                                   "Generate a QR",
-                                                  style: TextStyle(
-                                                      fontSize: 17,
-                                                      color: Colors.white),
+                                                  style:
+                                                      TextStyle(fontSize: 17, color: Colors.white),
                                                 ),
                                               ),
                                               buttonColor: Color(0xFFD3D3D3),

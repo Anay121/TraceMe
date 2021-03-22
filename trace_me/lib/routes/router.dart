@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trace_me/pages/customerViewPage.dart';
 import 'package:trace_me/pages/displayProducts.dart';
 import 'package:trace_me/pages/login.dart';
 import 'package:trace_me/pages/mainHomePage.dart';
@@ -47,6 +48,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (context) => UserInfoPage(arguments));
     case "ProdTransDetailsPage":
       return MaterialPageRoute(builder: (context) => ProdTransDetailsPage(arguments));
+    case "CustomerViewPage":
+      return MaterialPageRoute(builder: (context) => CustomerViewPage());
     default:
       return MaterialPageRoute(builder: (context) => LoginPage());
   }

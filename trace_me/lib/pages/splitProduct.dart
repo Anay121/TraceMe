@@ -34,8 +34,7 @@ class _SplitProductState extends State<SplitProductPage> {
 
     String val = await Session().getter('userid');
     return http.post(Helper.url + '/split',
-        body: json.encode(
-            {"product_id": args[0], "quantities": quants, "user_id": val}));
+        body: json.encode({"product_id": args[0], "quantities": quants, "user_id": val}));
   }
 
   @override
@@ -47,10 +46,8 @@ class _SplitProductState extends State<SplitProductPage> {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height * 0.2;
-    TextStyle keyStyle = TextStyle(
-        color: darker, fontSize: MediaQuery.of(context).size.width / 23);
-    TextStyle valueStyle =
-        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle keyStyle = TextStyle(color: darker, fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle = TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     List object = List();
     List<int> lint = List<int>();
     int objSum;
@@ -83,12 +80,10 @@ class _SplitProductState extends State<SplitProductPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: MediaQuery.of(context).size.height / 40),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            new Text("TOTAL QUANTITY", style: keyStyle),
-                            new Text("${args[1]}", style: valueStyle)
-                          ]),
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                        new Text("TOTAL QUANTITY", style: keyStyle),
+                        new Text("${args[1]}", style: valueStyle)
+                      ]),
                       SizedBox(height: MediaQuery.of(context).size.height / 40),
                       // Row(
                       // //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,8 +94,7 @@ class _SplitProductState extends State<SplitProductPage> {
                       // //     ]),
                       // // SizedBox(height: MediaQuery.of(context).size.height / 40),
                       Column(
-                        children: List.generate(
-                            fields.length, (int index) => fields[index]),
+                        children: List.generate(fields.length, (int index) => fields[index]),
                       ),
                       CircleAvatar(
                         backgroundColor: darker,
@@ -128,8 +122,7 @@ class _SplitProductState extends State<SplitProductPage> {
                 height: MediaQuery.of(context).size.height / 12,
                 child: TextButton(
                   onPressed: () => {
-                    for (int i = 0; i < fields.length; i++)
-                      {object.add(fields[i].getData())},
+                    for (int i = 0; i < fields.length; i++) {object.add(fields[i].getData())},
                     // print(object),
                     for (var i in object) {lint.add(int.parse(i))},
                     // print(lint),
@@ -147,8 +140,7 @@ class _SplitProductState extends State<SplitProductPage> {
                           }
                           // redirect with params
                           else {
-                            Navigator.popAndPushNamed(
-                                context, 'DisplayProductsPage');
+                            Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                           }
                         }),
                       }
@@ -165,8 +157,7 @@ class _SplitProductState extends State<SplitProductPage> {
                           }
                           // redirect with params
                           else {
-                            Navigator.popAndPushNamed(
-                                context, 'DisplayProductsPage');
+                            Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                           }
                         }),
                       }
@@ -178,10 +169,9 @@ class _SplitProductState extends State<SplitProductPage> {
                   child: Text("SPLIT PRODUCT"),
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(darker),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      shape:
+                          MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ))),
                 ),
@@ -262,7 +252,7 @@ class DataRow extends StatelessWidget {
 
 showAlertDialog(BuildContext context) {
   // set up the button
-  Widget okButton = FlatButton(
+  Widget okButton = TextButton(
     child: Text("OK"),
     onPressed: () {
       Navigator.of(context).pop();

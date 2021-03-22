@@ -2,7 +2,6 @@ from web3 import Web3
 import os
 import json
 
-
 class Connection:
     def create_conn(self):
         my_provider = Web3.HTTPProvider('HTTP://127.0.0.1:7545')

@@ -37,7 +37,7 @@ class QrScanPage extends StatelessWidget {
                     if (val['type'] == 'transfer') {
                       getStatus(val['sender'], val['product_id']).then((returnValue) {
                         // if status is 1, go to receiver page otherwise redirect to status page
-                        print(returnValue);
+                        // print('${json.decode(returnValue.body)["status"]} statuscode');
                         if (json.decode(returnValue.body)['status'] == 1) {
                           Navigator.popAndPushNamed(context, 'ReceiverPage',
                               arguments: snapshot.data);

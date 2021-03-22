@@ -36,11 +36,7 @@ class _StatusReceiverState extends State<StatusReceiver> {
     String receiver = await Session().getter('userid');
     http.post(
       Helper.url + '/transfer',
-      body: json.encode({
-        'senderId': _owner,
-        'productId': _productId,
-        'receiverId': receiver
-      }),
+      body: json.encode({'senderId': _owner, 'productId': _productId, 'receiverId': receiver}),
     );
   }
 
@@ -120,7 +116,7 @@ class _StatusReceiverState extends State<StatusReceiver> {
                           ButtonTheme(
                             minWidth: 100,
                             buttonColor: darker,
-                            child: RaisedButton(
+                            child: ElevatedButton(
                               onPressed: () {
                                 rate().then((val) {
                                   Fluttertoast.showToast(
@@ -130,16 +126,14 @@ class _StatusReceiverState extends State<StatusReceiver> {
                                     gravity: ToastGravity.BOTTOM,
                                   );
                                 });
-                                Future.delayed(Duration(seconds: 0), () => 1)
-                                    .then(
+                                Future.delayed(Duration(seconds: 0), () => 1).then(
                                   (_) => Navigator.pushReplacementNamed(
                                       context, 'DisplayProductsPage'),
                                 );
                               },
                               child: Text(
                                 "Submit Rating",
-                                style: TextStyle(
-                                    fontSize: 17, color: Colors.white),
+                                style: TextStyle(fontSize: 17, color: Colors.white),
                               ),
                             ),
                           ),
@@ -158,12 +152,10 @@ class _StatusReceiverState extends State<StatusReceiver> {
                     ),
                     ButtonTheme(
                       minWidth: 100,
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed: () {
                           // call api endpoint for removal
                           deleteTransaction().then((val) {
-                            // TODO
-                            // redirect to display page
                             Navigator.pop(context);
                           });
                         },

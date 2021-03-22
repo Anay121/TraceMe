@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify
 import json
-import time
+# import time
 import os
 from datetime import date, datetime
 import pytz
-from toolz import recipes
-from web3 import method
+# from toolz import recipes
+# from web3 import method
 from .web3connection import Connection
 from .treeStruct import makeTree
 from hashlib import sha256
@@ -15,7 +15,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 
-JWT_SECRET_KEY='a9346b0068335c634304afa5de1d51232a80966775613d8c1c5a0f6d231c8b1a'
+JWT_SECRET_KEY = 'a9346b0068335c634304afa5de1d51232a80966775613d8c1c5a0f6d231c8b1a'
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
@@ -257,7 +257,7 @@ def transfer_owner():
     #changed here timestamp
     try:
         tx_hash = conn.functions.TransferOwnership(
-            sender_id, receiver_id, product_id, location, datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%Y-%m-%d %H:%M:%S'), json.dumps(transf_props)).transact({'gas' : 400000})
+            sender_id, receiver_id, product_id, location, datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%d-%m-%Y %H:%M:%S'), json.dumps(transf_props)).transact({'gas' : 400000})
         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     # print(tx_receipt)
     except Exception as e:
@@ -300,9 +300,10 @@ def login():
     # generate a token also maybe?
     access_token = create_access_token(identity=hashedId)
     refresh_token = create_refresh_token(identity=hashedId)
-    # print(access_token)
+    role = user_details[3]
+    print(role)
     # return the generated token
-    return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token}), 200
+    return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token, 'role':role}), 200
 
 
 @app.route("/add_product", methods=["POST"])
