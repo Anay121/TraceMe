@@ -3,10 +3,11 @@ import json
 import time
 import os
 from datetime import date
+from toolz import recipes
 from web3 import method
-from web3connection import Connection
-from treeStruct import makeTree
-from hashlib import new, sha256
+from .web3connection import Connection
+from .treeStruct import makeTree
+from hashlib import sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     jwt_refresh_token_required, create_refresh_token,
@@ -25,6 +26,9 @@ print("connection address:", conn.address)
 # user : {product : status}
 #status: 1=added, 2=transaction deets added by recv, 3=rejected by receiver, 4=deets accepted by sender, 5=rejected by sender
 pendingTransactions = {}
+
+# userid : [productid]
+transactionStarted = {}
 
 # tracing function
 @app.route('/trace', methods=['POST'])
@@ -62,7 +66,7 @@ def split_product(p_id, p_name, parent_array, children_array, user_id, quantitie
         #add parent properties but change quantity field
         enc_props["quantity"]=q
         tx_hash = conn.functions.addProduct(
-             "C"+str(c)+"-"+str(p_id)+": "+p_name, parent_array, children_array, str(user_id), json.dumps(enc_props)).transact()
+             "C"+str(c)+"-"+str(p_id)+": "+p_name, parent_array, children_array, str(user_id), json.dumps(enc_props)).transact({'gas' : 400000})
         event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
         for event in event_filter.get_all_entries():
             print(event)
@@ -70,13 +74,13 @@ def split_product(p_id, p_name, parent_array, children_array, user_id, quantitie
             children.append(event['args']['_child'])
             #add error if any of parent to children
             for e in errors:
-                tx_hash = conn.functions.setError(event['args']['_child'], e).transact()
+                tx_hash = conn.functions.setError(event['args']['_child'], e).transact({'gas' : 400000})
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
         c+=1
 
         # check and change ownership
     # remove from parent
-    tx_hash = conn.functions.removeFromOwner(str(user_id), p_id).transact()
+    tx_hash = conn.functions.removeFromOwner(str(user_id), p_id).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     print("New children are:", children)
     return children
@@ -140,7 +144,7 @@ def register_user():
 
     # call addParticipant function of Product.sol
     tx_hash = conn.functions.addParticipant(
-        username, password, fullname, role, hashedId).transact()
+        username, password, fullname, role, hashedId).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     print("RECEIPT", tx_receipt)
 
@@ -181,7 +185,7 @@ def merge_children():
 
     print(childrenQuantities)
     # delete childrenIds
-    tx_hash = conn.functions.deleteProducts(childrenIds, ownerId).transact()
+    tx_hash = conn.functions.deleteProducts(childrenIds, ownerId).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     print("Delete RECEIPT", tx_receipt)
 
@@ -192,13 +196,13 @@ def merge_children():
         enc_props = json.loads(parent[1])
         enc_props["quantity"] = str(sum(childrenQuantities))
         tx_hash = conn.functions.addProduct(
-            p[0], [parent_id], [], p[4], json.dumps(enc_props)).transact()
+            p[0], [parent_id], [], p[4], json.dumps(enc_props)).transact({'gas' : 400000})
         tx_receipt = w3.eth.waitForTransactionReceipt(
             tx_hash)  # how to get returned value?
         print("AddNewProduct", tx_receipt)
     else:
         # add the parent id to products owned
-        tx_hash = conn.functions.addToOwner(parent_id, ownerId).transact()
+        tx_hash = conn.functions.addToOwner(parent_id, ownerId).transact({'gas' : 400000})
         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
         print("AddtoOwner RECEIPT", tx_receipt)
 
@@ -214,7 +218,7 @@ def transfer_owner():
     input_json = request.get_json(force=True)
     print('Received params', input_json)
     sender_id = input_json['senderId']
-    receiver_id = input_json['receiverId']
+    # receiver_id = input_json['receiverId']
     product_id = int(input_json['productId'])
     
     product = conn.functions.getProduct(product_id).call()
@@ -229,14 +233,19 @@ def transfer_owner():
             if int(transf_props["temperature"]) > -5:
                 sender_details = conn.functions.getParticipant(sender_id).call()
                 receiver_details = conn.functions.getParticipant(receiver_id).call()
-                tx_hash = conn.functions.setError(product_id,"Temperature of "+str(product_id)+" is not maintained during transfer from "+str(sender_details[2])+" to "+str(receiver_details[2])).transact()
+                tx_hash = conn.functions.setError(product_id,"Temperature of "+str(product_id)+" is not maintained during transfer from "+str(sender_details[2])+" to "+str(receiver_details[2])).transact({'gas' : 400000})
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
     if 'transfer' in new_props:
         del new_props['transfer']
-    pendingTransactions
-    tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact()
+    # pendingTransactions
+    tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+    
+    # if receiver_id in transactionStarted:
+    #     if product_id in transactionStarted[receiver_id]:
+    #         transactionStarted[receiver_id].remove(product_id)
+    
     if sender_id in pendingTransactions:
         if product_id in pendingTransactions[sender_id]:
             del pendingTransactions[sender_id][product_id]
@@ -246,7 +255,7 @@ def transfer_owner():
     print(pendingTransactions, 'this')
     try:
         tx_hash = conn.functions.TransferOwnership(
-            sender_id, receiver_id, product_id, location, str(time.time()), json.dumps(transf_props)).transact()
+            sender_id, receiver_id, product_id, location, str(time.time()), json.dumps(transf_props)).transact({'gas' : 400000})
         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     # print(tx_receipt)
     except Exception as e:
@@ -324,9 +333,8 @@ def add_product():
 
     # transacting the data to the blockchain using the addProduct function defined in the smart contract
     tx_hash = conn.functions.addProduct(
-        product_name, parent_id, children_id, user_id, product_properties).transact()
+        product_name, parent_id, children_id, user_id, product_properties).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    # print("addProduct Receipt", tx_receipt)
 
     # Calling the childAdded event to acquire the child_id as a return value
     event_filter = conn.events.childAdded.createFilter(fromBlock="latest")
@@ -356,15 +364,15 @@ def add_product():
                     harvest = date(int(harvest_date[6:]),int(harvest_date[3:5]),int(harvest_date[0:2]))
                     # print(harvest)
                     if (crush-harvest).days>2:
-                        tx_hash = conn.functions.setError(child_id, "Sugarcane exceeded crushing date! ID:"+str(pid)).transact()
+                        tx_hash = conn.functions.setError(child_id, "Sugarcane exceeded crushing date! ID:"+str(pid)).transact({'gas' : 400000})
                         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
             
             for e in errors:
-                tx_hash = conn.functions.setError(child_id, e).transact()
+                tx_hash = conn.functions.setError(child_id, e).transact({'gas' : 400000})
                 tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
             #remove parents from owner as they no longer exist and have made new product
-            tx_hash = conn.functions.removeFromOwner(str(user_id), pid).transact()
+            tx_hash = conn.functions.removeFromOwner(str(user_id), pid).transact({'gas' : 400000})
 
     return jsonify({"product_id": child_id})
 
@@ -451,6 +459,7 @@ def addTransaction():
     username = input_json['username']
     product_id = int(input_json['product_id'])
     print(product_id)
+    
     if username not in pendingTransactions:
         pendingTransactions[username] = {product_id : 1}
     print(pendingTransactions)
@@ -461,11 +470,18 @@ def deleteTransaction():
     input_json = request.get_json(force=True)
     username = input_json['username']
     product_id = int(input_json['product_id'])
+    # receiver = input_json['receiver']
+
+    # if receiver in transactionStarted:
+    #     if product_id in transactionStarted[receiver]:
+    #         transactionStarted[receiver].remove(product_id)
+
     if username in pendingTransactions:
         if product_id in pendingTransactions[username]:
             del pendingTransactions[username][product_id]
             if len(pendingTransactions[username]) == 0:
                 del pendingTransactions[username]
+    
     print(pendingTransactions, 'this')
     return 'done', 200
 
@@ -475,6 +491,7 @@ def sendMoreProps():
     product_id = int(input_json['product_id'])
     enc_props = input_json['enc_props']
     sender = input_json['owner']
+    # receiver = input_json['new']
 
     product = conn.functions.getProduct(product_id).call()
     new_props = json.loads(product[1])
@@ -482,8 +499,13 @@ def sendMoreProps():
     
     print(new_props)
 
-    tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact()
+    tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
+
+    # if receiver in transactionStarted:
+    #     transactionStarted[receiver].append(product_id)
+    # else:
+    #     transactionStarted[receiver] = [product_id]
 
     if sender in pendingTransactions:
         if product_id in pendingTransactions[sender]:
@@ -559,10 +581,19 @@ def rate():
     new_rating = round((float(x[0])*int(x[1]) + rating) / (int(x[1]) + 1), 2)
     new_rating_str = str(new_rating) + '#' + str(int(x[1]) + 1)
 
-    tx_hash = conn.functions.setRating(sender, new_rating_str).transact()
+    tx_hash = conn.functions.setRating(sender, new_rating_str).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
 
     p = conn.functions.getParticipant(sender).call()
     print(p, p[4])
 
     return 'done', 200
+
+@app.route('/getUserTransactions', methods = ['POST'])
+def getUserTransactions():
+    input_json = request.get_json(force=True)
+    user_id = float(input_json['user_id'])
+    if user_id in transactionStarted:
+        return jsonify(transactionStarted[user_id])
+    else:
+        return jsonify([])
