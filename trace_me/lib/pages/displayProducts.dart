@@ -136,7 +136,9 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
         Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.height / 50),
           child: Container(
-            height: MediaQuery.of(context).size.height - 180,
+            height: MediaQuery.of(context).size.height -
+                MediaQuery.of(context).size.height * 0.2 -
+                MediaQuery.of(context).size.height / 25,
             width: 400,
             child: Column(
               children: [

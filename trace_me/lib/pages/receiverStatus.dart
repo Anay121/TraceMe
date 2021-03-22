@@ -76,8 +76,12 @@ class _StatusReceiverState extends State<StatusReceiver> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Congratulations! \n\nProduct successfully transferred',
+                        'Congratulations!',
                         style: TextStyle(fontSize: 30, color: darker),
+                      ),
+                      Text(
+                        'Product successfully transferred',
+                        style: TextStyle(fontSize: 20, color: darker),
                       ),
                       Text(
                         "Please rate your experience",
