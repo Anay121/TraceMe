@@ -28,7 +28,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
     ));
   }
 
-  Future<dynamic> makeJsonData() {
+  Future<dynamic> makeJsonData() async {
     Map object = Map();
     int count = 0;
     for (int i = 0; i < fields.length; i++) {
@@ -39,6 +39,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
       object[val['key']] = val['value'];
     }
     print(object);
+    String loggedUser = await Session().getter('userid');
     if (count == 0) {
       return http.post(
         Helper.url + '/sendMoreProps',
@@ -46,6 +47,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
           'product_id': _qrData['product_id'],
           'enc_props': json.encode(object),
           'owner': _qrData['sender'],
+          'new': loggedUser,
         }),
       );
     }
@@ -175,8 +177,8 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                   children: [
                                     // DataRow(),
                                     Column(
-                                      children: List.generate(fields.length,
-                                          (int index) => fields[index]),
+                                      children: List.generate(
+                                          fields.length, (int index) => fields[index]),
                                     ),
                                     CircleAvatar(
                                       backgroundColor: darker,
@@ -191,36 +193,28 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                         },
                                       ),
                                     ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                40),
+                                    SizedBox(height: MediaQuery.of(context).size.height / 40),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                       children: [
                                         ButtonTheme(
                                           child: RaisedButton.icon(
                                             onPressed: () {
-                                              showAlert('Confirm',
-                                                  'Are you sure you want to confirm?',
+                                              showAlert(
+                                                  'Confirm', 'Are you sure you want to confirm?',
                                                   onYesPress: () {
                                                 Fluttertoast.showToast(
                                                   msg: "Waiting to send...",
-                                                  toastLength:
-                                                      Toast.LENGTH_LONG,
+                                                  toastLength: Toast.LENGTH_LONG,
                                                   gravity: ToastGravity.BOTTOM,
                                                 );
                                                 Navigator.pop(context);
                                                 makeJsonData().then((val) {
                                                   if (val == 'error') {
                                                     Fluttertoast.showToast(
-                                                      msg:
-                                                          "There's some error!",
-                                                      toastLength:
-                                                          Toast.LENGTH_LONG,
-                                                      gravity:
-                                                          ToastGravity.BOTTOM,
+                                                      msg: "There's some error!",
+                                                      toastLength: Toast.LENGTH_LONG,
+                                                      gravity: ToastGravity.BOTTOM,
                                                     );
                                                   } else {
                                                     print(val.body);
@@ -228,10 +222,8 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                                     Fluttertoast.showToast(
                                                       msg:
                                                           "Added Successfully! Wait for sender to confirm",
-                                                      toastLength:
-                                                          Toast.LENGTH_LONG,
-                                                      gravity:
-                                                          ToastGravity.BOTTOM,
+                                                      toastLength: Toast.LENGTH_LONG,
+                                                      gravity: ToastGravity.BOTTOM,
                                                     );
                                                     Navigator.pop(context);
                                                   }
@@ -241,9 +233,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                             },
                                             label: Text(
                                               "Confirm",
-                                              style: TextStyle(
-                                                  fontSize: 17,
-                                                  color: Colors.white),
+                                              style: TextStyle(fontSize: 17, color: Colors.white),
                                             ),
                                             icon: Icon(
                                               Icons.check_circle,
@@ -260,8 +250,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                                 // TODO
                                                 // redirect to products page
                                                 Navigator.pushReplacementNamed(
-                                                    context,
-                                                    'DisplayProductsPage');
+                                                    context, 'DisplayProductsPage');
                                               });
                                             },
                                             label: Text(
@@ -279,23 +268,16 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                         ),
                                       ],
                                     ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                40),
+                                    SizedBox(height: MediaQuery.of(context).size.height / 40),
                                     ButtonTheme(
                                         child: RaisedButton(
                                           onPressed: () {
-                                            Navigator.pushNamed(
-                                                context, 'TraceProductPage',
-                                                arguments: int.parse(
-                                                    _qrData['product_id']));
+                                            Navigator.pushNamed(context, 'TraceProductPage',
+                                                arguments: int.parse(_qrData['product_id']));
                                           },
                                           child: Text(
                                             "Product Trace",
-                                            style: TextStyle(
-                                                fontSize: 17,
-                                                color: Colors.white),
+                                            style: TextStyle(fontSize: 17, color: Colors.white),
                                           ),
                                         ),
                                         buttonColor: darker)
@@ -315,8 +297,7 @@ class _ReceiverPageState extends State<ReceiverPage> {
                                     },
                                     child: Text(
                                       "View Sender Information",
-                                      style: TextStyle(
-                                          fontSize: 17, color: Colors.white),
+                                      style: TextStyle(fontSize: 17, color: Colors.white),
                                     ),
                                   ),
                                   buttonColor: Color(0xFFD3D3D3),

@@ -81,8 +81,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
               Text(
                 'ADD PRODUCT',
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.width / 15,
-                    fontWeight: FontWeight.bold),
+                    fontSize: MediaQuery.of(context).size.width / 15, fontWeight: FontWeight.bold),
               ),
               TextFormField(
                   decoration: InputDecoration(labelText: 'Product Name..'),
@@ -99,16 +98,14 @@ class _AddNewProductState extends State<AddNewProductPage> {
                     icon: Icon(Icons.add),
                     color: Colors.grey,
                     onPressed: () {
-                      quantController.text =
-                          (int.parse(quantController.text) + 1).toString();
+                      quantController.text = (int.parse(quantController.text) + 1).toString();
                     },
                   ),
                   IconButton(
                     icon: Icon(Icons.remove),
                     color: Colors.grey,
                     onPressed: () {
-                      quantController.text =
-                          (int.parse(quantController.text) - 1).toString();
+                      quantController.text = (int.parse(quantController.text) - 1).toString();
                     },
                   ),
                 ],
@@ -119,8 +116,7 @@ class _AddNewProductState extends State<AddNewProductPage> {
                 children: [
                   // DataRow(),
                   Column(
-                    children: List.generate(
-                        fields.length, (int index) => fields[index]),
+                    children: List.generate(fields.length, (int index) => fields[index]),
                   ),
                   CircleAvatar(
                     backgroundColor: darker,
@@ -161,18 +157,17 @@ class _AddNewProductState extends State<AddNewProductPage> {
                       }
                       // redirect with params
                       else {
-                        Navigator.popAndPushNamed(
-                            context, 'DisplayProductsPage');
+                        Navigator.pop(context);
+                        Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                       }
                     }),
                   },
                   child: Text("ADD PRODUCT"),
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(darker),
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                      shape:
+                          MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ))),
                 ),

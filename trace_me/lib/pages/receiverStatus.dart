@@ -44,17 +44,19 @@ class _StatusReceiverState extends State<StatusReceiver> {
     );
   }
 
-  Future<dynamic> deleteTransaction() {
+  Future<dynamic> deleteTransaction() async {
+    String receiver = await Session().getter('userid');
     return http.post(
       Helper.url + '/removeTransaction',
       body: json.encode({
         'username': _owner,
         'product_id': _productId,
+        'receiver': receiver,
       }),
     );
   }
 
-  Future<dynamic> rate() {
+  Future<dynamic> rate() async {
     return http.post(
       Helper.url + '/rate',
       body: json.encode({
@@ -77,6 +79,10 @@ class _StatusReceiverState extends State<StatusReceiver> {
                     children: [
                       Text(
                         'Congratulations!',
+                        style: TextStyle(fontSize: 30, color: darker),
+                      ),
+                      Text(
+                        'Product successfully transferred',
                         style: TextStyle(fontSize: 30, color: darker),
                       ),
                       Text(
@@ -128,7 +134,7 @@ class _StatusReceiverState extends State<StatusReceiver> {
                                     gravity: ToastGravity.BOTTOM,
                                   );
                                 });
-                                Future.delayed(Duration(seconds: 2), () => 1)
+                                Future.delayed(Duration(seconds: 0), () => 1)
                                     .then(
                                   (_) => Navigator.pushReplacementNamed(
                                       context, 'DisplayProductsPage'),

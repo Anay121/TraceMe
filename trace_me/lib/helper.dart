@@ -7,13 +7,12 @@ var darker = Color(0xFFCB672F);
 var myOrangeButtonStyle = ButtonStyle(
     backgroundColor: MaterialStateProperty.all<Color>(darker),
     foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
+    shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(5.0),
     )));
 
 class Helper {
-  static final String url = 'https://8244321fae4b.ngrok.io';
+  static final String url = 'https://971d4a5fa299.ngrok.io';
 }
 
 class Session {
@@ -49,8 +48,7 @@ class MenuDrawer extends StatelessWidget {
             onTap: () async {
               String val = await Session().getter('userid');
               Navigator.pop(context);
-              Navigator.popAndPushNamed(context, 'UserInfoPage',
-                  arguments: val);
+              Navigator.popAndPushNamed(context, 'UserInfoPage', arguments: val);
             },
           ),
           ListTile(
@@ -62,10 +60,8 @@ class MenuDrawer extends StatelessWidget {
             title: Text('Logout'),
             trailing: Icon(Icons.logout),
             onTap: () async {
-              Session().setter(
-                  {'userid': "", 'JWTAccessToken': "", 'JWTRefreshToken': ""});
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/', (router) => false);
+              Session().setter({'userid': "", 'JWTAccessToken': "", 'JWTRefreshToken': ""});
+              Navigator.pushNamedAndRemoveUntil(context, '/', (router) => false);
             },
           )
         ],

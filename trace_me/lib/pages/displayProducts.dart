@@ -135,10 +135,12 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
         ),
         Padding(
           padding: EdgeInsets.all(MediaQuery.of(context).size.height / 50),
+          // child: FractionallySizedBox(
+          //   widthFactor: 1,
+          //   heightFactor: 0.7,
           child: Container(
             height: MediaQuery.of(context).size.height -
-                MediaQuery.of(context).size.height * 0.2 -
-                MediaQuery.of(context).size.height / 25,
+                MediaQuery.of(context).size.height * 0.24,
             width: 400,
             child: Column(
               children: [
