@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 import json
 import time
 import os
-from datetime import date
+from datetime import date, datetime
+import pytz
 from toolz import recipes
 from web3 import method
 from .web3connection import Connection
@@ -218,7 +219,7 @@ def transfer_owner():
     input_json = request.get_json(force=True)
     print('Received params', input_json)
     sender_id = input_json['senderId']
-    # receiver_id = input_json['receiverId']
+    receiver_id = input_json['receiverId']
     product_id = int(input_json['productId'])
     
     product = conn.functions.getProduct(product_id).call()
@@ -253,9 +254,10 @@ def transfer_owner():
                 del pendingTransactions[sender_id]
     
     print(pendingTransactions, 'this')
+    #changed here timestamp
     try:
         tx_hash = conn.functions.TransferOwnership(
-            sender_id, receiver_id, product_id, location, str(time.time()), json.dumps(transf_props)).transact({'gas' : 400000})
+            sender_id, receiver_id, product_id, location, datetime.now(pytz.timezone('Asia/Kolkata')).strftime('%Y-%m-%d %H:%M:%S'), json.dumps(transf_props)).transact({'gas' : 400000})
         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     # print(tx_receipt)
     except Exception as e:

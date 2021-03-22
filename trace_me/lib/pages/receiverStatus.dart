@@ -83,10 +83,6 @@ class _StatusReceiverState extends State<StatusReceiver> {
                       ),
                       Text(
                         'Product successfully transferred',
-                        style: TextStyle(fontSize: 30, color: darker),
-                      ),
-                      Text(
-                        'Product successfully transferred',
                         style: TextStyle(fontSize: 20, color: darker),
                       ),
                       Text(
