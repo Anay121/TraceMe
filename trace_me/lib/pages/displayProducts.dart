@@ -152,31 +152,71 @@ class _DisplayProductsState extends State<DisplayProductsPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    showBtn
-                        ? Expanded(
-                            child: TextButton(
-                              onPressed: () => {
-                                if (productsSelected.isEmpty)
-                                  {
-                                    Navigator.pushNamed(context, 'AddNewProductPage',
-                                        arguments: [-1])
-                                  }
-                                else
-                                  {
-                                    Navigator.pushNamed(context, 'AddNewProductPage',
-                                        arguments: productsSelected)
-                                  }
-                              },
-                              child: Text(
-                                'Add new Product',
-                              ),
-                              style: myOrangeButtonStyle,
-                            ),
-                          )
-                        : Container(
-                            width: 0,
-                            height: 0,
-                          ),
+                    FutureBuilder(
+                        future: Session().getter('role'),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            print(snapshot.data);
+                            print('hereh');
+                            if (snapshot.data == 'Transporter') {
+                              return Container(
+                                height: 0,
+                                width: 0,
+                              );
+                            } else {
+                              return Expanded(
+                                child: TextButton(
+                                  onPressed: () => {
+                                    if (productsSelected.isEmpty)
+                                      {
+                                        Navigator.pushNamed(context, 'AddNewProductPage',
+                                            arguments: [-1])
+                                      }
+                                    else
+                                      {
+                                        Navigator.pushNamed(context, 'AddNewProductPage',
+                                            arguments: productsSelected)
+                                      }
+                                  },
+                                  child: Text(
+                                    'Add new Product',
+                                  ),
+                                  style: myOrangeButtonStyle,
+                                ),
+                              );
+                            }
+                          } else {
+                            return Container(
+                              height: 0,
+                              width: 0,
+                            );
+                          }
+                        }),
+                    // showBtn
+                    //     ? Expanded(
+                    //         child: TextButton(
+                    //           onPressed: () => {
+                    //             if (productsSelected.isEmpty)
+                    //               {
+                    //                 Navigator.pushNamed(context, 'AddNewProductPage',
+                    //                     arguments: [-1])
+                    //               }
+                    //             else
+                    //               {
+                    //                 Navigator.pushNamed(context, 'AddNewProductPage',
+                    //                     arguments: productsSelected)
+                    //               }
+                    //           },
+                    //           child: Text(
+                    //             'Add new Product',
+                    //           ),
+                    //           style: myOrangeButtonStyle,
+                    //         ),
+                    //       )
+                    //     : Container(
+                    //         width: 0,
+                    //         height: 0,
+                    //       ),
                     SizedBox(width: MediaQuery.of(context).size.width / 20),
                     Expanded(
                       child: (TextButton(

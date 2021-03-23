@@ -12,7 +12,7 @@ var myOrangeButtonStyle = ButtonStyle(
     )));
 
 class Helper {
-  static final String url = 'https://5ebdb82939f9.ngrok.io';
+  static final String url = 'https://b30c304eb9a7.ngrok.io';
 }
 
 class Session {
@@ -21,6 +21,7 @@ class Session {
     await FlutterSession().set("userid", jsonVal['userid']);
     await FlutterSession().set("JWTAccess", jsonVal['JWTAccessToken']);
     await FlutterSession().set("JWTRefresh", jsonVal['JWTRefreshToken']);
+    await FlutterSession().set("role", jsonVal['role']);
   }
 
   Future<String> getter(String key) async {
