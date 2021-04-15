@@ -132,11 +132,14 @@ addNodes(context, prodDict, parents, id) {
                   ]),
                 },
             child: Column(children: [
-              Text("ID $id : ${prodDict[id]["name"]}",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.blue,
-                      fontSize: MediaQuery.of(context).size.width / 20)),
+              Text(
+                "ID $id : ${prodDict[id]["name"]}",
+                style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: Colors.blue,
+                    fontSize: MediaQuery.of(context).size.width / 20),
+                overflow: TextOverflow.ellipsis,
+              ),
             ])),
         // Text("Maker: ${prodDict[id]["maker"][1]} - ${prodDict[id]["maker"][2]}",
         //     style: defaultStyle),
@@ -159,22 +162,24 @@ addNodes(context, prodDict, parents, id) {
                           print('Go to sender page ${i[0][0]}');
                           Navigator.pushNamed(context, 'UserInfoPage', arguments: i[0][0]);
                         }),
-                  TextSpan(text: " - ${i[0][2]}")
+                  TextSpan(text: " - ${i[0][2][0]}")
                 ])),
                 SizedBox(height: MediaQuery.of(context).size.height / 200),
                 RichText(
-                    text: TextSpan(style: defaultStyle, children: <TextSpan>[
-                  TextSpan(text: "TO "),
-                  TextSpan(
-                      text: "${i[1][1]}",
-                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          print('Go to receiver page ${i[1][0]}');
-                          Navigator.pushNamed(context, 'UserInfoPage', arguments: i[1][0]);
-                        }),
-                  TextSpan(text: " - ${i[1][2]}")
-                ])),
+                  text: TextSpan(style: defaultStyle, children: <TextSpan>[
+                    TextSpan(text: "TO "),
+                    TextSpan(
+                        text: "${i[1][1]}",
+                        style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            print('Go to receiver page ${i[1][0]}');
+                            Navigator.pushNamed(context, 'UserInfoPage', arguments: i[1][0]);
+                          }),
+                    TextSpan(text: " - ${i[1][2][0]}")
+                  ]),
+                  overflow: TextOverflow.ellipsis,
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height / 75),
               ])
         ])

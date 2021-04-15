@@ -84,7 +84,7 @@ class StatusSenderState extends State<StatusSender> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'They Have Accepted!',
+                      'The Receivers have Accepted!',
                       style: TextStyle(fontSize: 30),
                     ),
                     //
@@ -194,7 +194,7 @@ class StatusSenderState extends State<StatusSender> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'They Have Rejected!',
+                      'The receivers have Rejected!',
                       style: TextStyle(fontSize: 30),
                     ),
                     ButtonTheme(
@@ -203,8 +203,6 @@ class StatusSenderState extends State<StatusSender> {
                         onPressed: () {
                           // call api endpoint for removal
                           deleteTransaction().then((val) {
-                            // TODO
-                            // redirect to display page
                             Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                           });
                         },

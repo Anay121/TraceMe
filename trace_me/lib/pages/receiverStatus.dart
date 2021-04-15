@@ -147,7 +147,7 @@ class _StatusReceiverState extends State<StatusReceiver> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      'They Have Rejected!',
+                      'The Sender has Rejected!',
                       style: TextStyle(fontSize: 30),
                     ),
                     ButtonTheme(

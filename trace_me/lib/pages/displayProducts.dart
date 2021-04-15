@@ -12,11 +12,11 @@ class DisplayProductsPage extends StatefulWidget {
 
 class _DisplayProductsState extends State<DisplayProductsPage> {
   var productList = [];
-  var productsSelected = [];
+  var productsSelected = <int>[];
   var parentsOfProductsSelected = Map();
   Map productsSelectedQuantities = Map();
   Map parentsToChildren = Map();
-  var splitArgs = [];
+  var splitArgs = <int>[];
   bool checked = false;
   bool showBtn = true;
 

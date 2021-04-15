@@ -29,9 +29,7 @@ contract SupplyChain {
     // Product Struct
     struct Product {
         string productName;
-        // mapping(string => string) productProperties;
         string encProdProps;
-        // Trace trace;
         int256[] parentId;
         uint256[] childrenId;
         string currentOwnerId;

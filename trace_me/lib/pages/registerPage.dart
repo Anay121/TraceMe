@@ -19,8 +19,7 @@ class _RegisterState extends State<RegisterPage> {
   bool _passwordShow;
   RegisterData _data = RegisterData();
 
-  Future<dynamic> checkData(
-      String uname, String pass, String fullname, String role) {
+  Future<dynamic> checkData(String uname, String pass, String fullname, String role) {
     return http.post(Helper.url + '/register',
         body: json.encode({
           'username': uname,
@@ -76,9 +75,7 @@ class _RegisterState extends State<RegisterPage> {
                                 _data.uname = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 40),
+                            SizedBox(height: MediaQuery.of(context).size.height / 40),
                             TextFormField(
                               obscureText: !_passwordShow,
                               decoration: InputDecoration(
@@ -88,9 +85,8 @@ class _RegisterState extends State<RegisterPage> {
                                   color: Colors.red,
                                 ),
                                 suffixIcon: IconButton(
-                                  icon: Icon(_passwordShow
-                                      ? Icons.visibility
-                                      : Icons.visibility_off),
+                                  icon:
+                                      Icon(_passwordShow ? Icons.visibility : Icons.visibility_off),
                                   onPressed: () {
                                     setState(() {
                                       _passwordShow = !_passwordShow;
@@ -103,9 +99,7 @@ class _RegisterState extends State<RegisterPage> {
                                 _data.password = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 40),
+                            SizedBox(height: MediaQuery.of(context).size.height / 40),
                             TextFormField(
                               obscureText: false,
                               decoration: InputDecoration(
@@ -119,16 +113,14 @@ class _RegisterState extends State<RegisterPage> {
                                 _data.fullname = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 40),
+                            SizedBox(height: MediaQuery.of(context).size.height / 40),
                             DropdownButtonFormField(
                               value: _roleValue,
                               items: [
                                 "Farmer",
                                 "Transporter",
                                 "Processor",
-                                "Validator",
+                                "Distributor",
                                 "Retailer",
                               ]
                                   .map((label) => DropdownMenuItem(
@@ -152,9 +144,7 @@ class _RegisterState extends State<RegisterPage> {
                                 _data.role = val;
                               },
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height / 20),
+                            SizedBox(height: MediaQuery.of(context).size.height / 20),
                             SizedBox(
                               width: double.infinity,
                               height: MediaQuery.of(context).size.height / 13,
@@ -164,8 +154,8 @@ class _RegisterState extends State<RegisterPage> {
                                     if (_formKey.currentState.validate()) {
                                       _formKey.currentState.save();
                                       // print(_data.fullname);
-                                      checkData(_data.uname, _data.password,
-                                              _data.fullname, _data.role)
+                                      checkData(_data.uname, _data.password, _data.fullname,
+                                              _data.role)
                                           .then((val) {
                                         // check validation
                                         print(val.statusCode);
@@ -178,8 +168,7 @@ class _RegisterState extends State<RegisterPage> {
                                           // print(data);
                                           print(data['userid']);
                                           Session().setter(data);
-                                          Navigator.popAndPushNamed(
-                                              context, 'DisplayProductsPage');
+                                          Navigator.popAndPushNamed(context, 'DisplayProductsPage');
                                         }
 
                                         print(val.body);

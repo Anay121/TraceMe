@@ -12,7 +12,7 @@ var myOrangeButtonStyle = ButtonStyle(
     )));
 
 class Helper {
-  static final String url = 'https://b30c304eb9a7.ngrok.io';
+  static final String url = 'https://83896d542772.ngrok.io';
 }
 
 class Session {

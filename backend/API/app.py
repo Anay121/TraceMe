@@ -186,7 +186,7 @@ def merge_children():
 
     print(childrenQuantities)
     # delete childrenIds
-    tx_hash = conn.functions.deleteProducts(childrenIds, ownerId).transact({'gas' : 400000})
+    tx_hash = conn.functions.deleteProducts(childrenIds, ownerId).transact({'gas' : 600000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     print("Delete RECEIPT", tx_receipt)
 
@@ -366,7 +366,7 @@ def add_product():
                     # print(harvest_date)
                     harvest = date(int(harvest_date[6:]),int(harvest_date[3:5]),int(harvest_date[0:2]))
                     # print(harvest)
-                    if (crush-harvest).days>2:
+                    if (crush-harvest).days>=2:
                         tx_hash = conn.functions.setError(child_id, "Sugarcane exceeded crushing date! ID:"+str(pid)).transact({'gas' : 400000})
                         tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
             
