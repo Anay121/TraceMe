@@ -6,8 +6,8 @@ from datetime import date, datetime
 import pytz
 # from toolz import recipes
 # from web3 import method
-from .web3connection import Connection
-from .treeStruct import makeTree
+from web3connection import Connection
+from treeStruct import makeTree
 from hashlib import sha256
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
@@ -145,7 +145,7 @@ def register_user():
 
     # call addParticipant function of Product.sol
     tx_hash = conn.functions.addParticipant(
-        username, password, fullname, role, hashedId).transact({'gas' : 400000})
+        username, password, fullname, role, hashedId).transact({'gas' : 600000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     print("RECEIPT", tx_receipt)
 
@@ -385,6 +385,19 @@ def get_participant(user_id):
     p = conn.functions.getParticipant(user_id).call()
     return jsonify({"fullname":p[2],"role":p[3],"rating":p[4]})
 
+#get participant details
+@app.route("/get_all_participants/<role>", methods=["GET"])
+def get_all_participants(role):
+    print("Search for role:",role)
+    allParts = conn.functions.getAllParticipants().call()
+    # print(p)
+    role_parts = []
+    for p in allParts:
+        if p[3].lower() == role.lower():
+            role_parts.append([sha256((p[0]+p[1]).encode()).hexdigest(),p[2],int(p[4].split('#')[0])])
+    role_parts.sort(key=lambda x:x[2],reverse=True)
+    print(role_parts)
+    return jsonify({"participants":role_parts})
 
 #get participant details
 @app.route("/get_transactions/<product_id>", methods=["GET"])

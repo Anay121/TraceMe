@@ -117,6 +117,14 @@ contract SupplyChain {
         return productTrace[_pid];
     }
     
+    function getAllParticipants() public view returns(Participant[] memory){
+        Participant[] memory allParticipants = new Participant[](participantIds.length);
+        for (uint256 j = 0; j< participantIds.length; j++){
+            allParticipants[j]=participant[participantIds[j]];
+        }
+        return allParticipants;
+    }
+    
     // IMPORTANT FUNCTIONS
 
     function addParticipant(
