@@ -17,10 +17,10 @@ POST http://127.0.0.1:5000/register HTTP/1.1
 content-type: application/json
 
 {
-    "username": "f",
-    "password": "m",
-    "fullname": "YM",
-    "role": "Transporter"
+    "username": "a",
+    "password": "b",
+    "fullname": "AB",
+    "role": "Farmer"
 }
 
 
@@ -104,7 +104,7 @@ content-type: application/json
 GET http://127.0.0.1:5000/get_products/4dde0ce25f6d8a57b63954aa0a1c208c4a14f467861d30c8bdeb8a5963a7691e HTTP/1.1
 ###
 
-GET http://127.0.0.1:5000/get_products/7d9071962a52f85673ec2654d4dd24f667d5e6f21591fa480b0ddc2920d98eb7 HTTP/1.1
+GET http://127.0.0.1:5000/get_products/0201523e656991cc311a3904b01dd0d88e2a7ba0ecfc0412ef5e54dc334d4a40 HTTP/1.1
 ###
 
 GET http://127.0.0.1:5000/get_transactions/16 HTTP/1.1

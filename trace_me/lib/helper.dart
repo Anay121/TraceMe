@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_session/flutter_session.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 var orange = Color.fromRGBO(255, 91, 53, 1);
 var darker = Color(0xFFCB672F);
@@ -13,7 +14,7 @@ var myOrangeButtonStyle = ButtonStyle(
     )));
 
 class Helper {
-  static final String url = 'http://1b7d12b5af8a.ngrok.io';
+  static final String url = 'http://68a90d8e0464.ngrok.io';
 }
 
 class Session {
@@ -79,6 +80,11 @@ class MenuDrawer extends StatelessWidget {
     );
   }
 }
+
+const spinkit = SpinKitFadingCube(
+  color: Color(0xFFCB672F),
+  size: 100.0,
+);
 
 class BezierClipper extends CustomClipper<Path> {
   @override

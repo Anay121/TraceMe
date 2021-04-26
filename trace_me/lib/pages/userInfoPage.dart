@@ -118,7 +118,7 @@ class _UserInfoState extends State<UserInfoPage> {
 
                         // print("here");
                       } else {
-                        return CircularProgressIndicator();
+                        return spinkit;
                       }
                     }),
               ],

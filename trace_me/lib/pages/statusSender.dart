@@ -20,7 +20,8 @@ class StatusSender extends StatefulWidget {
   }
 
   @override
-  StatusSenderState createState() => StatusSenderState(_statusCode, _productId, _owner);
+  StatusSenderState createState() =>
+      StatusSenderState(_statusCode, _productId, _owner);
 }
 
 class StatusSenderState extends State<StatusSender> {
@@ -73,8 +74,10 @@ class StatusSenderState extends State<StatusSender> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle keyStyle = TextStyle(color: darker, fontSize: MediaQuery.of(context).size.width / 23);
-    TextStyle valueStyle = TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle keyStyle = TextStyle(
+        color: darker, fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle =
+        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     return Scaffold(
       body: Center(
         child: Container(
@@ -100,10 +103,13 @@ class StatusSenderState extends State<StatusSender> {
                             child: SingleChildScrollView(
                               child: Table(
                                 border: TableBorder(
-                                  horizontalInside:
-                                      BorderSide(width: 1, color: darker, style: BorderStyle.solid),
+                                  horizontalInside: BorderSide(
+                                      width: 1,
+                                      color: darker,
+                                      style: BorderStyle.solid),
                                 ),
-                                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                defaultVerticalAlignment:
+                                    TableCellVerticalAlignment.middle,
                                 children: map.entries.map((entry) {
                                   return TableRow(
                                     children: [
@@ -132,7 +138,7 @@ class StatusSenderState extends State<StatusSender> {
                             ),
                           );
                         } else {
-                          return CircularProgressIndicator();
+                          return spinkit;
                         }
                       },
                     ),
@@ -154,7 +160,8 @@ class StatusSenderState extends State<StatusSender> {
                             },
                             label: Text(
                               "Accept",
-                              style: TextStyle(fontSize: 17, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 17, color: Colors.white),
                             ),
                             icon: Icon(
                               Icons.check_circle,
@@ -177,7 +184,8 @@ class StatusSenderState extends State<StatusSender> {
                             },
                             label: Text(
                               "Reject",
-                              style: TextStyle(fontSize: 17, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 17, color: Colors.white),
                             ),
                             icon: Icon(
                               Icons.cancel,
@@ -203,7 +211,8 @@ class StatusSenderState extends State<StatusSender> {
                         onPressed: () {
                           // call api endpoint for removal
                           deleteTransaction().then((val) {
-                            Navigator.popAndPushNamed(context, 'DisplayProductsPage');
+                            Navigator.popAndPushNamed(
+                                context, 'DisplayProductsPage');
                           });
                         },
                         child: Text(

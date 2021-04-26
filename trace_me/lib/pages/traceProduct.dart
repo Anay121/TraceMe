@@ -76,7 +76,8 @@ class _TraceProductState extends State<TraceProductPage> {
                               Text(
                                 'Error: $i',
                                 style: TextStyle(
-                                    fontSize: MediaQuery.of(context).size.width / 25,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width / 25,
                                     color: Colors.red),
                               )
                           ]);
@@ -92,11 +93,11 @@ class _TraceProductState extends State<TraceProductPage> {
                         Map data = json.decode(snapshot.data.body);
                         print("HEREE");
                         print(data["t"][args]);
-                        var treeNode =
-                            addNodes(context, data["t"], data["t"][args]["parents"], args);
+                        var treeNode = addNodes(context, data["t"],
+                            data["t"][args]["parents"], args);
                         return treeNode;
                       } else {
-                        return CircularProgressIndicator();
+                        return spinkit;
                       }
                     })
               ],
@@ -109,8 +110,8 @@ class _TraceProductState extends State<TraceProductPage> {
 }
 
 addNodes(context, prodDict, parents, id) {
-  TextStyle defaultStyle =
-      TextStyle(color: Colors.grey, fontSize: MediaQuery.of(context).size.width / 25);
+  TextStyle defaultStyle = TextStyle(
+      color: Colors.grey, fontSize: MediaQuery.of(context).size.width / 25);
   return TreeNode(
     title: Card(
         child: Row(children: <Widget>[
@@ -118,18 +119,19 @@ addNodes(context, prodDict, parents, id) {
         GestureDetector(
             onTap: () => {
                   print("Call product details for $id"),
-                  Navigator.pushNamed(context, 'ProdTransDetailsPage', arguments: [
-                    int.parse(id),
-                    prodDict[id]["name"],
-                    [
-                      prodDict[id]["maker"][0],
-                      "${prodDict[id]["maker"][1]} - ${prodDict[id]["maker"][2].substring(0, 1)}"
-                    ],
-                    [
-                      prodDict[id]["owner"][0],
-                      "${prodDict[id]["owner"][1]} - ${prodDict[id]["owner"][2].substring(0, 1)}"
-                    ]
-                  ]),
+                  Navigator.pushNamed(context, 'ProdTransDetailsPage',
+                      arguments: [
+                        int.parse(id),
+                        prodDict[id]["name"],
+                        [
+                          prodDict[id]["maker"][0],
+                          "${prodDict[id]["maker"][1]} - ${prodDict[id]["maker"][2].substring(0, 1)}"
+                        ],
+                        [
+                          prodDict[id]["owner"][0],
+                          "${prodDict[id]["owner"][1]} - ${prodDict[id]["owner"][2].substring(0, 1)}"
+                        ]
+                      ]),
                 },
             child: Column(children: [
               Text(
@@ -156,11 +158,14 @@ addNodes(context, prodDict, parents, id) {
                   TextSpan(text: "FROM "),
                   TextSpan(
                       text: "${i[0][1]}",
-                      style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                      style: TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           print('Go to sender page ${i[0][0]}');
-                          Navigator.pushNamed(context, 'UserInfoPage', arguments: i[0][0]);
+                          Navigator.pushNamed(context, 'UserInfoPage',
+                              arguments: i[0][0]);
                         }),
                   TextSpan(text: " - ${i[0][2][0]}")
                 ])),
@@ -170,11 +175,14 @@ addNodes(context, prodDict, parents, id) {
                     TextSpan(text: "TO "),
                     TextSpan(
                         text: "${i[1][1]}",
-                        style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                        style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             print('Go to receiver page ${i[1][0]}');
-                            Navigator.pushNamed(context, 'UserInfoPage', arguments: i[1][0]);
+                            Navigator.pushNamed(context, 'UserInfoPage',
+                                arguments: i[1][0]);
                           }),
                     TextSpan(text: " - ${i[1][2][0]}")
                   ]),
@@ -188,7 +196,8 @@ addNodes(context, prodDict, parents, id) {
     expaned: true,
     children: <Widget>[
       if (parents[0] != "-1")
-        for (var i in parents) addNodes(context, prodDict, prodDict[i]["parents"], i)
+        for (var i in parents)
+          addNodes(context, prodDict, prodDict[i]["parents"], i)
       // TreeNode(
       //   title: Text('This is a title!'),
       //   children: <Widget>[

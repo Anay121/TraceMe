@@ -35,15 +35,18 @@ class QrScanPage extends StatelessWidget {
                   if (snapshot.hasData) {
                     Map val = json.decode(snapshot.data);
                     if (val['type'] == 'transfer') {
-                      getStatus(val['sender'], val['product_id']).then((returnValue) {
+                      getStatus(val['sender'], val['product_id'])
+                          .then((returnValue) {
                         // if status is 1, go to receiver page otherwise redirect to status page
                         // print('${json.decode(returnValue.body)["status"]} statuscode');
                         if (json.decode(returnValue.body)['status'] == 1) {
                           Navigator.popAndPushNamed(context, 'ReceiverPage',
                               arguments: snapshot.data);
                         } else {
-                          val['status'] = json.decode(returnValue.body)['status'];
-                          Navigator.popAndPushNamed(context, 'StatusReceiverPage',
+                          val['status'] =
+                              json.decode(returnValue.body)['status'];
+                          Navigator.popAndPushNamed(
+                              context, 'StatusReceiverPage',
                               arguments: json.encode(val));
                         }
                       });
@@ -58,7 +61,7 @@ class QrScanPage extends StatelessWidget {
                     }
                     return Text('Just a Moment...');
                   } else {
-                    return CircularProgressIndicator();
+                    return spinkit;
                   }
                 },
               ),
