@@ -6,15 +6,17 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 var orange = Color.fromRGBO(255, 91, 53, 1);
 var darker = Color(0xFFCB672F);
 var myOrangeButtonStyle = ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(darker),
-    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
+  backgroundColor: MaterialStateProperty.all<Color>(darker),
+  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+    RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(5.0),
-    )));
+    ),
+  ),
+);
 
 class Helper {
-  static final String url = 'http://68a90d8e0464.ngrok.io';
+  static final String url = 'https://c2a7b2e0ad75.ngrok.io';
 }
 
 class Session {
@@ -51,14 +53,18 @@ class MenuDrawer extends StatelessWidget {
             onTap: () async {
               String val = await Session().getter('userid');
               Navigator.pop(context);
-              Navigator.popAndPushNamed(context, 'UserInfoPage',
-                  arguments: val);
+              Navigator.popAndPushNamed(context, 'UserInfoPage', arguments: val);
             },
           ),
           ListTile(
             title: Text('Scan'),
             trailing: Icon(Icons.qr_code_scanner_rounded),
             onTap: () => Navigator.popAndPushNamed(context, 'QRScanPage'),
+          ),
+          ListTile(
+            title: Text('Enter Code'),
+            trailing: Icon(Icons.code_outlined),
+            onTap: () => Navigator.popAndPushNamed(context, 'CodeEnterPage'),
           ),
           ListTile(
             title: Text('Search top stakeholders'),
@@ -69,10 +75,8 @@ class MenuDrawer extends StatelessWidget {
             title: Text('Logout'),
             trailing: Icon(Icons.logout),
             onTap: () async {
-              Session().setter(
-                  {'userid': "", 'JWTAccessToken': "", 'JWTRefreshToken': ""});
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/', (router) => false);
+              Session().setter({'userid': "", 'JWTAccessToken': "", 'JWTRefreshToken': "", "role": ""});
+              Navigator.pushNamedAndRemoveUntil(context, '/', (router) => false);
             },
           )
         ],

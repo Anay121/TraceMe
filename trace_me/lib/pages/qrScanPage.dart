@@ -14,11 +14,13 @@ class QrScanPage extends StatelessWidget {
   }
 
   Future<dynamic> getStatus(String _owner, String _prodId) async {
-    return http.post(Helper.url + '/transactionInfo',
-        body: json.encode({
-          'username': _owner,
-          'product_id': _prodId,
-        }));
+    return http.post(
+      Helper.url + '/transactionInfo',
+      body: json.encode({
+        'username': _owner,
+        'product_id': _prodId,
+      }),
+    );
   }
 
   @override
@@ -35,19 +37,14 @@ class QrScanPage extends StatelessWidget {
                   if (snapshot.hasData) {
                     Map val = json.decode(snapshot.data);
                     if (val['type'] == 'transfer') {
-                      getStatus(val['sender'], val['product_id'])
-                          .then((returnValue) {
+                      getStatus(val['sender'], val['product_id']).then((returnValue) {
                         // if status is 1, go to receiver page otherwise redirect to status page
                         // print('${json.decode(returnValue.body)["status"]} statuscode');
                         if (json.decode(returnValue.body)['status'] == 1) {
-                          Navigator.popAndPushNamed(context, 'ReceiverPage',
-                              arguments: snapshot.data);
+                          Navigator.popAndPushNamed(context, 'ReceiverPage', arguments: snapshot.data);
                         } else {
-                          val['status'] =
-                              json.decode(returnValue.body)['status'];
-                          Navigator.popAndPushNamed(
-                              context, 'StatusReceiverPage',
-                              arguments: json.encode(val));
+                          val['status'] = json.decode(returnValue.body)['status'];
+                          Navigator.popAndPushNamed(context, 'StatusReceiverPage', arguments: json.encode(val));
                         }
                       });
                     } else {

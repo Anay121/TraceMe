@@ -32,11 +32,15 @@ class _CustomerViewPageState extends State<CustomerViewPage> {
                 },
               ),
               ListTile(
+                title: Text('Search top stakeholders'),
+                trailing: Icon(Icons.people_rounded),
+                onTap: () => Navigator.popAndPushNamed(context, 'RankingPage'),
+              ),
+              ListTile(
                 title: Text('Exit from Customer View'),
                 trailing: Icon(Icons.logout),
                 onTap: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/', (router) => false);
+                  Navigator.pushNamedAndRemoveUntil(context, '/', (router) => false);
                 },
               )
             ],
@@ -59,8 +63,7 @@ class _CustomerViewPageState extends State<CustomerViewPage> {
               ),
             ),
             Padding(
-                padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.height / 50),
+                padding: EdgeInsets.all(MediaQuery.of(context).size.height / 50),
                 child: Container(
                     height: MediaQuery.of(context).size.height,
                     width: 400,
@@ -77,13 +80,9 @@ class _CustomerViewPageState extends State<CustomerViewPage> {
                             'Scan a Product',
                           ),
                           style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all<Color>(darker),
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
-                              shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
+                              backgroundColor: MaterialStateProperty.all<Color>(darker),
+                              foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
                               ))),
                         ),
@@ -107,7 +106,7 @@ class _CustomerViewPageState extends State<CustomerViewPage> {
                       SizedBox(height: MediaQuery.of(context).size.height / 20),
                       TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Enter product id..',
+                            labelText: 'Enter product id...',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(5),
                               borderSide: BorderSide(
@@ -129,12 +128,9 @@ class _CustomerViewPageState extends State<CustomerViewPage> {
                         },
                         child: Text("OK"),
                         style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(darker),
-                            foregroundColor:
-                                MaterialStateProperty.all<Color>(Colors.white),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(RoundedRectangleBorder(
+                            backgroundColor: MaterialStateProperty.all<Color>(darker),
+                            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ))),
                       ),

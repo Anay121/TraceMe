@@ -91,7 +91,7 @@ class _RankingState extends State<RankingPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      'Search:',
+                      'View Ranks:',
                       style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width / 15,
                           fontWeight: FontWeight.bold),

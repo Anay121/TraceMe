@@ -6,9 +6,10 @@ from datetime import date, datetime
 import pytz
 # from toolz import recipes
 # from web3 import method
-from web3connection import Connection
-from treeStruct import makeTree
+from .web3connection import Connection
+from .treeStruct import makeTree
 from hashlib import sha256
+from random import random, randint
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     jwt_refresh_token_required, create_refresh_token,
@@ -31,6 +32,9 @@ pendingTransactions = {}
 # userid : [productid]
 transactionStarted = {}
 
+# code: (sender, qty, prod, prodname)
+codeTransactions = {}
+
 # tracing function
 @app.route('/trace', methods=['POST'])
 def trace():
@@ -38,12 +42,9 @@ def trace():
     product_id = int(input_json.get('product_id', ''))
     user_id = input_json.get('user_id', '')
     is_owned = conn.functions.isOwner(user_id, product_id).call()
-    # why?
-    # if not is_owned:
-    #     return "Can't view trace of unowned products", 402
+
     product = conn.functions.getProduct(product_id).call()
-    # print(product, 'product')
-    # makeTree.conn = conn
+
     t = makeTree(product, product_id, conn)
     print("t",type(t))
     return jsonify({"t": t})
@@ -231,7 +232,7 @@ def transfer_owner():
     p = conn.functions.getProduct(product_id).call()
     if p[0].lower().find("juice"):
         if "temperature" in transf_props:
-            if int(transf_props["temperature"]) > -5:
+            if int(transf_props["temperature"]) > 5:
                 sender_details = conn.functions.getParticipant(sender_id).call()
                 receiver_details = conn.functions.getParticipant(receiver_id).call()
                 tx_hash = conn.functions.setError(product_id,"Temperature of "+str(product_id)+" is not maintained during transfer from "+str(sender_details[2])+" to "+str(receiver_details[2])).transact({'gas' : 400000})
@@ -394,7 +395,7 @@ def get_all_participants(role):
     role_parts = []
     for p in allParts:
         if p[3].lower() == role.lower():
-            role_parts.append([sha256((p[0]+p[1]).encode()).hexdigest(),p[2],int(p[4].split('#')[0])])
+            role_parts.append([sha256((p[0]+p[1]).encode()).hexdigest(), p[2], int(float(p[4].split('#')[0]))])
     role_parts.sort(key=lambda x:x[2],reverse=True)
     print(role_parts)
     return jsonify({"participants":role_parts})
@@ -455,6 +456,7 @@ def get_products(user_id):
 @app.route('/transactionInfo', methods=['POST'])
 def transactionInfo():
     input_json = request.get_json(force=True)
+    print(input_json)
     username = input_json['username']
     product_id = int(input_json['product_id'])
     print(username, product_id)
@@ -481,16 +483,31 @@ def addTransaction():
     print(pendingTransactions)
     return 'done', 200
 
+@app.route('/makeCodeTransaction', methods=['POST'])
+def addCodeTransaction():
+    input_json = request.get_json(force=True)
+    username = input_json['username']
+    product_id = int(input_json['product_id'])
+    quantity = int(input_json['quantity'])
+    product = input_json['product']
+    # print(product_id)
+    
+    if username not in pendingTransactions:
+        pendingTransactions[username] = {product_id : 1}
+    x = randint(0, 58)
+    code = sha256(str(random()).encode()).hexdigest()[x : x+6]
+
+    codeTransactions[code] = (username, quantity, product_id, product)
+
+    print(codeTransactions)
+    return code, 200
+
+
 @app.route('/removeTransaction', methods=['POST'])
 def deleteTransaction():
     input_json = request.get_json(force=True)
     username = input_json['username']
     product_id = int(input_json['product_id'])
-    # receiver = input_json['receiver']
-
-    # if receiver in transactionStarted:
-    #     if product_id in transactionStarted[receiver]:
-    #         transactionStarted[receiver].remove(product_id)
 
     if username in pendingTransactions:
         if product_id in pendingTransactions[username]:
@@ -500,6 +517,35 @@ def deleteTransaction():
     
     print(pendingTransactions, 'this')
     return 'done', 200
+
+@app.route('/removeCodeTransaction', methods=['POST'])
+def deleteCodeTransaction():
+    input_json = request.get_json(force=True)
+    username = input_json['username']
+    product_id = int(input_json['product_id'])
+    code = input_json['code']
+
+    if username in pendingTransactions:
+        if product_id in pendingTransactions[username]:
+            del pendingTransactions[username][product_id]
+            if len(pendingTransactions[username]) == 0:
+                del pendingTransactions[username]
+    print(code, codeTransactions)
+    if code in codeTransactions:
+
+        del codeTransactions[code]
+    print(codeTransactions, 'this')
+    return 'done', 200
+
+@app.route('/getCodeProps', methods = ['POST'])
+def getCodeProps():
+    input_json = request.get_json(force=True)
+    code = input_json['code'].lower()
+    print(code, codeTransactions[code], 'getting value!')
+    if code in codeTransactions:
+        ret = {"sender": codeTransactions[code][0], "quantity": str(codeTransactions[code][1]), "product_id": str(codeTransactions[code][2]), "product": codeTransactions[code][3]}
+        return jsonify(ret), 200
+    return 'Not Found', 404
 
 @app.route('/sendMoreProps', methods=['POST'])
 def sendMoreProps():
@@ -517,11 +563,6 @@ def sendMoreProps():
 
     tx_hash = conn.functions.setEncProps(product_id, json.dumps(new_props)).transact({'gas' : 400000})
     tx_receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-
-    # if receiver in transactionStarted:
-    #     transactionStarted[receiver].append(product_id)
-    # else:
-    #     transactionStarted[receiver] = [product_id]
 
     if sender in pendingTransactions:
         if product_id in pendingTransactions[sender]:

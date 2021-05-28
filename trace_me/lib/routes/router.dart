@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trace_me/pages/codeEnterPage.dart';
 import 'package:trace_me/pages/customerViewPage.dart';
 import 'package:trace_me/pages/displayProducts.dart';
 import 'package:trace_me/pages/login.dart';
@@ -28,18 +29,17 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case "DisplayProductsPage":
       return MaterialPageRoute(builder: (context) => DisplayProductsPage());
     case "AddNewProductPage":
-      return MaterialPageRoute(
-          builder: (context) => AddNewProductPage(arguments));
+      return MaterialPageRoute(builder: (context) => AddNewProductPage(arguments));
     case "SplitProductPage":
-      return MaterialPageRoute(
-          builder: (context) => SplitProductPage(arguments));
+      return MaterialPageRoute(builder: (context) => SplitProductPage(arguments));
     case 'RegisterPage':
       return MaterialPageRoute(builder: (context) => RegisterPage());
     case 'ProductPage':
-      return MaterialPageRoute(
-          builder: (context) => ProductDetailsPage(arguments));
+      return MaterialPageRoute(builder: (context) => ProductDetailsPage(arguments));
     case 'QRScanPage':
       return MaterialPageRoute(builder: (context) => QrScanPage());
+    case 'CodeEnterPage':
+      return MaterialPageRoute(builder: (context) => CodeEnterPage());
     case 'ReceiverPage':
       return MaterialPageRoute(builder: (context) => ReceiverPage(arguments));
     case 'StatusSenderPage':
@@ -47,13 +47,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case 'StatusReceiverPage':
       return MaterialPageRoute(builder: (context) => StatusReceiver(arguments));
     case 'TraceProductPage':
-      return MaterialPageRoute(
-          builder: (context) => TraceProductPage(arguments));
+      return MaterialPageRoute(builder: (context) => TraceProductPage(arguments));
     case 'UserInfoPage':
       return MaterialPageRoute(builder: (context) => UserInfoPage(arguments));
     case "ProdTransDetailsPage":
-      return MaterialPageRoute(
-          builder: (context) => ProdTransDetailsPage(arguments));
+      return MaterialPageRoute(builder: (context) => ProdTransDetailsPage(arguments));
     case "CustomerViewPage":
       return MaterialPageRoute(builder: (context) => CustomerViewPage());
     case "RankingPage":

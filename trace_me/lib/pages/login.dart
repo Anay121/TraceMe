@@ -16,11 +16,13 @@ class _LoginState extends State<LoginPage> {
   bool _validateError = false;
 
   Future<dynamic> checkData(String uname, String pass) {
-    return http.post(Helper.url + '/login',
-        body: json.encode({
-          'username': uname,
-          'password': pass,
-        }));
+    return http.post(
+      Helper.url + '/login',
+      body: json.encode({
+        'username': uname,
+        'password': pass,
+      }),
+    );
   }
 
   Map<String, String> getVal() {
@@ -91,33 +93,34 @@ class _LoginState extends State<LoginPage> {
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
                     SizedBox(
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height / 13,
-                        child: ElevatedButton(
-                          onPressed: () => {
-                            checkData(unameController.text, passController.text).then((val) {
-                              // check validation
-                              print(val.statusCode);
-                              if (val.statusCode != 200) {
-                                setState(() {
-                                  _validateError = true;
-                                });
-                              }
-                              // redirect with params
-                              else {
-                                dynamic data = json.decode(val.body);
-                                print(data);
-                                print(data['userid']);
-                                Session().setter(data);
-                                Navigator.popAndPushNamed(context, 'DisplayProductsPage');
-                              }
-                            })
-                          },
-                          child: Text(
-                            'LOG IN',
-                          ),
-                          style: myOrangeButtonStyle,
-                        )),
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height / 13,
+                      child: ElevatedButton(
+                        onPressed: () => {
+                          checkData(unameController.text, passController.text).then((val) {
+                            // check validation
+                            print(val.statusCode);
+                            if (val.statusCode != 200) {
+                              setState(() {
+                                _validateError = true;
+                              });
+                            }
+                            // redirect with params
+                            else {
+                              dynamic data = json.decode(val.body);
+                              print('data is $data');
+                              print(data['userid']);
+                              Session().setter(data);
+                              Navigator.popAndPushNamed(context, 'DisplayProductsPage');
+                            }
+                          })
+                        },
+                        child: Text(
+                          'LOG IN',
+                        ),
+                        style: myOrangeButtonStyle,
+                      ),
+                    ),
                   ],
                 ),
               ),

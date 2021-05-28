@@ -15,13 +15,18 @@ class ProductDetailsPage extends StatefulWidget {
   _ProductDetailsPageState createState() => _ProductDetailsPageState(args);
 }
 
+String _code;
+
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   String _prodName;
   String _quantity;
   String _prodId;
   String _owner;
+  // String _code;
+  bool _doGenerateCode = false;
   bool _doGenerateQR = false;
   bool flag = true;
+  bool codeflag = true;
 
   _ProductDetailsPageState(String args) {
     Map values = json.decode(args);
@@ -32,11 +37,30 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   }
 
   Future<dynamic> addTransaction() {
-    return http.post(Helper.url + '/makeTransaction',
+    return http.post(
+      Helper.url + '/makeTransaction',
+      body: json.encode({
+        'username': _owner,
+        'product_id': _prodId,
+      }),
+    );
+  }
+
+  Future<dynamic> addCodeTransaction() {
+    if (_code == '') {
+      return http.post(
+        Helper.url + '/makeCodeTransaction',
         body: json.encode({
           'username': _owner,
           'product_id': _prodId,
-        }));
+          'product': _prodName,
+          'quantity': _quantity,
+        }),
+      );
+    } else {
+      GetCode g = GetCode();
+      return Future.delayed(Duration(), () => g);
+    }
   }
 
   Future<dynamic> getProps() {
@@ -52,11 +76,32 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       return Future<String>.value('This is a string');
       // return Future.delayed(Duration.zero);
     } else {
-      return http.post(Helper.url + '/removeTransaction',
-          body: json.encode({
-            'username': _owner,
-            'product_id': _prodId,
-          }));
+      return http.post(
+        Helper.url + '/removeTransaction',
+        body: json.encode({
+          'username': _owner,
+          'product_id': _prodId,
+        }),
+      );
+    }
+  }
+
+  Future<dynamic> deleteCodeTransaction() {
+    if (codeflag) {
+      codeflag = !codeflag;
+      return Future<String>.value('This is a string');
+      // return Future.delayed(Duration.zero);
+    } else {
+      String t = _code;
+      _code = '';
+      return http.post(
+        Helper.url + '/removeCodeTransaction',
+        body: json.encode({
+          'username': _owner,
+          'product_id': _prodId,
+          'code': t,
+        }),
+      );
     }
   }
 
@@ -70,10 +115,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle keyStyle = TextStyle(
-        color: darker, fontSize: MediaQuery.of(context).size.width / 23);
-    TextStyle valueStyle =
-        TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle keyStyle = TextStyle(color: darker, fontSize: MediaQuery.of(context).size.width / 23);
+    TextStyle valueStyle = TextStyle(fontSize: MediaQuery.of(context).size.width / 23);
     return Scaffold(
       drawer: MenuDrawer(),
       body: Center(
@@ -87,9 +130,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 Text(
                   "Product Details",
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 12,
-                      fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.width / 12, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height / 40),
                 Container(
@@ -115,279 +156,341 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   height: MediaQuery.of(context).size.height / 2,
                   // width: MediaQuery.of(context).size.width,
                   child: DefaultTabController(
-                      length: 3,
-                      child: Column(
-                        children: [
-                          Container(
-                            child: TabBar(
-                              labelColor: darker,
-                              unselectedLabelColor: Colors.black,
-                              tabs: [
-                                Tab(
-                                  text: "Details",
-                                ),
-                                Tab(
-                                  text: "QR Code",
-                                ),
-                                Tab(
-                                  text: "Transfer",
-                                )
-                              ],
-                            ),
+                    length: 3,
+                    child: Column(
+                      children: [
+                        Container(
+                          child: TabBar(
+                            labelColor: darker,
+                            unselectedLabelColor: Colors.black,
+                            tabs: [
+                              Tab(
+                                text: "Details",
+                              ),
+                              Tab(
+                                text: "QR Code",
+                              ),
+                              Tab(
+                                text: "Transfer",
+                              )
+                            ],
                           ),
-                          Container(
-                            height: MediaQuery.of(context).size.height / 2.5,
-                            child: TabBarView(
-                              children: [
-                                Container(
-                                  child: FutureBuilder(
-                                    future: getProps(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot snapshot) {
-                                      if (snapshot.hasData) {
-                                        Map map = Map();
-                                        map['KEY'] = 'VALUE';
-                                        map.addAll(
-                                            json.decode(snapshot.data.body));
-                                        print(map);
-                                        return SingleChildScrollView(
-                                          child: Table(
-                                            border: TableBorder(
-                                              horizontalInside: BorderSide(
-                                                  width: 1,
-                                                  color: darker,
-                                                  style: BorderStyle.solid),
-                                            ),
-                                            defaultVerticalAlignment:
-                                                TableCellVerticalAlignment
-                                                    .middle,
-                                            children: Map.fromEntries(
-                                                map.entries.expand((e) => [
-                                                      if (e.key != 'transfer')
-                                                        MapEntry(e.key, e.value)
-                                                    ])).entries.map((entry) {
-                                              // if (entry.key != 'transfer') {
-                                              return TableRow(
-                                                children: [
-                                                  TableCell(
-                                                    child: Container(
-                                                        padding:
-                                                            EdgeInsets.all(10),
-                                                        child: Text(
-                                                          entry.key.toString(),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: keyStyle,
-                                                        )),
-                                                  ),
-                                                  TableCell(
-                                                    child: Container(
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height / 2.5,
+                          child: TabBarView(
+                            children: [
+                              Container(
+                                child: FutureBuilder(
+                                  future: getProps(),
+                                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      Map map = Map();
+                                      map['KEY'] = 'VALUE';
+                                      map.addAll(json.decode(snapshot.data.body));
+                                      print(map);
+                                      return SingleChildScrollView(
+                                        child: Table(
+                                          border: TableBorder(
+                                            horizontalInside: BorderSide(width: 1, color: darker, style: BorderStyle.solid),
+                                          ),
+                                          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                          children: Map.fromEntries(map.entries.expand((e) => [if (e.key != 'transfer') MapEntry(e.key, e.value)]))
+                                              .entries
+                                              .map((entry) {
+                                            // if (entry.key != 'transfer') {
+                                            return TableRow(
+                                              children: [
+                                                TableCell(
+                                                  child: Container(
+                                                      padding: EdgeInsets.all(10),
                                                       child: Text(
-                                                        entry.value.toString(),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: valueStyle,
-                                                      ),
+                                                        entry.key.toString(),
+                                                        textAlign: TextAlign.center,
+                                                        style: keyStyle,
+                                                      )),
+                                                ),
+                                                TableCell(
+                                                  child: Container(
+                                                    child: Text(
+                                                      entry.value.toString(),
+                                                      textAlign: TextAlign.center,
+                                                      style: valueStyle,
                                                     ),
                                                   ),
-                                                ],
-                                              );
-                                              // }
-                                            }).toList(),
-                                          ),
-                                        );
-                                      } else {
-                                        return spinkit;
-                                      }
-                                    },
-                                  ),
+                                                ),
+                                              ],
+                                            );
+                                            // }
+                                          }).toList(),
+                                        ),
+                                      );
+                                    } else {
+                                      return spinkit;
+                                    }
+                                  },
                                 ),
-                                Container(
-                                  child: QrImage(
-                                    data: json.encode({
-                                      "type": "display",
-                                      "product_id": _prodId,
-                                    }),
-                                    version: QrVersions.auto,
-                                    size:
-                                        MediaQuery.of(context).size.width / 2.5,
-                                  ),
+                              ),
+                              Container(
+                                child: QrImage(
+                                  data: json.encode({
+                                    "type": "display",
+                                    "product_id": _prodId,
+                                  }),
+                                  version: QrVersions.auto,
+                                  size: MediaQuery.of(context).size.width / 2.5,
                                 ),
-                                _doGenerateQR
-                                    ? FutureBuilder(
-                                        future: addTransaction(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData) {
-                                            return Container(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                children: [
-                                                  QrImage(
-                                                    data: json.encode({
-                                                      "type": "transfer",
-                                                      "product": _prodName,
-                                                      "quantity": _quantity,
-                                                      "sender": _owner,
-                                                      "product_id": _prodId,
-                                                    }),
-                                                    version: QrVersions.auto,
-                                                    size: MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        2.5,
+                              ),
+                              _doGenerateQR
+                                  ? FutureBuilder(
+                                      future: addTransaction(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Container(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                QrImage(
+                                                  data: json.encode({
+                                                    "type": "transfer",
+                                                    "product": _prodName,
+                                                    "quantity": _quantity,
+                                                    "sender": _owner,
+                                                    "product_id": _prodId,
+                                                  }),
+                                                  version: QrVersions.auto,
+                                                  size: MediaQuery.of(context).size.width / 2.5,
+                                                ),
+                                                Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                                                  ButtonTheme(
+                                                    child: ElevatedButton.icon(
+                                                      onPressed: () {
+                                                        getStatus().then((value) {
+                                                          if (json.decode(value.body)['status'] == 0 || json.decode(value.body)['status'] == 1) {
+                                                            // make toast
+                                                            Fluttertoast.showToast(
+                                                              msg: "Waiting for Receiver Confirmation",
+                                                              toastLength: Toast.LENGTH_LONG,
+                                                              gravity: ToastGravity.BOTTOM,
+                                                            );
+                                                          } else {
+                                                            //redirect
+                                                            Navigator.pushNamed(
+                                                              context,
+                                                              'StatusSenderPage',
+                                                              arguments: json.encode({
+                                                                'status': json.decode(value.body)['status'],
+                                                                'productId': _prodId,
+                                                                'owner': _owner,
+                                                              }),
+                                                            );
+                                                          }
+                                                        });
+                                                      },
+                                                      label: Text(
+                                                        "Check Status",
+                                                        style: TextStyle(fontSize: 17, color: Colors.white),
+                                                      ),
+                                                      icon: Icon(Icons.check, color: Colors.white),
+                                                    ),
                                                   ),
-                                                  Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: [
-                                                        ButtonTheme(
-                                                          child: ElevatedButton
-                                                              .icon(
-                                                            onPressed: () {
-                                                              getStatus().then(
-                                                                  (value) {
-                                                                if (json.decode(value.body)[
-                                                                            'status'] ==
-                                                                        0 ||
-                                                                    json.decode(
-                                                                            value.body)['status'] ==
-                                                                        1) {
-                                                                  // make toast
-                                                                  Fluttertoast
-                                                                      .showToast(
-                                                                    msg:
-                                                                        "Waiting for Receiver Confirmation",
-                                                                    toastLength:
-                                                                        Toast
-                                                                            .LENGTH_LONG,
-                                                                    gravity:
-                                                                        ToastGravity
-                                                                            .BOTTOM,
-                                                                  );
-                                                                } else {
-                                                                  //redirect
-                                                                  Navigator
-                                                                      .pushNamed(
-                                                                    context,
-                                                                    'StatusSenderPage',
-                                                                    arguments: json
-                                                                        .encode({
-                                                                      'status':
-                                                                          json.decode(
-                                                                              value.body)['status'],
-                                                                      'productId':
-                                                                          _prodId,
-                                                                      'owner':
-                                                                          _owner,
-                                                                    }),
-                                                                  );
-                                                                }
-                                                              });
-                                                            },
-                                                            label: Text(
-                                                              "Check Status",
-                                                              style: TextStyle(
-                                                                  fontSize: 17,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                            icon: Icon(
-                                                                Icons.check,
-                                                                color: Colors
-                                                                    .white),
+                                                  SizedBox(width: MediaQuery.of(context).size.width / 20),
+                                                  ButtonTheme(
+                                                    child: ElevatedButton.icon(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _doGenerateQR = false;
+                                                        });
+                                                      },
+                                                      label: Text(
+                                                        "Cancel",
+                                                        style: TextStyle(fontSize: 17, color: Colors.white),
+                                                      ),
+                                                      icon: Icon(
+                                                        Icons.cancel,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    buttonColor: Colors.red,
+                                                  )
+                                                ])
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          return CircularProgressIndicator();
+                                        }
+                                      },
+                                    )
+                                  : //conditional for generate code
+                                  _doGenerateCode
+                                      ? FutureBuilder(
+                                          future: addCodeTransaction(),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              print(snapshot.data.body);
+                                              _code = snapshot.data.body;
+                                              return Container(
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                  children: [
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: 'Your Code is: $_code',
+                                                        style: TextStyle(
+                                                          fontSize: MediaQuery.of(context).size.width / 15,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                                                      ButtonTheme(
+                                                        child: ElevatedButton.icon(
+                                                          onPressed: () {
+                                                            getStatus().then((value) {
+                                                              if (json.decode(value.body)['status'] == 0 || json.decode(value.body)['status'] == 1) {
+                                                                // make toast
+                                                                Fluttertoast.showToast(
+                                                                  msg: "Waiting for Receiver Confirmation",
+                                                                  toastLength: Toast.LENGTH_LONG,
+                                                                  gravity: ToastGravity.BOTTOM,
+                                                                );
+                                                              } else {
+                                                                //redirect
+                                                                Navigator.pushNamed(
+                                                                  context,
+                                                                  'StatusSenderPage',
+                                                                  arguments: json.encode({
+                                                                    'status': json.decode(value.body)['status'],
+                                                                    'productId': _prodId,
+                                                                    'owner': _owner,
+                                                                  }),
+                                                                );
+                                                              }
+                                                            });
+                                                          },
+                                                          label: Text(
+                                                            "Check Status",
+                                                            style: TextStyle(fontSize: 17, color: Colors.white),
+                                                          ),
+                                                          icon: Icon(Icons.check, color: Colors.white),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: MediaQuery.of(context).size.width / 20),
+                                                      ButtonTheme(
+                                                        child: ElevatedButton.icon(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              _doGenerateCode = false;
+                                                            });
+                                                          },
+                                                          label: Text(
+                                                            "Cancel",
+                                                            style: TextStyle(fontSize: 17, color: Colors.white),
+                                                          ),
+                                                          icon: Icon(
+                                                            Icons.cancel,
+                                                            color: Colors.white,
                                                           ),
                                                         ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width /
-                                                                20),
-                                                        ButtonTheme(
-                                                          child: ElevatedButton
-                                                              .icon(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                _doGenerateQR =
-                                                                    false;
-                                                              });
-                                                            },
-                                                            label: Text(
-                                                              "Cancel",
-                                                              style: TextStyle(
-                                                                  fontSize: 17,
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                            icon: Icon(
-                                                              Icons.cancel,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                          buttonColor:
-                                                              Colors.red,
-                                                        )
-                                                      ])
-                                                ],
-                                              ),
-                                            );
-                                          } else {
-                                            return CircularProgressIndicator();
-                                          }
-                                        },
-                                      )
-                                    : FutureBuilder(
-                                        future: deleteTransaction(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.hasData) {
-                                            return ButtonTheme(
-                                              // minWidth: 100,
-                                              // height: 10,
-                                              child: ElevatedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _doGenerateQR = true;
-                                                  });
-                                                },
-                                                child: Text(
-                                                  "Generate a QR",
-                                                  style: TextStyle(
-                                                      fontSize: 17,
-                                                      color: Colors.white),
+                                                        buttonColor: Colors.red,
+                                                      )
+                                                    ])
+                                                  ],
+                                                ),
+                                              );
+                                            } else {
+                                              return CircularProgressIndicator();
+                                            }
+                                          },
+                                        )
+                                      : Column(
+                                          children: [
+                                            FutureBuilder(
+                                              future: deleteTransaction(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  return ButtonTheme(
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _doGenerateQR = true;
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        "Generate a QR",
+                                                        style: TextStyle(fontSize: 17, color: Colors.white),
+                                                      ),
+                                                    ),
+                                                    buttonColor: Color(0xFFD3D3D3),
+                                                  );
+                                                } else {
+                                                  return CircularProgressIndicator();
+                                                }
+                                              },
+                                            ),
+                                            Row(children: <Widget>[
+                                              Expanded(
+                                                child: Divider(
+                                                  thickness: 2,
+                                                  endIndent: 10,
                                                 ),
                                               ),
-                                              buttonColor: Color(0xFFD3D3D3),
-                                            );
-                                          } else {
-                                            return CircularProgressIndicator();
-                                          }
-                                        },
-                                      ),
-                              ],
-                            ),
-                          )
-                        ],
-                      )),
+                                              Text("OR"),
+                                              Expanded(
+                                                child: Divider(
+                                                  thickness: 2,
+                                                  indent: 10,
+                                                ),
+                                              ),
+                                            ]),
+                                            FutureBuilder(
+                                              future: deleteCodeTransaction(),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  return ButtonTheme(
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _doGenerateCode = true;
+                                                        });
+                                                      },
+                                                      child: Text(
+                                                        "Generate a Code",
+                                                        style: TextStyle(fontSize: 17, color: Colors.white),
+                                                      ),
+                                                    ),
+                                                    buttonColor: Color(0xFFD3D3D3),
+                                                  );
+                                                } else {
+                                                  return CircularProgressIndicator();
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height / 12,
-                        child: TextButton(
-                          onPressed: () => {
-                            Navigator.pushNamed(context, 'TraceProductPage',
-                                arguments: int.parse(_prodId)),
-                          },
-                          child: Text("DISPLAY TRACE"),
-                          style: myOrangeButtonStyle,
-                        ),
-                      )),
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height / 12,
+                      child: TextButton(
+                        onPressed: () => {
+                          Navigator.pushNamed(context, 'TraceProductPage', arguments: int.parse(_prodId)),
+                        },
+                        child: Text("DISPLAY TRACE"),
+                        style: myOrangeButtonStyle,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -395,5 +498,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         ),
       ),
     );
+  }
+}
+
+class GetCode {
+  String get body {
+    return _code;
   }
 }
