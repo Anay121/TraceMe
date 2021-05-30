@@ -156,7 +156,7 @@ def register_user():
     access_token = create_access_token(identity=hashedId)
     refresh_token = create_refresh_token(identity=hashedId)
 
-    return jsonify({'userid': hashedId, 'JWTAccessToken': access_token, 'JWTRefreshToken': refresh_token, 'role' : role}), 200
+    return jsonify({'userid': hashedId,  'role' : role}), 200
 
 # merge -- deleteProducts + addToOwner
 @app.route('/merge', methods=['POST'])

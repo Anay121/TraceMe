@@ -13,14 +13,14 @@ content-type: application/json
 
 ###
 # Testing the /register [POST] endpoint
-POST http://127.0.0.1:5000/register HTTP/1.1
+POST http://127.0.0.1:5000/register HTTP/2
 content-type: application/json
 
 {
-    "username": "a",
-    "password": "b",
-    "fullname": "AB",
-    "role": "Farmer"
+    "username": "Armin",
+    "password": "password",
+    "fullname": "KMart Retailers",
+    "role": "Retailer"
 }
 
 
