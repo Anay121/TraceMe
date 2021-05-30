@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=40% src="trace_me\assets\icon\logo1.png" alt="TraceMe-logo"></a>
+ <img width=20% src="trace_me\assets\icon\logo1.png" alt="TraceMe-logo"></a>
 </p>
 
 # TraceMe
